@@ -93,7 +93,7 @@ echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\
 echo "<link href=\"../".$_SESSION['config']['stylesheet_file']."\" rel=\"stylesheet\" type=\"text/css\">\n";
 /* echo "<link href=\"../jquery-ui-1.10.3.custom_a.css\" rel=\"stylesheet\" type=\"text/css\" >\n"; */ 
 echo "<title> ".$_SESSION['config']['titre_application'].$_SESSION['config']['titre_resp_index']." </title>\n";
-include("../fonctions_javascript.php") ;
+// _nfj_ include("../fonctions_javascript.php") ;
 echo "<script src=\"/jquery/js/jquery-1.10.2.min.js\"></script>\n";
 echo "<script src=\"/jquery/js/jquery-ui-1.10.3.custom.min.js\"></script>\n";
 echo "<script src=\"/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr.js\"></script>\n";
