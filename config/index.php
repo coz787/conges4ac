@@ -63,6 +63,8 @@ function propose_config( $DEBUG=FALSE)
 	echo "<TITLE> ".$_SESSION['config']['titre_application']." : Installation : </TITLE>\n</head>\n";
 	echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";	
 	echo "<link href=\"../style_basic.css\" rel=\"stylesheet\" type=\"text/css\">\n";
+    echo "<script src=\"../jqcal.min.js\"></script>\n";
+
 	echo "</head>\n";
 				
 	echo "<body text=\"#000000\" bgcolor=\"#597c98\" link=\"#000080\" vlink=\"#800080\" alink=\"#FF0000\" >\n";
