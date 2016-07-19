@@ -28,7 +28,7 @@ if(phpversion() > "5.1.2") { include("../controle_ids.php") ;}
 
 //include("../fonctions_conges.php") ;
 //include("../INCLUDE.PHP/fonction.php");
-include("../fonctions_javascript.php") ;
+// _nfj_ include("../fonctions_javascript.php") ;
 
 include("fonctions_install.php") ;
 include("../fonctions_conges.php") ;

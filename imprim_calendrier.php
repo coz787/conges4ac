@@ -60,7 +60,7 @@ function form_saisie($action, $new_mois, $new_year, $DEBUG=FALSE)
 {
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
-	include("fonctions_javascript.php") ;
+	// _nfj_ include("fonctions_javascript.php") ;
 
 	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n";
 	echo "<html>\n";
@@ -69,6 +69,7 @@ function form_saisie($action, $new_mois, $new_year, $DEBUG=FALSE)
 	echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
 	echo "<link href=\"../".$_SESSION['config']['stylesheet_file']."\" rel=\"stylesheet\" type=\"text/css\">\n";
 	echo "<title>PHP_CONGES : </title>\n";
+    echo "<script src=\"jqcal.min.js\"></script>\n";
 	echo "</head>\n";
 	echo "<body>\n";
 

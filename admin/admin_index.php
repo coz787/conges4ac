@@ -30,7 +30,7 @@ $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session']
 include("../fonctions_conges.php") ;
 include("../INCLUDE.PHP/fonction.php");
 include("../INCLUDE.PHP/session.php");
-include("../fonctions_javascript.php") ;
+// _nfj_ include("../fonctions_javascript.php") ;
 include("admin_jourshorsperiode.php"); 
 
 $gu_nature_set = array('membre','visiteur'); 

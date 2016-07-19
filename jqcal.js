@@ -736,191 +736,45 @@ function cb_highlightMovableDays(date) {
     return(olret) ; 
 } 
 
-// __attic
+/* reprise des fonctions originales php_conges */ 
 
-/*
+function OpenPopUp(MyFile,MyWindow,MyWidth,MyHeight)
+//MyFile :	  nom du fichier contenant le code HTML du pop-up
+//MyWindow :	  nom de la fenêtre (ne pas mettre d'espace)
+//MyWidth :	  entier indiquant la largeur de la fenêtre en pixels
+//MyHeight :	  entier indiquant la hauteur de la fenêtre en pixels
 
+{	  
+var ns4 = (document.layers)? true:false; 	  //NS 4
+var ie4 = (document.all)? true:false;	  //IE 4
+var dom = (document.getElementById)? true:false;	  //DOM
+var xMax, yMax, xOffset, yOffset;;	  
 
-function cb_highlightWorkDays_1(date) {
-    var wd = date.getDay()  ; // jour de la semaine 
-    var sdate = $.datepicker.formatDate("yy-mm-dd",date) ;
-    var rtype = "";
-    var rlegend = "" ; 
-    var lret = [] ; 
-
-    // say("hwd " + sdate + ":" + wd );
-    if (sdate in ospdays.period) {
-        rtype = ospdays.period[sdate].type ;
-        // say("hdwd " + sdate + ":" + rtype);
-        // _w3 
-        rlegend = new String(ospdays.period[sdate].legend) ;
-        if (rtype in owdaydisplay) {
-            lret = owdaydisplay[rtype] ; 
-            lret.push(rlegend) ; 
-            return lret ; 
-        } else {
-            smessage = "jqcal::hwd warning:" + sdate + " " + rtype + " not existing" ;
-            console.log(smessage);
-            say(smessage); 
-            return [true,'',''];
+    if (ie4 || dom)
+        {
+        xMax = screen.width;
+        yMax = screen.height;
         }
-    } else if ( weexcluded  &&   $.inArray(wd, ospdays.weekend.days) != -1 ) { 
-        rtype = "twe" ; 
-        lret = owdaydisplay[rtype] ; 
-        lret.push(ospdays.weekend.legend) ;
-        return lret ;
-    }
-    // par defaut selectionnable sans style,legend
-    return [true,'',''];
+    else if (ns4)
+        {
+        xMax = window.outerWidth;
+        yMax = window.outerHeight;
+        }
+    else
+        {
+        xMax = 800;
+        yMax = 600;
+        }
+    xOffset = (xMax - MyWidth)/2;
+    yOffset = (yMax - MyHeight)/2;
+    window.open(MyFile,MyWindow,'width='+MyWidth
++',height='+MyHeight
++',screenX='+xOffset
++',screenY='+yOffset
++',top='+yOffset
++',left='+xOffset
++',scrollbars=yes,resizable=yes');
 }
 
-
-// cette fonction appellÃ©e pour chaque jour, permet de donner un style affichage aux 
-// jours echangeables (selectionnable) et dÃ©selectionnÃ©es les autres  
-function cb_highlightExchangeDays(date) {
-
-
-    return [true,'',''];
-}
-
-var ospdays = { 
-    "mindate": "2014/12/1", "maxdate": "2015/1/31", 
-    "pubholidays" : { "days": ["2014/1/1","2014/3/1","2014/5/1"], "legend": "feriÃ©" },
-    "weekend" : { "days": [0,6],  "legend": "we" },
-    "offvalid" : {"2014/3/3": "3-3" , "2014/3/4":"3-4" , "2014/3/5":"3-5", "2014/3/31": "3-31" , } ,
-    "offnotvalid" :  {"2014/3/6":"3-6", "2014/3/7":"3-7"} , 
-    "jlp" : { "days": ["2014/3/12"] , "legend": "jlp" } ,
-    "jlpam" : { "days": ["2014/3/19"], "legend": "djlpam" } ,
-    "jlppm" : { "days": ["2014/3/26"], "legend": "djlppm" } 
-};  
-// var loffvalid = [] ;
-// var loffnotvalid = [] ;
-// highlightDays_1 :  cette fonction appellÃ©e pour chaque jour, permet de mettre en relief les 
-// jours affichÃ©s (style), les rendre selectionable/pas  
-
-function highlightDays_1(date) {
-    var m = date.getMonth(), d = date.getDate(), y = date.getFullYear(),
-    wd = date.getDay()  ;
-    m += 1 ; 
-    // say("hd" + y + m + d + ":" + wd ); 
-    sdate = y + "/" + m + "/" + d ; 
-    if ( $.inArray(sdate, dayspubholidays) != -1 ) { 
-        return   [false, 'css-day-pub-holidays', 'fÃ©riÃ©']; 
-    } else if ( weexcluded  &&   $.inArray(wd, wedays) != -1 ) { 
-        return   [false, '', 'week-end']; 
-    } else if($.inArray(sdate, daysoffvalid) != -1) { 
-        return   [false, 'css-day-off ui-corner-all', 'conge validÃ©']; 
-    } else if($.inArray(sdate, daysoffnotvalid) != -1) { 
-        return   [false, 'css-day-off-not-validated', 'conge demandÃ©']; 
-    } else if($.inArray(sdate, daysjlp) != -1) { 
-        return   [false, 'css-day-jlp', 'jlp']; 
-    } else if($.inArray(sdate, daysdjlpam) != -1) { 
-        return   [true, 'css-day-djlp-am', 'djlp am']; 
-    } else if($.inArray(sdate, daysdjlppm) != -1) { 
-        return   [true, 'css-day-djlp-pm', 'djlp pm']; 
-    }
-//    } else if($.inArray(sdate, offDays) != -1) { 
-//        return   [false, 'css-day-off', 'jour ferie']; 
-//  }
-    return [true,'',''];
-}
-
-
-function cb_highlightWorkDays_form1(date) {
-    // var m = date.getMonth(), d = date.getDate(), y = date.getFullYear(),
-    // m += 1 ; 
-    // sdate = y + "/" + m + "/" + d ; 
-    var wd = date.getDay()  ; // jour de la semaine 
-    var sdate = $.datepicker.formatDate("yy-mm-dd",date) ;
-
-    // say("hd " + sdate + ":" + wd );
-
-    if ( $.inArray(sdate, ospdays.pubholidays.days) != -1 ) { 
-        return   [false, 'css-day-pub-holidays', ospdays.pubholidays.legend]; 
-    } else if ( weexcluded  &&   $.inArray(wd, ospdays.weekend.days) != -1 ) { 
-        return   [false, '', ospdays.weekend.legend ]; 
-    } else if($.inArray(sdate, loffvalid) != -1) {
-        return   [false, 'css-day-off ui-corner-all', ospdays.offvalid[sdate]]; 
-    } else if($.inArray(sdate, loffnotvalid) != -1) { 
-        return   [false, 'css-day-off-not-validated', ospdays.offnotvalid[sdate]]; 
-    } else if($.inArray(sdate, ospdays.jlp.days) != -1) { 
-        return   [false, 'css-day-jlp', ospdays.jlp.legend]; 
-    } else if($.inArray(sdate,ospdays.jlpam.days ) != -1) { 
-        return   [true, 'css-day-djlp-am', ospdays.jlpam.legend]; 
-    } else if($.inArray(sdate, ospdays.jlppm.days) != -1) { 
-        return   [true, 'css-day-djlp-pm', ospdays.jlppm.legend]; 
-    }
-//    } else if($.inArray(sdate, offDays) != -1) { 
-//        return   [false, 'css-day-off', 'jour ferie']; 
-//  }
-    return [true,'',''];
-}
-
-
-
-
-*/ 
-/*  chantier animation 
-var fbm_anim = false ;
-function fb_message2(wlevel,wtext) { // wlevel 0:ok, 1:normal message, 2:erreur saisie 
-    dpicker_message$.text(wtext);
-}
-function fb_message_anim() { 
-    if (fbm_anim) {
-        fbm_anim = false ;
-        dpicker_message$.addClass("ui-fbmessage-loading"); // .attr("className",
-    } else { // starting anim for a while 
-        fbm_anim = true ;
-        dpicker_message$.removeClass("ui-fbmessage-loading"); // .attr("className",
-        setTimeout("fb_message_anim('')", 1000);
-    }
-}  */ 
-
-/* function fb_message_wrong(wlevel,wtext) { // wlevel 0:ok, 1:normal message, 2:erreur saisie 
-    // anim and other 
-    if (fb_message_anim) { // anim running
-        dpicker_message$.removeClass("ui-fbmessage-loading"); 
-        if (wlevel==2) {
-//            dpicker_message$.addClass("ui-fbmessage-error"); 
-        } else {
-//            dpicker_message$.removeClass("ui-fbmessage-error"); 
-        }; 
-        dpicker_message$.text(wtext); 
-        fb_message_anim = false ;
-    } else { // starting anim for a while 
-        fb_message_anim = true ;
-        dpicker_message$.text();
-        dpicker_message$.addClass("ui-fbmessage-loading"); 
-        setTimeout("fb_message("+wlevel+",'"+wtext+"')", 500);
-    };
-}
-var owdaydisplay_oldt = {
-    "tpubhol" : [false, 'css-day-pub-holidays'], 
-    "twe"     : [false, ''],
-    "toffval" : [false, 'css-day-off'], 
-    "toffvalam" : [true, 'css-day-off-am'],
-    "toffvalpm" : [true, 'css-day-off-pm'],
-    "toffdem" : [false, 'css-day-off-not-validated'],
-    "toffdemam" : [true, 'css-day-off-not-validated-am'],
-    "toffdempm" : [true, 'css-day-off-not-validated-pm'],
-    "tjlp"    : [false, 'css-day-jlp'],
-    "tdjlpam" : [true, 'css-day-djlp-am'],     
-    "tdjlppm" : [true, 'css-day-djlp-pm'] ,
-    "toffvalamtdjlppm" : [false, 'css-day-off-am css-day-djlp-pm'],
-    "toffvalpmtdjlpam" : [false, 'css-day-off-pm css-day-djlp-am'],
-    "toffdemamtdjlppm" : [false, 'css-day-off-not-validated-am css-day-djlp-pm'], 
-    "toffdempmtdjlpam" : [false, 'css-day-off-not-validated-pm css-day-djlp-am']
-}; 
-
-var owdayechange_oldt = {
-    "tjlp"    : [true, 'css-day-jlp'],
-    "tdjlpam" : [true, 'css-day-djlp-am'],     
-    "tdjlppm" : [true, 'css-day-djlp-pm'],
-    "toffvalamtdjlppm" : [true, 'css-day-off-am css-day-djlp-pm'],
-    "toffvalpmtdjlpam" : [true, 'css-day-off-pm css-day-djlp-am'],
-    "toffdemamtdjlppm" : [true, 'css-day-off-not-validated-am css-day-djlp-pm'], 
-    "toffdempmtdjlpam" : [true, 'css-day-off-not-validated-pm css-day-djlp-am']
-};
-
-
-*/ 
+/* <_attic> */ 
+/* </_attic> */ 

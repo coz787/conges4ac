@@ -32,7 +32,7 @@ include("../INCLUDE.PHP/fonction.php");
 
 $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
 include("../INCLUDE.PHP/session.php");
-include("../fonctions_javascript.php") ;
+// _nfj_ include("../fonctions_javascript.php") ;
 
 //include("fonctions_install.php") ;
 	
