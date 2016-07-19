@@ -1,0 +1,111 @@
+
+cg_etl.py,66
+def usage(19,464
+def neatconflines(29,832
+def mygetopt(39,1095
+
+cg_etl_lib.py,1752
+def msd2string(12,375
+def py2msd(44,1617
+class OrderRecorder(105,3947
+    def __init__(106,3970
+    def append(113,4189
+    def get_order(117,4297
+class AbsTransformFactory:AbsTransformFactory120,4351
+    def __init__(121,4378
+    def get_ldometh(129,4647
+    def get_meth(131,4702
+    def set_debug(133,4770
+    def std_scheme(136,4824
+    def do_dryrun(155,5591
+    def do_realrun(177,6459
+class c4ac_2to3(224,8124
+    def __init__(225,8162
+    def init_scheme(232,8527
+    def nodo_apply(234,8609
+class c4ac_2to2(237,8666
+    def __init__(238,8704
+    def init_scheme(243,8921
+    def nodo_apply(245,9003
+class c4ac_2to2_filtered(248,9060
+    def __init__(249,9107
+    def init_scheme(259,9634
+    def build_selection_by_group(269,10006
+class AbsTransform:AbsTransform338,12754
+    def __init__(339,12774
+    def truncate(341,12811
+    def isvalid_primary_key(346,13011
+    def has_nonull(359,13428
+    def isvalid_row(377,14061
+    def insert_all_dict_noorder(400,15001
+    def insert_all_dict(411,15435
+    def run(425,15889
+    def print_table_struct(431,16072
+    def get_table_struct(470,17764
+class noVoidnImport(493,18531
+    def run(495,18639
+class VoidnImportdeprecated(509,19198
+    def run(512,19349
+class VoidnImportKw(531,20070
+    def run(534,20226
+class VoidnImportSelUser(556,21141
+    def configure(559,21282
+    def run(561,21344
+class VoidnImportSelGroup(587,22713
+    def configure(590,22856
+    def run(592,22915
+class VoidnSelectiveImport(616,23952
+    def run(619,24102
+class VoidnImportGroupeUser(622,24136
+    def run(624,24234
+class KeepnUpdate(642,25018
+    def run(646,25201
+    def get_set(681,26594
+    def get_where(692,26925
+    def get_field_val(706,27355
+
+cg_minst.py,118
+def usage(17,400
+def neatconflines(45,1283
+def mygetopt(55,1546
+def subcmd(111,3354
+def patch_dbconnect(129,4095
+
+cg_lib.py,911
+def neat_email(11,266
+def msd2latin1_old(19,488
+def msd2string(30,806
+def s2_latin1(52,1564
+def e_utf8(57,1691
+def exec_sql_file(92,2673
+class CDoer:CDoer119,3809
+    def __init__(120,3822
+    def set_debug(128,4124
+    def get_ldometh(131,4178
+    def do_echo(133,4233
+    def do_print_table(142,4485
+    def do_show_desc(172,5521
+    def nodo_show_desc_v1(208,6906
+    def do_show_table(251,8225
+    def olddo_print_all_users(278,9158
+    def do_print_all_users(327,11191
+    def do_print_dis_periode(398,14239
+    def do_check_users_ldap(413,14738
+    def do_print_user_solde(474,17241
+    def do_print_user_usage(512,19227
+    def do_print_afile_auser(602,22832
+    def print_afile_auser(634,24039
+    def do_print_userrights(667,26640
+    def do_print_last_c_periode(671,26807
+    def do_print_last_c_logs(734,29152
+    def do_sql_usce(785,30946
+    def do_set_dummy(819,32308
+
+cg_select.py,181
+def usage(18,433
+def neatconflines(27,696
+def mygetopt(37,959
+class LdapSearch:LdapSearch99,2970
+    def __init__(100,2988
+    def search(122,3800
+    def search_s(144,4641

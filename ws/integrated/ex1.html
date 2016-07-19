@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>angelique web services ; formulaire de test</title>
+	<link rel="stylesheet" href="/jquery/development-bundle/themes/base/jquery.ui.all.css">
+	<script src="/jquery/js/jquery-1.8.3.js"></script>
+    <script src="/jquery/js/jquery-ui-1.9.2.custom.js"></script>
+
+	<style>
+	.ui-autocomplete-loading {
+		background: white url('/jquery/development-bundle/demos/autocomplete/images/ui-anim_basic_16x16.gif') right center no-repeat;
+	}
+    .ui-autocomplete.ui-menu { opacity: 0.8 ; }
+    .ui-autocomplete.ui-menu .ui-menu-item { font-size: 0.7em; }
+    .ui-legend { background-color: #ddddbb ; } 
+	</style>
+    <script src="../../ws/integrated/aiws.js"></script>
+	<script>$(function() { aiws_ready(); } ); </script>
+</head>
+<body>
+<p>Ce formulaire demontre les capacitÃ©s des Angelique Web Service de type REST. 
+Il  permet de saisir un uid de personne, obtenir une liste d'autocomplÃ©tion 
+et de prÃ©-remplir les champs Nom, Prenom, Email, etc ...</p> 
+<p>D'autres services pourraient Ãªtre dÃ©veloppÃ©s fournissant des donnÃ©es relatives
+aux individus, Ã  la structure organisation, mailings liste, application, etc... </p> 
+<table>
+<tr valign="top" width="200">
+<td>
+	<label for="uid">Uid : </label>
+	<input id="uid" size=50 ><br>
+    <span id="uidlegend"></span><br>
+    <button id="uidanim" type="button">animation</button>
+</td>
+
+<td align=right>
+<div>
+<label>Nom:</label> <input id="sn" size=40 ><br>
+<label>PrÃ©nom:</label> <input id="givenname" size=40 ><br>
+<label>Email:</label> <input id="mail" size=40 >
+</div>
+</td>
+</tr>
+</table>
+
+<div class="ui-widget"> <!-- style="margin-top:2em;" -->
+	Result:
+	<div id="log" style="height: 200px; width: 800px; overflow: auto;" class="ui-widget-content"></div>
+</div>
+
+<div class="demo-description">
+
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# -*-mode: Python; coding: iso-8859-1; -*-
+{ 
+'rootdb': {'id':'root', 'pw':'' },
+# pw saisie en interactif 
+'cdba': {'id':'congesdba', 'pw':'RRRRRR' },
+'creader': {'id':'congesreader', 'pw':'RRRRRR' },
+'cdbprefixe': 'RRRRR_', 
+# les base de donnees seront nomme RRRRR_sg 
+'crefpath' : '/tmp/work/ac2ns',
+# endroit ou est installer logiciel de reference
+'cdestpath': '/srv/www/htdocs/RRRRRRR', 
+# endroit ou seront installes les instances logicielles 
+'clinstance': ['sg','dsacn'] 
+# a completer 
+}

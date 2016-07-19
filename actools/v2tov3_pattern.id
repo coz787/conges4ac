@@ -1,0 +1,36 @@
+# -*-mode: Python; coding: utf-8; -*-
+# to be used by conges4ac_transform 
+{ 'src': {
+'host': "localhost", 'port':3306, 'database': "conges_dsacn_v2", 
+'user': "congesdba", 'pw': r'conges' ,'charset': 'latin1' },
+  'dest': {
+'host': "localhost", 'port':3306, 'database': "cv3_dsacn", 
+'user': "congesdba", 'pw': r'conges' ,'charset': 'utf8' },
+  'strat': { 'name': "c4ac_2to3",
+             'scheme': {
+             'tabpattern': [
+['conges_config',['conf_nom'],'keep_n_update',
+ {'selection': "conf_nom not in('bgcolor','bgimage','light_grey_bgcolor','installed_version','stylesheet_file')" }],
+['conges_jours_feries',['jf_date'],'void_n_import'],
+['conges_jours_fermeture',['jf_id','jf_gid','jf_date'],'void_n_import'],
+['conges_mail',['mail_nom'],'keep_n_update'],
+['conges_edition_papier',['ep_id'],'void_n_import'],
+['conges_solde_edition',['se_id_edition','se_id_absence'],'void_n_import'],
+['conges_type_absence',['ta_id'],'void_n_import'],
+['conges_users',['u_login'],'void_n_import'], 
+['conges_groupe',['g_gid'],'void_n_import'],
+['conges_artt',['a_login','a_date_fin_grille'],'void_n_import'],
+['conges_echange_rtt',['e_login','e_date_jour'],'void_n_import'],
+['conges_groupe_grd_resp',['ggr_gid','ggr_login'],'void_n_import'],
+['conges_groupe_resp',['gr_gid','gr_login'],'void_n_import'],
+['conges_groupe_users',['gu_gid','gu_login'],'void_n_import_gu'],
+['conges_periode',['p_num'],'void_n_import'],
+['conges_solde_user',['su_login','su_abs_id'],'void_n_import'],
+['conges_logs',['log_id'],'void_n_import'],
+
+] , 
+	'opt': None 
+}
+}
+}
+

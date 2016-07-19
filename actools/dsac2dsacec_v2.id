@@ -1,0 +1,37 @@
+# -*-mode: Python; coding: utf-8; -*-
+# to be used by conges4ac_transform 
+{ 'src': {
+'host': "a-conges-x.ssim.aviation", 'database': "dsac_prod", 
+'user': "lecteur", 'pw': r'NePasPerdre42',
+'port':3306, 'charset': 'latin1' },
+  'dest': {
+'host': "a-dev-02-d", 'port':3306, 'database': "conges_dsacec_v2", 
+'user': "congesdba", 'pw': r'conges' ,'charset': 'latin1' },
+  'strat': { 'name': "c4ac_2to2_filtered",
+# "c4ac_2to3" , 
+             'scheme': { 
+            'tabpattern' : [
+['conges_config',['conf_nom'],'void_n_import'],
+['conges_jours_feries',['jf_date'],'void_n_import'],
+['conges_jours_fermeture',['jf_id','jf_gid','jf_date'],'void_n_import'],
+['conges_mail',['mail_nom'],'void_n_import'],
+['conges_edition_papier',['ep_id'],'void_n_import_sel_user',{'key':'ep_login'}],
+['conges_solde_edition',['se_id_edition','se_id_absence'],'void_n_import'],
+['conges_type_absence',['ta_id'],'void_n_import'],
+['conges_users',['u_login'],'void_n_import_sel_user',{'key':'u_login'}],
+['conges_groupe',['g_gid'],'void_n_import_sel_group',{'key':'g_gid'}],
+['conges_artt',['a_login','a_date_fin_grille'],'void_n_import_sel_user',{'key':'a_login','notnull':['a_login','a_date_debut_grille']}],
+['conges_echange_rtt',['e_login','e_date_jour'],'void_n_import_sel_user',{'key':'e_login','notnull':['e_login']}],
+['conges_groupe_grd_resp',['ggr_gid','ggr_login'],'void_n_import_sel_group',{'key':'ggr_gid'}],
+['conges_groupe_resp',['gr_gid','gr_login'],'void_n_import_sel_group',{'key':'gr_gid'}],
+['conges_groupe_users',['gu_gid','gu_login'],'void_n_import_sel_group',{'key':'gu_gid'}],
+['conges_periode',['p_num'],'void_n_import_sel_user',{'key':'p_login','notnull':['p_date_deb','p_date_fin']}],
+['conges_solde_user',['su_login','su_abs_id'],'void_n_import_sel_user',{'key':'su_login','notnull':['su_login']}],
+['conges_logs',['log_id'],'void_n_import',{'selection':"log_date >= '2015-01-01'",'notnull':['log_user_login_par'] }],
+] ,
+            'opt': {'groupselection': 
+"select g_groupename from conges_groupe where g_groupename not like 'DSAC/N/%' ;"  }
+}
+
+}
+}
