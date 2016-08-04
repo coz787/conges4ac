@@ -570,6 +570,7 @@ $LANG['config_comment_php_conges_phpmailer_include_path']	= "// CHEMIN VERS LE R
 $LANG['config_comment_php_conges_cas_include_path']			= "// CHEMIN VERS LE REPERTOIRE DE cas<br>\n//-------------------------------------------------------<br>\n// On défini ici le chemin pour accéder au répertoire de la librairie PHP \"CAS\".<br>\n// Le chemin doit etre relatif depuis la racine de l'application php_conges.";
 $LANG['config_comment_php_conges_authldap_include_path']	= "// CHEMIN VERS LE fichier authLDAP.php<br>\n//-------------------------------------------------------<br>\n// On défini ici le chemin pour accéder au répertoire de la librairie PHP \"authLDAP.php\".<br>\n// Le chemin doit etre relatif depuis la racine de l'application php_conges.";
 
+$LANG['config_comment_verif_droits'] = "// Vérification des Droits d\'accés :<br>\n//------------------------------------<br>\n// mettre a TRUE Pour gérer les droits d\'accés aux pages (est a FALSE par defaut)<br>\n/* parametre propre à certains environnements d\'install seulement !!!...... */" ; 
 
 
 /***************************/

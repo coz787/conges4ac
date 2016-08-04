@@ -10,7 +10,9 @@
              'scheme': {
              'tabpattern': [
 ['conges_config',['conf_nom'],'keep_n_update',
- {'selection': "conf_nom not in('bgcolor','bgimage','light_grey_bgcolor','installed_version','stylesheet_file')" }],
+ {'selection': "conf_nom not in('bgcolor','bgimage','light_grey_bgcolor','installed_version','stylesheet_file','url_conges_assistance','hdeb_periode_am','hfin_periode_am','hdeb_periode_pm','hfin_periode_pm')" }],
+# note 'url_conges_assistance','hdeb_periode_am','hfin_periode_am','hdeb_periode_pm','hfin_periode_pm' are here
+# cause of a misconfigured original data so v3 values are imposed 
 ['conges_jours_feries',['jf_date'],'void_n_import'],
 ['conges_jours_fermeture',['jf_id','jf_gid','jf_date'],'void_n_import'],
 ['conges_mail',['mail_nom'],'keep_n_update'],
