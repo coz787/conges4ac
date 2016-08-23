@@ -5157,7 +5157,7 @@ function get_vperiod($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=FALSE)
        "mindate" => $dmindate->format('Y-m-d'),
        "maxdate" => $dmaxdate->format('Y-m-d'),
        "period" => array(),
-       "weekend"=> array( "days"=> array(0,6),  "legend"=>"we" )); 
+       "weekend"=> array( "days"=> array(0,6),  "legend"=>$_SESSION['lang']['saisie_conges_lc_weekend'] )); 
   /* example */ 
   $vper_2 = array(
    "mindate" => "2014-11-01",
@@ -5193,7 +5193,7 @@ z-am-jl-pm- , z-am-jl-pm-offva ,  z-am-jl-pm-offdem ,
     //     echo "lday=".$lday."lval=".$lval."\n" ; 
     $vper['period'][$lday] = array(
         "type" => $tartt[$lval],
-        "legend" => "rtt" ); 
+        "legend" => $_SESSION['lang']['saisie_conges_lc_jlp'] ); 
   }
   /* selection des jours de fermeture pour tous et jours de fermeture pour les groupes dont 
      le user est membre */ 
@@ -5208,7 +5208,7 @@ conges_jours_fermeture.jf_gid = 0";
       $sdatej = $ddatej->format('Y-m-d') ;
       $vper['period'][$sdatej] = array(
            "type" => "z-da-pubhol" ,
-           "legend" => "chome" ); 
+           "legend" => $_SESSION['lang']['saisie_conges_lc_chome'] ); 
     };
   }
   $cgf_select = "SELECT jf_date FROM conges_jours_feries" ; 
@@ -5220,7 +5220,7 @@ conges_jours_fermeture.jf_gid = 0";
       $sdatej = $ddatej->format('Y-m-d') ;
       $vper['period'][$sdatej] = array(
            "type" => "z-da-pubhol" ,
-           "legend" => "chome" ); 
+           "legend" => $_SESSION['lang']['saisie_conges_lc_chome'] ); 
     };
   }
 

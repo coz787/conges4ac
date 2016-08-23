@@ -411,6 +411,11 @@ $LANG['saisie_conges_compter_jours']		= "Compter les jours";
 $LANG['saisie_conges_nb_jours']				= "NB_Jours_Pris";
 $LANG['saisie_conges_solde_futur']			= "Solde futur (incluant dem.encours)";
 $LANG['week-end_exclus']                    = "week-end exclus" ; 
+// lc legende courte (popup passage souris)
+$LANG['saisie_conges_lc_weekend']           = "we" ; 
+$LANG['saisie_conges_lc_chome']             = "chomé" ; 
+$LANG['saisie_conges_lc_jlp']               = "jlp" ; 
+
 
 /***********************/
 // SAISIE ECHANGE ABSENCE
