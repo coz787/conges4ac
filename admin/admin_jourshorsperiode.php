@@ -1,16 +1,16 @@
 <?php
 /*************************************************************************************************
-PHP_CONGES : Gestion Interactive des CongÃ©s
+PHP_CONGES : Gestion Interactive des Congés
 Copyright (C) 2005 (cedric chauvineau) & 2012-2015 ( dgac / didier pavet)
 
 Ce programme est libre, vous pouvez le redistribuer et/ou le modifier selon les
-termes de la Licence Publique GÃ©nÃ©rale GNU publiÃ©e par la Free Software Foundation.
-Ce programme est distribuÃ© car potentiellement utile, mais SANS AUCUNE GARANTIE,
+termes de la Licence Publique Générale GNU publiée par la Free Software Foundation.
+Ce programme est distribué car potentiellement utile, mais SANS AUCUNE GARANTIE,
 ni explicite ni implicite, y compris les garanties de commercialisation ou d'adaptation
-dans un but spÃ©cifique. Reportez-vous Ã  la Licence Publique GÃ©nÃ©rale GNU pour plus de dÃ©tails.
-Vous devez avoir reÃ§u une copie de la Licence Publique GÃ©nÃ©rale GNU en mÃªme temps
-que ce programme ; si ce n'est pas le cas, Ã©crivez Ã  la Free Software Foundation,
-Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, Ãtats-Unis.
+dans un but spécifique. Reportez-vous à  la Licence Publique Générale GNU pour plus de détails.
+Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps
+que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation,
+Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, Etats-Unis.
 *************************************************************************************************
 This program is free software; you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation; either
@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 require_once("../fonctions_calcul.php") ;
 
-// etat attribuÃ© Ã  objet_conges_periode qui memorise les conges hors periode 
+// etat attribué à objet_conges_periode qui memorise les conges hors periode 
 define('HP_ETAT','hp' ); 
 $lnow = conges_get_date();
 $year_cur = $lnow['year'] ; 
@@ -122,7 +122,7 @@ p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='
       if ($aperiod['n_elig_day'] == $aperiod['p_nb_jours']) { 
         echo "<td></td>" ; 
       } else {
-        // on affiche le nombre de jour du titre infÃ©rieur au nombre eligible
+        // on affiche le nombre de jour du titre inférieur au nombre eligible
         echo "<td><i>(".$aperiod['p_nb_jours'].")</i></td>";
       }
       echo "<td>".$aperiod['n_elig_day']."</td>"; 
@@ -219,7 +219,7 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
       $comment = "" ; 
       $ddeb = new DateTime($cphpok_row['p_date_deb']); 
       $dfin = new DateTime($cphpok_row['p_date_fin']); 
-      if ($ddeb >= $ddebutannee && $dfin <= $dfinannee) { // ds l'annÃ©e 
+      if ($ddeb >= $ddebutannee && $dfin <= $dfinannee) { // ds l'année 
         if ($dfin <= $ddebutete || $ddeb >= $dfinete) { // conges complet 
           $n_elig_day = $cphpok_row['p_nb_jours'] ; // compte a 100%
         } elseif ( $ddeb <= $ddebutete && $dfin > $ddebutete) {
@@ -241,7 +241,7 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
           array_push($leligibledata['lperiode'],$cphpok_row); 
         };
       };
-      // on ne fait rien si conges sur autre annÃ©e 
+      // on ne fait rien si conges sur autre année 
     }
     return $leligibledata ; 
 }
@@ -308,7 +308,7 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
           array_push($leligibledata['lperiode'],$cphpok_row); 
         };
       };
-      // on ne fait rien si conges sur autre annÃ©e 
+      // on ne fait rien si conges sur autre année 
     }
     return $leligibledata ; 
 }
@@ -320,7 +320,8 @@ function update_hperiod($user,$hpmode,$spnum,$snewjhp,$mysql_link,$DEBUG)
   $jhptype = intval($_SESSION['config']['jourshorsperiodetype']) ; 
   $jhpfinete = $_SESSION['config']['moisjour-finete'] ;
 
-  $srefhpdate = $year_cur."-".$jhpfinete." 00:00:00" ; 
+  $srefhpdate = $year_cur."-".$jhpfinete." 00:00:00" ;
+  $srefhpdatefin = "0000-00-00" ; 
   $newjhp = intval($snewjhp) ; 
 
   $snow = sprintf("%02d-%02d-%02d %02d:%02d:%02d",$lnow['year'],$lnow['mon'],$lnow['mday'],
@@ -328,7 +329,7 @@ function update_hperiod($user,$hpmode,$spnum,$snewjhp,$mysql_link,$DEBUG)
   $comment = "jours hors periode ". $year_cur ; 
   if ($hpmode == 'cre') {
     $sqlhp = "INSERT INTO conges_periode 
-SET p_login='$user', p_date_deb='$srefhpdate', p_demi_jour_deb='am', p_date_fin='', p_demi_jour_fin='am', p_nb_jours=$newjhp, p_commentaire='$comment', p_type='$jhptype', p_etat='".HP_ETAT."', p_date_traitement='$snow' ; " ;
+SET p_login='$user', p_date_deb='$srefhpdate', p_demi_jour_deb='am', p_date_fin='$srefhpdatefin', p_demi_jour_fin='am', p_nb_jours=$newjhp, p_commentaire='$comment', p_type='$jhptype', p_etat='".HP_ETAT."', p_date_traitement='$snow' ; " ;
 
   } else if ($hpmode == 'mod'){
     $pnum = intval($spnum); 
