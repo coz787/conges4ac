@@ -284,7 +284,12 @@ function affiche_anciennes_editions($login, $mysql_link, $DEBUG=FALSE)
 			echo "<td class=\"histo-big\">".$tab_ed['date']."</td>";
 			foreach($tab_type_cong as $id_abs => $libelle)
 			{
-				echo "<td class=\"histo\">".$tab_ed['conges'][$id_abs]."</td>";
+              if (array_key_exists($id_abs,$tab_ed['conges'])) { 
+                $val1 = $tab_ed['conges'][$id_abs] ; 
+              } else {
+                $val1 = "" ; 
+              }
+              echo "<td class=\"histo\">".$val1."</td>";
 			}
 
 			echo "<td class=\"histo\">$text_edit_a_nouveau</td>";
