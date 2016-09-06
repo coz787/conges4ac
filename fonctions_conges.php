@@ -4081,7 +4081,14 @@ function init_config_tab($DEBUG=FALSE)
 		}
 		elseif($type=="path")
 		{
+          /* dgac/dpa 
+             si la valeur commence par "/" 
+                alors c'est un chemin absolu laissé en l'état
+             sinon c'est un chemin relatif : on prefixe par 
+                $config_php_conges_document_root */
+          if ($value[0] != '/') {  
 			$value = $config_php_conges_document_root."/".$value ;
+          }
 		}
 
 		$tab[$key] = $value;
