@@ -23,6 +23,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *************************************************************************************************/
 
+
 //appel de PHP-IDS que si version de php > 5.1.2
 if(phpversion() > "5.1.2") { include("../controle_ids.php") ;}
 $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : session_id()) ) ;
@@ -34,6 +35,46 @@ include("../INCLUDE.PHP/session.php");
 
 //$DEBUG = TRUE ;
 $DEBUG = FALSE ;
+// define('FPDF_FONTPATH','font/');
+define("_SYSTEM_TTFONTS",$_SESSION['config']['php_conges_fpdf_include_path']."/tfpdf/font/");
+// define('_SYSTEM_TTFONTS',"/srv/www/htdocs/tfpdf/font/");
+$fpdf_filename = $_SESSION['config']['php_conges_fpdf_include_path']."/tfpdf/tfpdf.php";
+// verif si la librairie fpdf est présente 
+if (!is_readable($fpdf_filename)) {
+  echo $_SESSION['lang']['fpdf_not_valid']."<br> !";
+  echo "located in ".  $fpdf_filename."<br> !";
+}  else	{
+  // require_once($fpdf_filename);
+  require($fpdf_filename);
+  // include($fpdf_filename);
+}
+
+class uPDF extends tFPDF {
+  /* public function __construct(){
+      error_log("class pdf __construct");
+      parent::__construct();
+      $this->AddFont('DvSerif','','unifont/DejaVuSerif.ttf',true);
+      $this->AddFont('DvSans','','unifont/DejaVuSans.ttf',true);
+      } */ 
+  function Header() {
+    /**************************************/
+    /* affichage du texte en haut de page */
+    /**************************************/
+    $this->SetFont('DvSans','',10);
+    $this->Cell(0,3, $_SESSION['config']['texte_haut_edition_papier'],0,1,'C');
+    $this->Ln(10);
+  }
+			
+  function Footer()  {
+    /**************************************/
+    /* affichage du texte de bas de page */
+    /**************************************/
+    $this->SetFont('DvSans','',10);
+    //$pdf->Cell(0,6, 'texte_haut_edition_papier',0,1,'C');
+    $this->Cell(0,3, $_SESSION['config']['texte_bas_edition_papier'],0,1,'C');
+    $this->Ln(10);
+  }
+}
 	
 
 	/*************************************/
@@ -66,42 +107,21 @@ $DEBUG = FALSE ;
 /********  FONCTIONS      ******/
 /**************************************************************************************/
 
+/* dgac/dpa passage de fpdf a tfpdf pour utilisation utf8 */ 
 function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 {
-	$fpdf_filename = $_SESSION['config']['php_conges_fpdf_include_path']."/fpdf/fpdf.php";
-	// verif si la librairie fpdf est présente 
-	if (!is_readable($fpdf_filename))
-	{
-		echo $_SESSION['lang']['fpdf_not_valid']."<br> !";
-	}
-	else
-	{
-		require_once($fpdf_filename);
-		define('FPDF_FONTPATH','font/');
-		
-		class PDF extends FPDF
-		{
-			function Header()
-			{
-				/**************************************/
-				/* affichage du texte en haut de page */
-				/**************************************/
-				$this->SetFont('Times','',10);
-				$this->Cell(0,3, $_SESSION['config']['texte_haut_edition_papier'],0,1,'C');
-				$this->Ln(10);
-			}
-			
-			function Footer()
-			{
-				/**************************************/
-				/* affichage du texte de bas de page */
-				/**************************************/
-				$this->SetFont('Times','',10);
-				//$pdf->Cell(0,6, 'texte_haut_edition_papier',0,1,'C');
-				$this->Cell(0,3, $_SESSION['config']['texte_bas_edition_papier'],0,1,'C');
-				$this->Ln(10);
-			}
-		} 
+  /*
+  // by default  php_conges_fpdf_include_path is "/srv/www/htdocs" 
+  $fpdf_filename = $_SESSION['config']['php_conges_fpdf_include_path']."/tfpdf/tfpdf.php";
+  // verif si la librairie fpdf est présente 
+  if (!is_readable($fpdf_filename)) {
+    echo $_SESSION['lang']['fpdf_not_valid']."<br> !";
+    echo "located in ".  $fpdf_filename."<br> !";
+  }
+  else	{
+    // require_once($fpdf_filename);
+    require($fpdf_filename);
+*/
 		
 		// recup du tableau des types de conges (seulement les conges)
 		$tab_type_cong=recup_tableau_types_conges($mysql_link);
@@ -126,9 +146,17 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 		header('content-type: application/pdf');
 		//header('content-Disposition: attachement; filename="downloaded.pdf"');    // pour IE
 		
-		$pdf=new PDF();
+		$pdf = new uPDF();
 		//$pdf->Open();
+        $pdf->AddFont('DvSerif','','unifont/DejaVuSerif.ttf',true); // Times
+        $pdf->AddFont('DvSans','','unifont/DejaVuSans.ttf',true); // Arial  
 		$pdf->AddPage();
+        /*
+        error_log("epdf: ".count($pdf->fonts));
+        foreach($pdf->fonts as $k => $v){
+          error_log("epdf: ".$k." ".print_r($v, true) ." "); 
+        }
+        error_log("epdf: ".print_r($pdf->fonts, true)); */ 
 			
 		$pdf->SetFillColor(200);
 		
@@ -140,10 +168,10 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 		/**************************************/
 		/* affichage du TITRE                 */
 		/**************************************/
-		$pdf->SetFont('Times', 'B', 18);				
+		$pdf->SetFont('DvSerif', '', 18);				
 		$pdf->Cell(0, 5, $tab_info_user['nom']." ".  $tab_info_user['prenom'],0,1,'C');
 		$pdf->Ln(5);
-		$pdf->SetFont('Times', 'B', 13);				
+		$pdf->SetFont('DvSerif', '', 13);				
 		$tab_date=explode("-", $tab_info_edition['date']);
 		$pdf->Cell(0, 5, $_SESSION['lang']['editions_bilan_au']." ".$tab_date[2]." / ".$tab_date[1]." / ".$tab_date[0],0,1,'C');
 		$pdf->Ln(4);
@@ -155,21 +183,21 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 		affiche_pdf_tableau_bilan_conges_user_edtion($pdf, $tab_info_user, $tab_info_edition, $tab_type_cong, $tab_type_conges_exceptionnels, $mysql_link, $DEBUG) ;
 	
 		// affichage de la quotité
-		$pdf->SetFont('Times', 'B', 13);				
+		$pdf->SetFont('DvSerif', '', 13);				
 		$quotite=$tab_info_user['quotite'];
 		$pdf->Cell(0, 5, $_SESSION['lang']['divers_quotite']."  :  $quotite % ",0,1,'C');
 		$pdf->Ln(4);
 		$pdf->Ln(8);
 	
 	
-		$pdf->SetFont('Times', 'BU', 11);				
+		$pdf->SetFont('DvSerif', '', 11);				
 		$pdf->Cell(0, 5, $_SESSION['lang']['editions_historique']." :",0,1,'C');
 		$pdf->Ln(5);
 		/*********************************************/
 		/* Tableau Historique des Conges et demandes */
 		/*********************************************/
 	
-			$pdf->SetFont('Times', 'B', 10);
+			$pdf->SetFont('DvSerif', '', 10);
 
 			//test d'une ligne à 120 caractères
 			//$ligne120="123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
@@ -229,7 +257,7 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 		/*************************************/
 		/* affichage des zones de signature  */
 		/*************************************/
-		$pdf->SetFont('Times', 'B', 10);				
+		$pdf->SetFont('DvSerif', '', 10);				
 		// decalage pour centrer 
 		$pdf->Cell(20); 
 		$pdf->Cell(70, 5, $_SESSION['lang']['editions_date']." :",0,0);
@@ -239,7 +267,7 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 		$pdf->Cell(70, 5, $_SESSION['lang']['editions_signature_1']." :",0,0);
 		$pdf->Cell(70, 5, $_SESSION['lang']['editions_signature_2']." :",0,1);
 		
-		$pdf->SetFont('Times', 'I', 10);				
+		$pdf->SetFont('DvSerif', '', 10);				
 		// decalage pour centrer 
 		$pdf->Cell(20); 
 		$pdf->Cell(70, 5, "",0,0);
@@ -253,7 +281,7 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 		// fait dans le footer de la classe (cf + haut)
 		
 		$pdf->Output();
-	}
+	
 }
 
 
@@ -265,7 +293,7 @@ function affiche_pdf_tableau_bilan_conges_user_edtion(&$pdf, $tab_info_user, $ta
 	$decalage = 55 ;
 
 	// affichage :
-	$pdf->SetFont('Times', 'B', 11);				
+	$pdf->SetFont('DvSerif', '', 9);				
 		
 	$pdf->Cell($decalage); 
 	$pdf->Cell(40, 5, " ", 1, 0, 'C');
@@ -295,13 +323,13 @@ function affiche_pdf_tableau_bilan_conges_user_edtion(&$pdf, $tab_info_user, $ta
 // affichage en pdf des anciens soldes de congés d'un user
 function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_type_conges_exceptionnels, $decalage, $mysql_link, $DEBUG=FALSE)
 {
-//	$pdf->SetFont('Arial', 'B', 10);
+//	$pdf->SetFont('Arial', '', 10);
 
 	$edition_precedente_id=get_id_edition_precedente_user($login, $edit_id, $mysql_link, $DEBUG);
 	if($edition_precedente_id==0)
 	{
 		$pdf->Cell($decalage); 
-		$pdf->SetFont('Arial', '', 10);
+		$pdf->SetFont('DvSans', '', 8);
 		$pdf->Cell(50, 5, $_SESSION['lang']['editions_soldes_precedents_inconnus']." !...",0,1);
 	}
 	else
@@ -311,17 +339,17 @@ function affiche_pdf_ancien_solde(&$pdf, $login, $edit_id, $tab_type_cong, $tab_
 		foreach($tab_type_cong as $id_abs => $libelle)
 		{
 			$pdf->Cell($decalage); 
-			$pdf->SetFont('Arial', '', 10);
+			$pdf->SetFont('DvSans', '', 8);
 			$pdf->Cell(26, 5, $_SESSION['lang']['editions_solde_precedent']." ",0,0);
-			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetFont('DvSans', '', 8);
 			$pdf->Cell(10, 5, $libelle." : ".$tab_edition_precedente['conges'][$id_abs], 0, 1);
 		}
 		foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
 		{
 			$pdf->Cell($decalage); 
-			$pdf->SetFont('Arial', '', 10);
+			$pdf->SetFont('DvSans', '', 8);
 			$pdf->Cell(26, 5, $_SESSION['lang']['editions_solde_precedent']." ",0,0);
-			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetFont('DvSans', '', 8);
 			$pdf->Cell(10, 5, $libelle." : ".$tab_edition_precedente['conges'][$id_abs], 0, 1);
 		}
 	}
@@ -335,17 +363,17 @@ function affiche_pdf_nouveau_solde(&$pdf, $login, $tab_info_edition, $tab_type_c
 	foreach($tab_type_cong as $id_abs => $libelle)
 	{
 		$pdf->Cell($decalage); 
-		$pdf->SetFont('Arial', '', 10);
+		$pdf->SetFont('DvSans', '', 8);
 		$pdf->Cell(24, 5, $_SESSION['lang']['editions_nouveau_solde']." ",0,0);
-		$pdf->SetFont('Arial', 'B', 10);
+		$pdf->SetFont('DvSans', '', 8);
 		$pdf->Cell(40, 5, $libelle." : ".$tab_info_edition['conges'][$id_abs], 0, 1);
 	}
 	foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
 	{
 		$pdf->Cell($decalage); 
-		$pdf->SetFont('Arial', '', 10);
+		$pdf->SetFont('DvSans', '', 8);
 		$pdf->Cell(24, 5, $_SESSION['lang']['editions_nouveau_solde']." ",0,0);
-		$pdf->SetFont('Arial', 'B', 10);
+		$pdf->SetFont('DvSans', '', 8);
 		$pdf->Cell(40, 5, $libelle." : ".$tab_info_edition['conges'][$id_abs], 0, 1);
 	}
 }
@@ -371,7 +399,7 @@ function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage,
 	// decalage pour centrer 
 	$pdf->Cell($decalage); 
 	
-	$pdf->SetFont('Times', 'B', 9);				
+	$pdf->SetFont('DvSerif', '', 8);				
 	$pdf->Cell($size_cell_type, 5, $_SESSION['lang']['divers_type_maj_1'], 1, 0, 'C', 1); 
 	$pdf->Cell($size_cell_etat, 5, $_SESSION['lang']['divers_etat_maj_1'], 1, 0, 'C', 1);
 	$pdf->Cell($size_cell_nb_jours, 5, $_SESSION['lang']['divers_nb_jours_maj_1'], 1, 0, 'C', 1);
@@ -406,7 +434,7 @@ function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage,
 						
 		$taille_font=8;
 							
-		$pdf->SetFont('Times', '', $taille_font);				
+		$pdf->SetFont('DvSerif', '', $taille_font);				
 
 		$pdf->Cell($size_cell_type, $hauteur_cellule*2, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C'); 
 	
@@ -419,9 +447,9 @@ function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage,
 		$pdf->Cell($size_cell_etat, $hauteur_cellule*2, $text_etat, 1, 0, 'C');
 	
 		if( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") )
-			$pdf->SetFont('Times', '', $taille_font);
+			$pdf->SetFont('DvSerif', '', $taille_font);
 		else			
-			$pdf->SetFont('Times', 'B', $taille_font);	
+			$pdf->SetFont('DvSerif', '', $taille_font);	
 										
 		if($sql_p_etat=="ok")
 			$text_nb_jours="-".$sql_p_nb_jours;
@@ -431,7 +459,7 @@ function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage,
 			$text_nb_jours=$sql_p_nb_jours;
 		$pdf->Cell($size_cell_nb_jours, $hauteur_cellule*2, $text_nb_jours, 1, 0, 'C');
 	
-		$pdf->SetFont('Times', '', $taille_font);				
+		$pdf->SetFont('DvSerif', '', $taille_font);				
 		$pdf->Cell($size_cell_debut, $hauteur_cellule*2, $sql_p_date_deb." _ ".$demi_j_deb, 1, 0, 'C');
 		$pdf->Cell($size_cell_fin, $hauteur_cellule*2, $sql_p_date_fin." _ ".$demi_j_fin, 1, 0, 'C');
 		// reduction de la taille du commentaire pour rentrer dans la cellule
@@ -463,8 +491,8 @@ function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all
 	// decalage pour centrer 
 	$pdf->Cell($decalage); 
 	
-	//$pdf->SetFont('Times', 'B', 10);				
-	$pdf->SetFont('Times', 'B', 10);				
+	//$pdf->SetFont('DvSerif', '', 10);				
+	$pdf->SetFont('DvSerif', '', 8);				
 	$pdf->Cell($size_cell_type, 5, $_SESSION['lang']['divers_type_maj_1'], 1, 0, 'C', 1); 
 	$pdf->Cell($size_cell_etat, 5, $_SESSION['lang']['divers_etat_maj_1'], 1, 0, 'C', 1);
 	$pdf->Cell($size_cell_nb_jours, 5, $_SESSION['lang']['divers_nb_jours_maj_1'], 1, 0, 'C', 1);
@@ -497,9 +525,9 @@ function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all
 		$pdf->Cell($decalage);
 		$hauteur_cellule=5;
 						
-		$taille_font=10;
+		$taille_font=8;
 							
-		$pdf->SetFont('Times', '', $taille_font);				
+		$pdf->SetFont('DvSerif', '', $taille_font);				
 
 		$pdf->Cell($size_cell_type, $hauteur_cellule, $tab_type_all_cong[$sql_p_type]['libelle'], 1, 0, 'C'); 
 	
@@ -512,9 +540,9 @@ function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all
 		$pdf->Cell($size_cell_etat, $hauteur_cellule, $text_etat, 1, 0, 'C');
 	
 		if( ($sql_p_etat=="refus") || ($sql_p_etat=="annul") )
-			$pdf->SetFont('Times', '', $taille_font);
+			$pdf->SetFont('DvSerif', '', $taille_font);
 		else			
-			$pdf->SetFont('Times', 'B', $taille_font);	
+			$pdf->SetFont('DvSerif', '', $taille_font);	
 							
 		if($sql_p_etat=="ok")
 			$text_nb_jours="-".$sql_p_nb_jours;
@@ -524,7 +552,7 @@ function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all
 			$text_nb_jours=$sql_p_nb_jours;
 		$pdf->Cell($size_cell_nb_jours, $hauteur_cellule, $text_nb_jours, 1, 0, 'C');
 	
-		$pdf->SetFont('Times', '', $taille_font);				
+		$pdf->SetFont('DvSerif', '', $taille_font);				
 		$pdf->Cell($size_cell_debut, $hauteur_cellule, $sql_p_date_deb." _ ".$demi_j_deb, 1, 0, 'C');
 		$pdf->Cell($size_cell_fin, $hauteur_cellule, $sql_p_date_fin." _ ".$demi_j_fin, 1, 0, 'C');
 		// reduction de la taille du commentaire pour rentrer dans la cellule
