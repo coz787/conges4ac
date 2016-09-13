@@ -1,0 +1,5 @@
+*~
+*CVS*
+*.diff
+.git
+INCLUDE.EXTERNAL/fpdf
