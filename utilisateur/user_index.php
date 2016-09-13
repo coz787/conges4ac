@@ -802,7 +802,7 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 
         /* $new_comment=addslashes($new_comment); */
         /* _protectsql_ dpa */ 
-        $new_comment = mysqli_real_escape_string($mysql_link, $new_comment);
+        $new_comment = mysql_escape_string($new_comment);
 
 		// si le couple user/date1 existe dans conges_echange_rtt : on update
 		if($count_verif_echange1!=0)

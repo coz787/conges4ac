@@ -514,7 +514,7 @@ function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul, $mysq
 		$numero_int=(int) $numero;
 		$user_type_abs_id=$champs[2];
         /* _protectsql_ dpa $motif_annul=addslashes($tab_text_annul[$numero_int]); */ 
-		$motif_annul = mysqli_real_escape_string($mysql_link, $tab_text_annul[$numero_int] );
+		$motif_annul = mysql_escape_string($tab_text_annul[$numero_int] );
 		
 		if($DEBUG==TRUE) { echo "<br><br>conges numero :$numero ---> login : $user_login --- nb de jours : $user_nb_jours_pris_float --- type : $user_type_abs_id ---> ANNULER <br>"; }
 
@@ -626,7 +626,7 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
 		{
 			// recup di motif de refus
           /* _protectsql_ dpa $motif_refus=addslashes($tab_text_refus[$numero_int]); */
-          $motif_refus = mysqli_real_escape_string($mysql_link, $tab_text_refus[$numero_int]);
+          $motif_refus = mysql_escape_string($tab_text_refus[$numero_int]);
 
 			//$sql3 = "UPDATE conges_periode SET p_etat=\"refus\" WHERE p_num=$numero_int" ;
 			$sql3 = "UPDATE conges_periode SET p_etat=\"refus\", p_motif_refus='$motif_refus', p_date_traitement=NOW() WHERE p_num=$numero_int" ;

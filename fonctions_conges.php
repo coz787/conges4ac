@@ -3949,7 +3949,7 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
 	else
 		$num_new_demande = 1;  // la table est vide ! le premier num sera 1
     /* _protectsql_ dpa */ 
-    $commentaire = mysqli_real_escape_string($mysql_link, $commentaire);
+    $commentaire = mysql_escape_string($commentaire);
 
 	$sql2 = "INSERT INTO conges_periode
 			SET p_login='$login',

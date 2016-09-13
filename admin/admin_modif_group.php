@@ -176,8 +176,8 @@ function commit_update($group_to_update, $new_groupname, $new_comment, $new_doub
 
 	$result=TRUE;
 
-	$new_comment = mysqli_real_escape_string($mysql_link,$new_comment);
-    $new_groupname = mysqli_real_escape_string($mysql_link,$new_groupname);
+	$new_comment = mysql_escape_string($new_comment);
+    $new_groupname = mysql_escape_string($new_groupname);
 	echo "$group_to_update---$new_groupname---$new_comment---$new_double_valid<br>\n";
 
 

@@ -415,8 +415,8 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 	{
 		// UPDATE de la table conges_users
 		$sql1 = "UPDATE conges_users
-			SET	u_nom='".mysqli_real_escape_string($mysql_link,$tab_new_user['nom'])."',
-				u_prenom='".mysqli_real_escape_string($mysql_link,$tab_new_user['prenom'])."',
+			SET	u_nom='".mysql_escape_string($tab_new_user['nom'])."',
+				u_prenom='".mysql_escape_string($tab_new_user['prenom'])."',
 				u_is_resp='".$tab_new_user['is_resp']."',
 				u_resp_login='".$tab_new_user['resp_login']."',
 				u_is_admin='".$tab_new_user['is_admin']."',

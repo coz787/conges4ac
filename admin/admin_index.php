@@ -176,7 +176,7 @@ echo "</head>\n";
 		$tab_new_user[0]['new_year']= getpost_variable("new_year") ;
 	}
 
-/* _protectsql_ : protection par mysqli_real_escape_string realise ailleurs 
+/* _protectsql_ : protection par mysql_escape_string realise ailleurs 
    $new_group_name=addslashes( getpost_variable("new_group_name")) ;
    $new_group_libelle=addslashes( getpost_variable("new_group_libelle")) ; */ 
     $new_group_double_valid= getpost_variable("new_group_double_valid") ;
@@ -509,8 +509,8 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		$motdepasse = md5($tab_new_user['password1']);
 		$sql1 = "INSERT INTO conges_users SET ";
 		$sql1=$sql1."u_login='".$tab_new_user['login']."', ";
-		$sql1=$sql1."u_nom='".mysqli_real_escape_string($mysql_link,$tab_new_user['nom'])."', ";
-		$sql1=$sql1."u_prenom='".mysqli_real_escape_string($mysql_link,$tab_new_user['prenom'])."', ";
+		$sql1=$sql1."u_nom='".mysql_escape_string($tab_new_user['nom'])."', ";
+		$sql1=$sql1."u_prenom='".mysql_escape_string($tab_new_user['prenom'])."', ";
 		$sql1=$sql1."u_is_resp='".$tab_new_user['is_resp']."', ";
 		$sql1=$sql1."u_resp_login='".$tab_new_user['resp_login']."', ";
 		$sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
@@ -573,7 +573,7 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		else
 			echo $_SESSION['lang']['form_modif_not_ok']."<br><br> \n";
 
-		$comment_log = "ajout_user : ".$tab_new_user['login']." / ".mysqli_real_escape_string($mysql_link,$tab_new_user['nom'])." ".mysqli_real_escape_string($mysql_link,$tab_new_user['prenom'])." (".$tab_new_user['quotite']." %)" ;
+		$comment_log = "ajout_user : ".$tab_new_user['login']." / ".mysql_escape_string($tab_new_user['nom'])." ".mysql_escape_string($tab_new_user['prenom'])." (".$tab_new_user['quotite']." %)" ;
 		log_action(0, "", $tab_new_user['login'], $comment_log, $mysql_link, $DEBUG);
 
 		/* APPEL D'UNE AUTRE PAGE */
@@ -1158,8 +1158,8 @@ function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_val
 	$session=session_id();
 
     /* _protectsql_ dpa */ 
-    $new_group_name = mysqli_real_escape_string($mysql_link, $new_group_name);
-    $new_group_libelle = mysqli_real_escape_string($mysql_link, $new_group_libelle);
+    $new_group_name = mysql_escape_string( $new_group_name);
+    $new_group_libelle = mysql_escape_string( $new_group_libelle);
 
 	if(verif_new_param_group($new_group_name, $new_group_libelle, $mysql_link, $DEBUG)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existe pas déjà
 	{

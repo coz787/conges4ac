@@ -376,8 +376,7 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie, $mysql_link, $
             } else { 
               /* _protectsql_ dpa 
                  $commentaire = $tab_commentaire_saisie[$user_name] ; */ 
-              $commentaire = mysqli_real_escape_string($mysql_link, 
-                                                       $tab_commentaire_saisie[$user_name]);
+              $commentaire = mysql_escape_string($tab_commentaire_saisie[$user_name]);
             }
 			insert_ajout_dans_periode($DEBUG, $user_name, $user_nb_jours_ajout_float, $id_conges, $commentaire, $mysql_link);
 	      }
