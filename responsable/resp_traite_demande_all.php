@@ -402,8 +402,11 @@ function traite_all_demande_en_cours($mysql_link, $tab_bt_radio, $tab_text_refus
           alerte_mail($_SESSION['userlogin'], $user_login, $numero_int, "accept_conges", $mysql_link, $DEBUG);
         }
       } else if ($reponse == "not_OK") { 
-        // recup du motif de refus
-        $motif_refus=addslashes($tab_text_refus[$numero_int]);
+        /* recup du motif de refus
+        $motif_refus=addslashes($tab_text_refus[$numero_int]); */
+        /* _protectsql_ dpa */ 
+        $motif_refus = mysqli_real_escape_string($mysql_link, $tab_text_refus[$numero_int]);
+
         $sql1 = "UPDATE conges_periode SET p_etat=\"refus\", p_motif_refus='$motif_refus', p_date_traitement=NOW() WHERE p_num=$numero_int" ;
         //echo "$sql1<br>\n");
 			
