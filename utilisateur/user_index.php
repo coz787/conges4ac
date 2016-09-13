@@ -800,10 +800,13 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 
 		$count_verif_echange1=mysql_num_rows($result_verif_echange1);
 
+        /* $new_comment=addslashes($new_comment); */
+        /* _protectsql_ dpa */ 
+        $new_comment = mysqli_real_escape_string($mysql_link, $new_comment);
+
 		// si le couple user/date1 existe dans conges_echange_rtt : on update
 		if($count_verif_echange1!=0)
 		{
-			$new_comment=addslashes($new_comment);
 			//$resultat1=mysql_fetch_array($result_verif_echange1);
 			//if($resultatverif_echange1['e_absence'] == 'N' )
 			$sql1 = "UPDATE conges_echange_rtt

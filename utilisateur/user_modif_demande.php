@@ -196,6 +196,9 @@ function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $n
 	//connexion mysql
 	$mysql_link = connexion_mysql() ;
 
+    /* _protectsql_ dpa */ 
+    $new_comment = mysqli_real_escape_string($mysql_link, $new_comment);
+
 	$sql1 = "UPDATE conges_periode
 		SET p_date_deb=STR_TO_DATE('$new_debut', '%d-%m-%Y'), p_demi_jour_deb='$new_demi_jour_deb', p_date_fin=STR_TO_DATE('$new_fin', '%d-%m-%Y'), p_demi_jour_fin='$new_demi_jour_fin', p_nb_jours='$new_nb_jours', p_commentaire='$new_comment', ";
 	if($p_etat=="demande")
