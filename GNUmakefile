@@ -18,7 +18,7 @@ tags:
 # 	md5sum -c md5.sum 
 
 dist:	jqcal.min.js
-	pushd .. && tar zcvf $(DIST).tgz --exclude-from=$(WDIR)/exclude.txt $(WDIR)/ \
+	pushd .. && tar zcvf $(DIST).tgz --exclude-from=$(WDIR)/exclude.def $(WDIR)/ \
        && md5sum  $(DIST).tgz > $(DIST).md5 && popd 
 
 
