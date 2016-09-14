@@ -2271,7 +2271,7 @@ function date_fr($code, $timestmp)
 // parametre 4=objet du message (cf table conges_mail pour les diff valeurs possibles)
 function alerte_mail($login_expediteur, $destinataire, $operiode, $objet, $mysql_link, $DEBUG=FALSE)
 {
-  error_log("alerte_mail:".$login_expediteur."-".$destinataire."-".$operiode."-".$objet);
+  error_log("alerte_mail:".$login_expediteur."-".$destinataire."-".print_r($operiode,True)."-".$objet);
   //  $DEBUG=TRUE;
   if ($DEBUG) {  // _dpa 
     if (has_int_calendar_mode($destinataire, $mysql_link)) {
