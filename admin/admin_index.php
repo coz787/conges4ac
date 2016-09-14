@@ -176,9 +176,9 @@ echo "</head>\n";
 		$tab_new_user[0]['new_year']= getpost_variable("new_year") ;
 	}
 
-/* _protectsql_ : protection par mysql_escape_string realise ailleurs 
-   $new_group_name=addslashes( getpost_variable("new_group_name")) ;
-   $new_group_libelle=addslashes( getpost_variable("new_group_libelle")) ; */ 
+/* _protectsql_ : protection par mysql_escape_string realise ailleurs */ 
+   $new_group_name=getpost_variable("new_group_name") ;
+   $new_group_libelle=getpost_variable("new_group_libelle") ; 
     $new_group_double_valid= getpost_variable("new_group_double_valid") ;
 if ($new_group_double_valid=="") {
   $new_group_double_valid = 'N' ; // conformite avec database
