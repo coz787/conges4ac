@@ -4767,21 +4767,23 @@ function affiche_select_from_lang_directory($select_name="lang")
 // retourne TRUE ou FALSE
 function log_action($num_periode, $etat_periode, $login_pour, $comment, $mysql_link, $DEBUG=FALSE)
 {
-	if(isset($_SESSION['userlogin']))
-	$user = $_SESSION['userlogin'] ;
-	else
-	$user = "inconnu";
+  if(isset($_SESSION['userlogin'])) {
+      $user = $_SESSION['userlogin'] ;
+  }	else {
+      $user = "inconnu";
+  }
+  $comment = mysql_escape_string($comment);
 
-	$sql = "INSERT INTO conges_logs
+  $sql = "INSERT INTO conges_logs
 		SET log_p_num='$num_periode',
 			log_user_login_par='$user',
 			log_user_login_pour='$login_pour',
 			log_etat='$etat_periode',
 			log_comment='$comment',
 			log_date=NOW() " ;
-	$result = requete_mysql($sql, $mysql_link, "log", $DEBUG);
+  $result = requete_mysql($sql, $mysql_link, "log", $DEBUG);
 
-	return $result;
+  return $result;
 }
 
 
