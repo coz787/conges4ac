@@ -352,7 +352,7 @@ INSERT INTO `conges_config` VALUES ('demande_conges_bgcolor', '#E7C4C4', '14_Pre
 INSERT INTO `conges_config` VALUES ('absence_autre_bgcolor', '#D3FFB6', '14_Presentation', 'hidden', 'config_comment_absence_autre_bgcolor');
 INSERT INTO `conges_config` VALUES ('fermeture_bgcolor', '#7B9DE6', '14_Presentation', 'hidden', 'config_comment_fermeture_bgcolor');
 
-INSERT INTO `conges_config` VALUES ('php_conges_fpdf_include_path', '/srv/www/htdocs', '15_Modules Externes', 'path', 'config_comment_php_conges_fpdf_include_path');
+INSERT INTO `conges_config` VALUES ('php_conges_fpdf_include_path', 'INCLUDE.EXTERNAL/', '15_Modules Externes', 'path', 'config_comment_php_conges_fpdf_include_path');
 INSERT INTO `conges_config` VALUES ('php_conges_phpmailer_include_path', 'INCLUDE.EXTERNAL/', '15_Modules Externes', 'path', 'config_comment_php_conges_phpmailer_include_path');
 INSERT INTO `conges_config` VALUES ('php_conges_cas_include_path', 'INCLUDE.EXTERNAL/', '15_Modules Externes', 'path', 'config_comment_php_conges_cas_include_path');
 INSERT INTO `conges_config` VALUES ('php_conges_authldap_include_path', 'INCLUDE.EXTERNAL/', '15_Modules Externes', 'path', 'config_comment_php_conges_authldap_include_path');
