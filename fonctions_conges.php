@@ -5386,9 +5386,9 @@ function get_frame_date($mode="conge",$by="user")
 
   // en mode user et une retroactivite max est defini 
   if  ( $by=="resp" ) { // mode responsable 
-    $yearmin_start -= 1 ;  // le responsable peut saisir sur année n-1 
+    // $yearmin_start -= 1 ;  // le responsable peut saisir sur année n-1 
+    // non trop complique _dirtyweeknumber_
   } else if ( $by=="user" && $lretromonth >= 0 ) { 
-
     $month_cur = $lnow['mon'] ;
     // error_log("get_frame_date:".$year_cur.$month_cur); 
     $month_retro = $month_cur - $lretromonth ; 
@@ -5434,6 +5434,12 @@ function get_frame_date($mode="conge",$by="user")
 }
 
 // _dpa  get_recurrentvacancy v2 qui marche mais reputee COMPLEX 
+// <_dirtyweeknumber_>
+// cette fonction est basee sur un calcul de schema recurrent bi-hebdo or 
+// ce schema est mis en defaut sur annee type 2016 ou on quitte un semaine impaire
+// pour reprendre une semaine impaire 
+// necessaire d'apporter un correctif 
+// </_dirtyweeknumber_>
 function get_recurrentvacancy($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=FALSE)
 {
   global $aday ; 
@@ -5502,6 +5508,7 @@ function get_recurrentvacancy($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=F
 
 function get_recurrentvacancy_with_update($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=FALSE)
 {
+  // error_log("get_recurrentvacancy_with_update".$user."-".$dmindate->format('Y-m-d')."-".$dmaxdate->format('Y-m-d')); 
   $lvacperiod = get_recurrentvacancy($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG) ;
   $cer_select = "SELECT * FROM conges_echange_rtt WHERE e_login='$user'" ;
   // _dpatodo
@@ -5539,7 +5546,10 @@ function get_recurrentvacancy_with_update($user, $mysql_link, $dmindate, $dmaxda
 function date2vacperiodidx($ddate) {
   global $aweek ; 
   global $afourteen ; 
-  $nweek = $ddate->format('W') ; /* ISO-8601 du num de semaine */ 
+  $nweek = $ddate->format('W') ; /* ISO-8601 du num de semaine */
+  if ($nweek == 53) {  // _dirtyweeknumber_ 
+    $nweek = 0 ;  
+  }
   $jweek = $ddate->format('w') ; /* num jour ds semaine 0:di, 6:sa */ 
   $jweek_rs =  ( $jweek + 6 ) % $aweek ; /* num jour ds semaine 0:lu, 6:di */
 
