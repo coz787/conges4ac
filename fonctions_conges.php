@@ -5449,7 +5449,7 @@ function get_recurrentvacancy($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=F
   // (ddate,'d' ou 'a' ou 'p') pour day,am,pm TEL QUE PROGRAMMEE  
   $lvacperiod = array() ; 
   $lrecscheme = get_recurrentscheme($user, $mysql_link) ; 
-
+  
   if (sizeof($lrecscheme) == 0 ) { // cas ou schema non rempli 
     return $lvacperiod ; 
   };
@@ -5631,6 +5631,7 @@ ORDER BY a_date_debut_grille ASC";
     array_push($rec_scheme,$lscheme);
     array_push($lrec_scheme,$rec_scheme); 
   } 
+  // error_log("get_recurrentscheme ". print_r($lrec_scheme,True)); 
   return $lrec_scheme ;  
 }
 /* _dpa_todo: 
