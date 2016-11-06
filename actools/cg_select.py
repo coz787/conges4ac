@@ -164,21 +164,25 @@ if __name__ == '__main__':
     #1.2 check acess to conges database  
     try:
 # see charset='latin1' charset='utf8'  option 
+        if ddcid.has_key('charset'):
+            scharset = ddcid['charset']
+        else:
+            scharset='latin1'
         if ddcid.has_key('port'): 
             odbconn_std = MySQLdb.connect( 
                 ddcid['host'],ddcid['user'],ddcid['pw'], ddcid['database'], 
-                port=ddcid['port'], charset=ddcid['charset'], use_unicode=1)
+                port=ddcid['port'], charset=scharset, use_unicode=1)
             odbconn_dict = MySQLdb.connect( 
                 ddcid['host'],ddcid['user'],ddcid['pw'], ddcid['database'], 
-                port=ddcid['port'], charset=ddcid['charset'], use_unicode=1,  
+                port=ddcid['port'], charset=scharset, use_unicode=1,  
                 cursorclass=MySQLdb.cursors.DictCursor)
         else :
             odbconn_std = MySQLdb.connect( 
                 ddcid['host'],ddcid['user'],ddcid['pw'], ddcid['database'], 
-                charset=ddcid['charset'], use_unicode=1)
+                charset=scharset, use_unicode=1)
             odbconn_dict = MySQLdb.connect( 
                 ddcid['host'],ddcid['user'],ddcid['pw'], ddcid['database'], 
-                charset=ddcid['charset'], use_unicode=1,  cursorclass=MySQLdb.cursors.DictCursor)
+                charset=scharset, use_unicode=1,  cursorclass=MySQLdb.cursors.DictCursor)
 
         odbcursor_std = odbconn_std.cursor() 
         odbcursor_dict = odbconn_dict.cursor() 
