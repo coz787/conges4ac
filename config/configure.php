@@ -222,6 +222,14 @@ function commit_saisie(&$tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 {
 //$DEBUG=TRUE;
 	$PHP_SELF=$_SERVER['PHP_SELF'];
+	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n";
+	echo "<html>\n";
+	echo "<head>\n";
+	echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
+	echo "<link href=\"../".$_SESSION['config']['stylesheet_file']."\" rel=\"stylesheet\" type=\"text/css\">\n";
+	echo "<TITLE> CONGES : Configuration </TITLE>\n";
+	echo "</head>\n";
+    echo "<body>\n"; 
 
 	$timeout=2 ;  // temps d'attente pour rafraichir l'écran après l'update !
 
@@ -262,12 +270,16 @@ function commit_saisie(&$tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 	$comment_log = "nouvelle configuration de php_conges ";
 	log_action(0, "", "", $comment_log, $mysql_link, $DEBUG);
 
+
 	echo "<span class = \"messages\">".$_SESSION['lang']['form_modif_ok']."</span><br>";
 	if($session=="")
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"$timeout; URL=$PHP_SELF?\">";
 	else
 		echo "<META HTTP-EQUIV=REFRESH CONTENT=\"$timeout; URL=$PHP_SELF?session=$session\">";
 
+    
+    echo "</body>\n"; 
+	echo "</html>\n";
 
 }
 
