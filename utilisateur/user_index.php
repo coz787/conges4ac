@@ -120,7 +120,7 @@ echo "<a href=\"../ws/in/main.php?session=$session&rq=print_session\">" ;
 echo "wsinmain" ;
 echo "</a>" ; 
 echo "</p>" ; */
-
+correct_artt_scheme($_SESSION['userlogin'],$mysql_link, $DEBUG); 
 	/*************************************/
 	/*** affichage "deconnexion" et "actualiser page" et "mode administrateur" et "affichage calendrier" ***/
 	/*************************************/
