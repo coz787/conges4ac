@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 '''cg_lib.py: real set of class, function used by cg_select'''
 
-import ldap, sys, os, pprint, string, re, time # , getopt
+import datetime, ldap, sys, os, pprint, string, re, time # , getopt
 from traceback import print_exc
 from decimal import Decimal 
 from datetime  import date
@@ -813,6 +813,61 @@ su_login ='%s' and su_abs_id=%d ;"
             print "err: do_sql_usce" 
             return -1
         return 1 
+
+    def do_detect_w_artt(self, dopt, odbcursor, odbcursordict, ddcid):
+        '''detecte les plages de prévisions artt courant manquante '''
+        ssql_users = "SELECT u_login FROM conges_users ;" 
+        ssql_detectp = "SELECT a_date_debut_grille,a_date_fin_grille from conges_artt WHERE a_login='%s' ORDER BY a_date_debut_grille ASC ;" 
+        sdfgrillet = datetime.date(9999, 12, 31)
+        lusers = [] 
+        try:
+            odbcursor.execute(ssql_users)
+            while 1 :
+                row = odbcursor.fetchone()
+                if row == None :
+                    break
+                lusers.append(row[0]) 
+        except:
+            print_exc()
+            print "method do_detect_w_artt " 
+            return -1 
+        # print "do_detect_w_artt" + pprint.pformat(lusers) 
+        nind = 0 
+        for auser in lusers :
+            if auser in self.ltechuser :
+                continue 
+            #if nind > 5 :  # pour test 
+            #    break 
+            # pour un user valid 
+            lartt = [] 
+            try:
+                ssql_detect = ssql_detectp % auser
+                odbcursor.execute(ssql_detect)
+                while 1 :
+                    row = odbcursor.fetchone()
+                    if row == None :
+                        break
+                    lartt.append(row) 
+                nartt = len(lartt)
+                try:
+                    sdfg = lartt[nartt-1][1] 
+                except:
+                    print "do_detect_w_artt no artt define for %s ;" % auser 
+                if sdfg == sdfgrillet : 
+                    pass # ok
+                else:
+                    print "do_detect_w_artt last artt for %s differes from standard [%s];" % (auser,sdfg)
+                # print "do_detect_w_artt \n" + pprint.pformat(lartt)
+            except:
+                print_exc()
+                print "method do_detect_w_artt 2" 
+                return -1 
+            
+            nind += 1 
+        return 1
+
+        
+
 # some method to patch database 
 # they require a write access to the database 
 
