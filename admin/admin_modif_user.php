@@ -523,6 +523,15 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 						WHERE a_login='$u_login_to_update' AND a_date_fin_grille='9999-12-31'" ;
 				$result2 = requete_mysql($sql2, $mysql_link, "commit_update", $DEBUG);
 
+                /* dpavet tentative correcton du bug qui fait disparaitre le dernier enregistrement */ 
+				$result2commit = requete_mysql("commit ; ", $mysql_link, "commit_update", $DEBUG);
+                /* commit requi sinon ordre suivant porte sur la meme cle primaire */ 
+                $newi_date_deb_grille=date("Y-m-d", mktime(0, 0, 0, $new_mois_num, $new_jour_num, $new_year_num)); // int mktime(int hour, int minute, int second, int month, int day, int year )
+                $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille  )
+						VALUES ('$u_login_to_update', '$newi_date_deb_grille', '9999-12-31') " ;
+ 				$result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
+                /* dpavet end */ 
+
 				if($result2==FALSE)
 					$result==FALSE;
 			}
