@@ -5122,7 +5122,8 @@ $afourteen = 14 ;
 $aweek     = 7  ;
 // tartt : association 
 $tartt = array('d'=>'z-da-jlp', 'a' =>'z-am-jl-pm-','p'=>'z-am--pm-jl'); 
-$dendoftime = new DateTime("9999-12-31") ; 
+$sendoftime = "9999-12-31" ;
+$dendoftime = new DateTime($sendoftime) ; 
 $tjlppartday = array('z-am-jl--','z-am--pm-jl') ; 
 
 function dayindateinterval($number) {
@@ -5633,6 +5634,41 @@ ORDER BY a_date_debut_grille ASC";
   } 
   // error_log("get_recurrentscheme ". print_r($lrec_scheme,True)); 
   return $lrec_scheme ;  
+}
+
+function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
+{
+  /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
+     corrompues par appli conges4ac jusque v2 ; elle ajoute un enregistrement final
+     avec la dernière date force a 9999-12-31 comme requis 
+     voir également  admin_modif_user.php::commit_update 
+  */
+  global $sendoftime, $aday ; 
+  $ca_select = "SELECT * FROM conges_artt WHERE a_login='$user'
+ORDER BY a_date_debut_grille ASC"; 
+  $ca_req = requete_mysql($ca_select, $mysql_link, "correct_artt_scheme", $DEBUG);
+  $lrec_scheme = array(); 
+  while( $row = mysql_fetch_array($ca_req) ) {
+    array_push($lrec_scheme, $row);
+  }
+  $nrow = sizeof($lrec_scheme);
+  /*  echo "<pre>"; 
+  print_r($lrec_scheme[$nrow -1]) ;
+  echo "</pre>"; */
+  $lastrow = $nrow -1 ; 
+  if ($lrec_scheme[$lastrow]['a_date_fin_grille'] != $sendoftime) {
+    $dnewdeb = new DateTime($lrec_scheme[$lastrow]['a_date_fin_grille']); 
+    $dnewdeb->add($aday);
+
+    $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille  )
+						VALUES ('$user', '".$dnewdeb->format("Y-m-d")."', '$sendoftime') " ;
+    /* echo "<pre>"; 
+    print_r($sql3n) ; 
+    echo "</pre>"; */
+    $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
+    $result2commit = requete_mysql("commit ; ", $mysql_link, "commit_update", $DEBUG);
+
+  };
 }
 /* _dpa_todo: 
    delivre date du jour / heure du jour soit réelle , soit impose par config 
