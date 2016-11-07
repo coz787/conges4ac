@@ -5667,7 +5667,7 @@ ORDER BY a_date_debut_grille ASC";
     echo "</pre>"; */
     $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
     $result2commit = requete_mysql("commit ; ", $mysql_link, "commit_update", $DEBUG);
-
+    log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
   };
 }
 /* _dpa_todo: 
