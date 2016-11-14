@@ -32,6 +32,18 @@ $g_users= array(); // pour
 $o_users= array(); // liste des users pour lesquels la fonction glau a deja ete appelle
 $glau_cpt = 0;
 
+// constantes partagees 
+
+$aday = new DateInterval('P1D');
+$a30day = new DateInterval('P30D');
+$afourteen = 14 ; 
+$aweek     = 7  ;
+// tartt : association 
+$tartt = array('d'=>'z-da-jlp', 'a' =>'z-am-jl-pm-','p'=>'z-am--pm-jl'); 
+$sendoftime = "9999-12-31" ;
+$dendoftime = new DateTime($sendoftime) ; 
+$tjlppartday = array('z-am-jl--','z-am--pm-jl') ; 
+
 /* version ac3_01 : les routines servant affichage des outils de saisie
    calendrier deviennent inutile ; mise de cote par prefix "atic_" */
  
@@ -758,12 +770,10 @@ function atic_affiche_cellule_calendrier_echange_presence_saisie_semaine($val_ma
 	}
 }
 
-
-
-
 // saisie de la grille des jours d'abscence ARTT ou temps partiel:
 function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 {
+  global $aday,$a30day ; 
 	/* initialisation des variables **************/
 	$checked_option_sem_imp_lu_am="";
 	$checked_option_sem_imp_lu_pm="";
@@ -833,12 +843,32 @@ function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 		$date_deb_grille=$resultat1['a_date_debut_grille'];
 		$date_fin_grille=$resultat1['a_date_fin_grille'];
 	}
+    /* _admin_mod_artt_ */ 
+    $ddeb_grille = new DateTime($date_deb_grille); 
+    /* _endur_ */ 
+    $dmindate = $ddeb_grille ;   $dmindate->add($aday);
+    $dmaxdate = new DateTime(conges_get_date_fmt1(False)) ; $dmaxdate->add($a30day);
+    
+    $oconfigartt = array("user" => $login , 
+                         "date_deb_grille_actu" => $date_deb_grille ,
+                         "smindate" => $dmindate->format('Y-m-d'), 
+                         "smaxdate" => $dmaxdate->format('Y-m-d')
+                         );
 
+    echo "<div id=\"oconfigartt\"  class=\"tech\">\n"; 
+    echo json_encode($oconfigartt);
+    echo "</div>\n"; 
 
+    //    echo "<p>_admin_mod_artt: restructurer IHM </p>" ;
 	echo "<h4>".$_SESSION['lang']['admin_temps_partiel_titre']." :</h4>\n";
 	echo "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n";
-	echo "<tr>\n";
-	echo "<td>\n";
+    /*	echo "<tr align=\"center\">\n";
+	echo "<td colspan=\"3\">\n";
+    echo $_SESSION['lang']['admin_temps_partiel_date_valid_actuel']." : ".$date_deb_grille ; 
+    echo "</td>\n";
+	echo "</tr>\n"; */ 
+	echo "<tr valign=\"top\">\n";
+	echo "<td align=\"left\" >\n"; // cell des selecteur de djlp 
 		//tableau semaines impaires
 		echo "<b><u>".$_SESSION['lang']['admin_temps_partiel_sem_impaires']." :</u></b><br>\n";
 		$tab_checkbox_sem_imp=array();
@@ -962,19 +992,29 @@ function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 				echo "<td class=\"histo\">$p_di_pm</td>\n";
 		echo "</tr>\n";
 		echo "</table>\n";
-	echo "</td>\n";
+        echo "</td>\n"; // fin cell des selecteur de djlp 
+    echo "<td>&nbsp;&nbsp;</td>\n";    
+    echo "<td>&nbsp;&nbsp;</td>\n";    
+	echo "<td  align=\"right\">\n";
+    echo "<div>". $_SESSION['lang']['admin_temps_partiel_date_valid_actuel']." : ".$date_deb_grille."<br><br>" ; 
+    echo $_SESSION['lang']['admin_temps_partiel_date_valid']."<br><br></div>" ;
+
+    echo "</td>\n";
+
 	echo "</tr>\n";
-	echo "<tr align=\"center\">\n";
-	echo "<td colspan=\"3\">\n";
-		$jour_default=date("d");
-		$mois_default=date("m");
-		$year_default=date("Y");
-		echo "<br>".$_SESSION['lang']['admin_temps_partiel_date_valid']." :\n";
-		affiche_selection_new_jour($jour_default);  // la variable est $new_jour
-		affiche_selection_new_mois($mois_default);  // la variable est $new_mois
-		affiche_selection_new_year($year_default-2, $year_default+10, $year_default );  // la variable est $new_year
-	echo "</td>\n";
-	echo "</tr>\n";
+    /* 	retrait ancien selecteur de date de début  */
+
+    /* _admin_mod_artt_ */
+    echo "<tr align=\"center\">\n";
+    echo "<td></td>\n";
+    echo "<td></td>\n";
+    echo "<td></td>\n";
+    echo "<td></td>\n";
+    echo "<td></td>\n";
+	echo "<td>\n";
+    echo "<input type=\"text\" id=\"newschemed\" name=\"newschemed\" size=\"10\" readonly style=\"text-align:center;\"/><br>\n"; 
+    echo "<div id=\"dpickernewscheme\"></div>\n";  
+	echo "</td></tr>\n"; 
 	echo "</table>\n";
 
 }
@@ -5115,16 +5155,6 @@ function referer2rootpath($http_referer) {
     print_r();
     echo "</pre>\n";   */ 
 
-// constantes partagees 
-
-$aday = new DateInterval('P1D');
-$afourteen = 14 ; 
-$aweek     = 7  ;
-// tartt : association 
-$tartt = array('d'=>'z-da-jlp', 'a' =>'z-am-jl-pm-','p'=>'z-am--pm-jl'); 
-$sendoftime = "9999-12-31" ;
-$dendoftime = new DateTime($sendoftime) ; 
-$tjlppartday = array('z-am-jl--','z-am--pm-jl') ; 
 
 function dayindateinterval($number) {
   $di = new DateInterval('P'.$number.'D');
@@ -5636,14 +5666,14 @@ ORDER BY a_date_debut_grille ASC";
   return $lrec_scheme ;  
 }
 
-function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
+function correct_artt_scheme_v0($user, $mysql_link, $DEBUG=FALSE)
 {
   /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
      corrompues par appli conges4ac jusque v2 ; elle ajoute un enregistrement final
      avec la dernière date force a 9999-12-31 comme requis 
      voir également  admin_modif_user.php::commit_update 
   */
-  global $sendoftime, $aday ; 
+  global $sendoftime,$aday ; 
   $ca_select = "SELECT * FROM conges_artt WHERE a_login='$user'
 ORDER BY a_date_debut_grille ASC"; 
   $ca_req = requete_mysql($ca_select, $mysql_link, "correct_artt_scheme", $DEBUG);
@@ -5670,6 +5700,53 @@ ORDER BY a_date_debut_grille ASC";
     log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
   };
 }
+function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
+{
+  /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
+     corrompues par appli conges4ac jusque v2 ; elle retablit la sequence comme suit :
+     deb1, deb2 - 1j, 
+     deb2, deb3 - 1j, 
+     debn, 9999-12-31 
+     voir également  admin_modif_user.php::commit_update 
+  */
+  global $sendoftime,$aday ; 
+  $ca_select = "SELECT * FROM conges_artt WHERE a_login='$user'
+ORDER BY a_date_debut_grille ASC"; 
+  $ca_req = requete_mysql($ca_select, $mysql_link, "correct_artt_scheme", $DEBUG);
+  $lrec_scheme = array(); 
+  while( $row = mysql_fetch_array($ca_req) ) {
+    array_push($lrec_scheme, $row);
+  }
+  $nrow = sizeof($lrec_scheme);
+  /*  echo "<pre>"; 
+  print_r($lrec_scheme[$nrow -1]) ;
+  echo "</pre>"; */
+  $lastrow = $nrow -1 ; 
+  if ($lrec_scheme[$lastrow]['a_date_fin_grille'] != $sendoftime) {
+    /* les donnees sont corrompues ; on corrige au mieux */ 
+    $indrow = 0 ; 
+    /* pour tous les rows sauf le dernier */ 
+    while ($indrow < $lastrow ) { 
+      $dactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
+      $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
+      $dnewfin->sub($aday);
+      $sql3n = "UPDATE conges_artt SET a_date_fin_grille='".$dnewfin->format("Y-m-d").
+        "' WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+      $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
+      $indrow += 1 ; 
+    }
+    $dactufin = $lrec_scheme[$lastrow]['a_date_fin_grille']; 
+    $sql3last = "UPDATE conges_artt SET a_date_fin_grille='$sendoftime' WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+    $result3last = requete_mysql($sql3last, $mysql_link, "commit_update", $DEBUG);
+    
+    /* echo "<pre>"; 
+    print_r($sql3n) ; 
+    echo "</pre>"; */
+    log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
+  };
+}
+
+
 /* _dpa_todo: 
    delivre date du jour / heure du jour soit réelle , soit impose par config 
    sous la forme d'un array comparable au resultat de getdate(), ie.
