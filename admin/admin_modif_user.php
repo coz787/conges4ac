@@ -32,6 +32,7 @@ include("../INCLUDE.PHP/fonction.php");
 include("../INCLUDE.PHP/session.php");
 include("admin_jourshorsperiode.php"); 
 
+// $aday = new DateInterval('P1D');
 $DEBUG=FALSE;
 //$DEBUG=TRUE ;
 
@@ -44,9 +45,12 @@ echo "<html>\n";
 echo "<head>\n";
 echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
 echo "<link href=\"../".$_SESSION['config']['stylesheet_file']."\" rel=\"stylesheet\" type=\"text/css\">\n";
-/* echo "<link href=\"../jquery-ui-1.10.3.custom_a.css\" rel=\"stylesheet\" type=\"text/css\" >\n"; */
+echo "<link href=\"../jquery-ui-1.10.3.custom_a.css\" rel=\"stylesheet\" type=\"text/css\" >\n";  
 
 echo "<script src=\"/jquery/js/jquery-1.10.2.min.js\"></script>\n";
+echo "<script src=\"/jquery/js/jquery-ui-1.10.3.custom.min.js\"></script>\n";
+echo "<script src=\"/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr.js\"></script>\n";
+
 // $(function() { jqcal_ready(); } );
 echo "<script src=\"../admin_mod.js\"></script>\n";
 echo "<script>$(function() { admin_mod_ready(); } ); </script>\n"; 
@@ -82,6 +86,8 @@ echo "<CENTER>\n";
 	$tab_new_user['jour'] = getpost_variable("new_jour") ;
 	$tab_new_user['mois'] = getpost_variable("new_mois") ;
 	$tab_new_user['year'] = getpost_variable("new_year") ;
+/* for _admin_mod_artt_ */  
+    $tab_new_user['sdate-debut-schema'] = getpost_variable("newschemed"); 
 	$tab_new_jours_an = getpost_variable("tab_new_jours_an") ;
 	$tab_new_solde    = getpost_variable("tab_new_solde") ;
 	$tab_checkbox_sem_imp = getpost_variable("tab_checkbox_sem_imp") ;
@@ -345,10 +351,11 @@ function modifier($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=F
 	mysql_close($mysql_link);
 
 }
-
+/* dpacomment : cette fonction est pourrie _refactorrequired_ */ 
 function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=FALSE)
 {
 //$DEBUG=TRUE;
+  global $aday ; 
 	$PHP_SELF=$_SERVER['PHP_SELF'];
 	$session=session_id();
 
@@ -490,13 +497,13 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 		}
 		else
 		{
-			$new_date_deb_grille=$tab_new_user['year']."-".$tab_new_user['mois']."-".$tab_new_user['jour'];
-			//echo "$new_date_deb_grille<br>\n" ;
+          /* _admin_mod_artt_ */
+          $new_date_deb_grille = $tab_new_user['sdate-debut-schema'] ; /* tout cuit */
 
-			/****************************/
-			/***   phase 1 :  ***/
-			// si la derniere grille est ancienne, on l'update (on update la date de fin de grille)
-			// sinon, si la derniere grille date d'aujourd'hui, on la supprime
+          /****************************/
+          /***   phase 1 :  ***/
+          // si la derniere grille est ancienne, on l'update (on update la date de fin de grille)
+          // sinon, si la derniere grille date d'aujourd'hui, on la supprime
 
 			// on regarde si la grille artt a deja été modifiée aujourd'hui :
 			$sql_grille="SELECT a_date_fin_grille FROM conges_artt
@@ -505,15 +512,10 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 
 			$count_grille=mysql_num_rows($result_grille);
 
-			if($count_grille==0) // si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
-			{
-				// date de fin de la grille précedent :
-				// $new_date_fin_grille = $new_date_deb_grille -1 jour !
-				$new_jour_num= (integer) $tab_new_user['jour'];
-				$new_mois_num= (integer) $tab_new_user['mois'];
-				$new_year_num= (integer) $tab_new_user['year'];
-				$new_date_fin_grille=date("Y-m-d", mktime(0, 0, 0, $new_mois_num, $new_jour_num-1, $new_year_num)); // int mktime(int hour, int minute, int second, int month, int day, int year )
-
+			if($count_grille==0) {// si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
+              $date_fin_grille = new DateTime($new_date_deb_grille) ;
+              $date_fin_grille->sub($aday) ;  /* jour avant */ 
+              $new_date_fin_grille = $date_fin_grille->format('Y-m-d') ; 
 				// UPDATE de la table conges_artt
 				// en fait, on update la dernière grille (on update la date de fin de grille), et on ajoute une nouvelle
 				// grille (avec sa date de début de grille)
@@ -523,23 +525,11 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 						WHERE a_login='$u_login_to_update' AND a_date_fin_grille='9999-12-31'" ;
 				$result2 = requete_mysql($sql2, $mysql_link, "commit_update", $DEBUG);
 
-                /* dpavet tentative correcton du bug qui fait disparaitre le dernier enregistrement */ 
-				$result2commit = requete_mysql("commit ; ", $mysql_link, "commit_update", $DEBUG);
-                /* commit requi sinon ordre suivant porte sur la meme cle primaire */ 
-                $newi_date_deb_grille=date("Y-m-d", mktime(0, 0, 0, $new_mois_num, $new_jour_num, $new_year_num)); // int mktime(int hour, int minute, int second, int month, int day, int year )
-                $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille  )
-						VALUES ('$u_login_to_update', '$newi_date_deb_grille', '9999-12-31') " ;
- 				$result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
-                /* dpavet end */ 
-
 				if($result2==FALSE)
 					$result==FALSE;
-			}
-			else  // si une grille modifiée aujourd'hui : on delete cette grille
-			{
+			} else  { // si une grille modifiée aujourd'hui : on delete cette grille
 				$sql_suppr_grille="DELETE FROM conges_artt WHERE a_login='$u_login_to_update' AND a_date_debut_grille='$new_date_deb_grille'";
 				$result_suppr_grille = requete_mysql($sql_suppr_grille, $mysql_link, "commit_update", $DEBUG);
-
 				if($result_suppr_grille==FALSE)
 					$result==FALSE;
 			}
@@ -581,6 +571,7 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 			{
 				$sql3 = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille )
 						VALUES ('$u_login_to_update', $list_valeurs, '$new_date_deb_grille') " ;
+                /*   `a_date_fin_grille` est peuplé à '9999-12-31' par défaut */ 
 				$result3 = requete_mysql($sql3, $mysql_link, "commit_update", $DEBUG);
 
 				if($result3==FALSE)
