@@ -350,7 +350,8 @@ $LANG['admin_temps_partiel_sem_impaires']	= "semaines Impaires";
 $LANG['admin_temps_partiel_sem_paires']		= "semaines Paires";
 $LANG['admin_temps_partiel_am']				= "matin";
 $LANG['admin_temps_partiel_pm']				= "apres-midi";
-$LANG['admin_temps_partiel_date_valid']		= "Date de début de validité de cette grille";
+$LANG['admin_temps_partiel_date_valid_actuel']		= "Date de début de validité grille actuelle";
+$LANG['admin_temps_partiel_date_valid']		= "Date de début de validité de la nouvelle grille";
 // page admin_suppr_groupe
 $LANG['admin_suppr_groupe_titre']		= "Suppression de Groupe.";
 // page admin_suppr_groupe
