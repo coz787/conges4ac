@@ -5718,35 +5718,36 @@ ORDER BY a_date_debut_grille ASC";
     array_push($lrec_scheme, $row);
   }
   $nrow = sizeof($lrec_scheme);
-  /*  echo "<pre>"; 
-  print_r($lrec_scheme[$nrow -1]) ;
-  echo "</pre>"; */
-  $lastrow = $nrow -1 ; 
-  if ($lrec_scheme[$lastrow]['a_date_fin_grille'] != $sendoftime) {
-    /* les donnees sont corrompues ; on corrige au mieux */ 
-    $indrow = 0 ; 
-    /* pour tous les rows sauf le dernier */ 
-    while ($indrow < $lastrow ) { 
-      $dactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
-      $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
-      $dnewfin->sub($aday);
-      $sql3n = "UPDATE conges_artt SET a_date_fin_grille='".$dnewfin->format("Y-m-d").
-        "' WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
-      $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
-      $indrow += 1 ; 
-    }
-    $dactufin = $lrec_scheme[$lastrow]['a_date_fin_grille']; 
-    $sql3last = "UPDATE conges_artt SET a_date_fin_grille='$sendoftime' WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
-    $result3last = requete_mysql($sql3last, $mysql_link, "commit_update", $DEBUG);
-    
-    /* echo "<pre>"; 
-    print_r($sql3n) ; 
-    echo "</pre>"; */
-    log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
-  };
-}
+  if ($nrow > 0) { // schemas artt existe 
 
+      $lastrow = $nrow -1 ; 
+      if ($lrec_scheme[$lastrow]['a_date_fin_grille'] != $sendoftime) {
+        /* les donnees sont corrompues ; on corrige au mieux */ 
+        $indrow = 0 ; 
+        /* pour tous les rows sauf le dernier */ 
+        while ($indrow < $lastrow ) { 
+          $dactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
+          $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
+          $dnewfin->sub($aday);
+          $sql3n = "UPDATE conges_artt SET a_date_fin_grille='".$dnewfin->format("Y-m-d").
+            "' WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+          $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
+          $indrow += 1 ; 
+        }
+        $dactufin = $lrec_scheme[$lastrow]['a_date_fin_grille']; 
+        $sql3last = "UPDATE conges_artt SET a_date_fin_grille='$sendoftime' WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+        $result3last = requete_mysql($sql3last, $mysql_link, "commit_update", $DEBUG);
+        log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
 
+      };
+  } else { // pas de schemas artt creation d'1 par defaut 
+    $stoday = conges_get_date_fmt1(False) ; 
+    $sql3ins = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
+						VALUES ('$user', '$stoday', '$sendoftime') " ;
+    $result3ins = requete_mysql($sql3ins, $mysql_link, "commit_update", $DEBUG);
+    log_action(0, "", $user, "correct_artt_scheme init", $mysql_link, $DEBUG);
+  }
+};
 /* _dpa_todo: 
    delivre date du jour / heure du jour soit réelle , soit impose par config 
    sous la forme d'un array comparable au resultat de getdate(), ie.
@@ -5842,7 +5843,7 @@ function get_currentscheme($lrecscheme,$ddate) {
   return $lrecscheme[$ilast] ; 
 }
 
-
-// pour echange RTT 
-
+/* echo "<pre>"; 
+     print_r($sql3n) ; 
+     echo "</pre>"; */
 ?>
