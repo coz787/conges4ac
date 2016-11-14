@@ -208,6 +208,7 @@ function build_datepicker(sid,odpi_cf) {
     });
 }
 function jqcal_ready() {
+
     // jqcal_refresh() ; 
     songletn = $("#ongletname"); 
     if (songletn) {

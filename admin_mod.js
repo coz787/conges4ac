@@ -1,4 +1,4 @@
-/* -*-mode: Javascript; coding: iso-8859-1; -*-
+/* -*-mode: Javascript; coding: utf-8; -*-
  * admin_mod.js 
  * client-side functions of use by admin mod of php_conges
  * 
@@ -7,6 +7,18 @@
 var oconfig = {"msg_nouveau_solde": " comme nouveau solde, pensez à valider " ,
                "msg_hp_controle": "nombre de jours hors période est entre 0 et 2" }; 
 
+var oconfigartt = {"user":"simon.adalbert","date_deb_grille_actu":"2016-10-01",
+                   "smindate":"", "smaxdate":"" } ; 
+var dconsole$ ; 
+var oschemeartt = { "dmindate": null, 
+                    "dmaxdate": null } ; 
+
+function say(mytext) {
+    stext = "at: " + mynow() + ": " + mytext + "<br>"; 
+    if (dconsole$) {
+        dconsole$.append(stext) ;
+    }
+}
 
 function admin_mod_ready() { 
     fbmessage$ = $('#fbmessage') ;
@@ -27,7 +39,40 @@ function admin_mod_ready() {
         }
     };     
     $('#jhpvalid').click(cb_jhpval);
+    soconfigartt$ = $('#oconfigartt');
+    if (soconfigartt$) {
+        try {
+            oconfigartt = JSON.parse(soconfigartt$.text());
+        } catch(e){ 
+            smessage = "admin_mod_ready::error in parsing oconfigartt " + e  ;
+            console.log(smessage); // alert(e); popup message 
+        }
+    };     
+
+    /* _admin_mod_artt_ */ 
+    oschemeartt.dmindate = $.datepicker.parseDate("yy-mm-dd",oconfigartt.smindate) ;
+    oschemeartt.dmaxdate = $.datepicker.parseDate("yy-mm-dd",oconfigartt.smaxdate) ;
+    
+    $('#dpickernewscheme').datepicker({ 
+        altField: "#newschemed" ,
+        showButtonPanel: true,
+        showWeek: true, 
+        dateFormat: "yy-mm-dd",
+        beforeShowDay: cb_highlightschemeday ,  
+        /* pas indispensable mais apporte la bulle de commentaire */ 
+        minDate:  oschemeartt.dmindate ,
+        maxDate:  oschemeartt.dmaxdate , 
+    });
+ 
+/*    $('#dpickernewscheme').datepicker();   {   
+        showButtonPanel: true,
+        showweek: true, 
+        dateFormat: "yy-mm-dd", 
+        beforeShowDay: cb_highlightschemeday ,
+        onSelect: cb_onselectschemeday }); 
+*/ 
 }
+
 
 function cb_jhpval() {
     newjhp = parseFloat(newjhp_input$.val());
@@ -70,4 +115,16 @@ function fb_msg(wlevel,wtext) { // wlevel 0:ok, 1:normal message, 2:erreur saisi
         fbmessage$.removeClass("ui-fbmessage-error").addClass("ui-fbmessage") ; 
     }; 
     fbmessage$.text(wtext);
+}
+function cb_onselectschemeday(dateText, inst) {
+    say("cb_onselect " + inst.id + " " + dateText );
+}
+function cb_highlightschemeday(date) {
+    if ( date < oschemeartt.dmindate ) { 
+        return [false,'','date avant le début de la grille actuelle'] ;
+    } else if ( date > oschemeartt.dmaxdate ) {
+        return [false,'','date trop anticipée'] ;
+    } else {
+        return [true,'','date sélectionnable'] ; 
+    } 
 }
