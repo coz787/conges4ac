@@ -5700,7 +5700,7 @@ ORDER BY a_date_debut_grille ASC";
     log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
   };
 }
-function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
+function correct_artt_scheme_v1($user, $mysql_link, $DEBUG=FALSE)
 {
   /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
      corrompues par appli conges4ac jusque v2 ; elle retablit la sequence comme suit :
@@ -5747,7 +5747,57 @@ ORDER BY a_date_debut_grille ASC";
     $result3ins = requete_mysql($sql3ins, $mysql_link, "commit_update", $DEBUG);
     log_action(0, "", $user, "correct_artt_scheme init", $mysql_link, $DEBUG);
   }
-};
+}
+function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
+{
+  /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
+     corrompues par appli conges4ac jusque v2 ; elle retablit la sequence comme suit :
+     deb1, deb2 - 1j, 
+     deb2, deb3 - 1j, 
+     debn, 9999-12-31 
+     voir également  admin_modif_user.php::commit_update 
+  */
+  global $sendoftime,$aday ; 
+  $ca_select = "SELECT * FROM conges_artt WHERE a_login='$user'
+ORDER BY a_date_debut_grille ASC"; 
+  $ca_req = requete_mysql($ca_select, $mysql_link, "correct_artt_scheme", $DEBUG);
+  $lrec_scheme = array(); 
+  while( $row = mysql_fetch_array($ca_req) ) {
+    array_push($lrec_scheme, $row);
+  }
+  $nrow = sizeof($lrec_scheme);
+  if ($nrow > 0) { // schemas artt existe 
+
+      $lastrow = $nrow -1 ; 
+      if ($lrec_scheme[$lastrow]['a_date_fin_grille'] != $sendoftime) {
+        /* les donnees sont corrompues ; on corrige au mieux */ 
+        $indrow = $lastrow ; 
+        /* on passe en revue les rows en commençant par le dernier */ 
+        while ($indrow >= 0 ) {
+          $dactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
+          if ($indrow == $lastrow) { 
+            $snewfin = $sendoftime ; 
+          } else { // on utilise la date de debut (suivant) - 1 j 
+            $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
+            $dnewfin->sub($aday);
+            $snewfin = $dnewfin->format("Y-m-d") ; 
+          }
+          $sql3n = "UPDATE conges_artt SET a_date_fin_grille='$snewfin' 
+WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+          $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
+          $indrow -= 1 ; 
+        }
+        log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
+
+      };
+  } else { // pas de schemas artt creation d'1 par defaut 
+    $stoday = conges_get_date_fmt1(False) ; 
+    $sql3ins = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
+						VALUES ('$user', '$stoday', '$sendoftime') " ;
+    $result3ins = requete_mysql($sql3ins, $mysql_link, "commit_update", $DEBUG);
+    log_action(0, "", $user, "correct_artt_scheme init", $mysql_link, $DEBUG);
+  }
+}
 /* _dpa_todo: 
    delivre date du jour / heure du jour soit réelle , soit impose par config 
    sous la forme d'un array comparable au resultat de getdate(), ie.
