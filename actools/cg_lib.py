@@ -862,7 +862,7 @@ su_login ='%s' and su_abs_id=%d ;"
                 else:
                     # print "do_detect_w_artt last artt for %s differes from standard [%s];" % (auser,sdfg)
                     print "do_detect_w_artt no item with [%s] for user[%s] " % (sdfgrillet,auser)
-                    # print "do_detect_w_artt \n%s\n" % pprint.pformat(lartt)
+                    print "do_detect_w_artt \n%s\n" % pprint.pformat(lartt)
             except:
                 print_exc()
                 print "method do_detect_w_artt 2" 
