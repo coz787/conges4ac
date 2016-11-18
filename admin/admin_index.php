@@ -48,11 +48,12 @@ echo "<head>\n";
 echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
 echo "<link href=\"../".$_SESSION['config']['stylesheet_file']."\" rel=\"stylesheet\" type=\"text/css\">\n";
 // <aiws>
-echo "<link rel=\"stylesheet\" href=\"/jquery/development-bundle/themes/base/jquery.ui.all.css\">\n" ;
+echo "<link href=\"../jquery-ui-1.10.3.custom_a.css\" rel=\"stylesheet\" type=\"text/css\" >\n";
+
+/* echo "<link rel=\"stylesheet\" href=\"/jquery/development-bundle/themes/base/jquery.ui.all.css\">\n" ; */
 echo "<script src=\"/jquery/js/jquery-1.10.2.min.js\"></script>\n";
 echo "<script src=\"/jquery/js/jquery-ui-1.10.3.custom.min.js\"></script>\n";
-/* echo "<script src=\"/jquery/js/jquery-1.8.3.js\"></script>\n" ; 
-   echo "<script src=\"/jquery/js/jquery-ui-1.9.2.custom.js\"></script>\n" ; */ 
+echo "<script src=\"/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr.js\"></script>\n";
 echo "	<style>\n" ;
 echo "	.ui-autocomplete-loading {\n";
 echo "		background: white url('/jquery/development-bundle/demos/autocomplete/images/ui-anim_basic_16x16.gif') right center no-repeat;\n";
@@ -64,6 +65,9 @@ echo "	</style>\n";
 echo "	<script src=\"../ws/integrated/aiws.js\"></script>\n";
 echo "  <script>$(function() { aiws_ready(); } ); </script>\n";
 // </aiws>
+echo "<script src=\"../admin_mod.js\"></script>\n";
+echo "<script>$(function() { admin_mod_ready(); } ); </script>\n"; 
+
 echo "<TITLE> ".$_SESSION['config']['titre_application'].$_SESSION['config']['titre_admin_index']." </TITLE>\n";
 echo "</head>\n";
 
@@ -501,8 +505,10 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		{
 			echo $tab_new_jours_an[$id_cong]."---".$tab_new_solde[$id_cong]."<br>\n";
 		}
-		$new_date_deb_grille=$tab_new_user['new_year']."-".$tab_new_user['new_mois']."-".$tab_new_user['new_jour'];
-		echo "$new_date_deb_grille<br>\n" ;
+        /* for _admin_mod_artt_ */  
+		/* $new_date_deb_grille=$tab_new_user['new_year']."-".$tab_new_user['new_mois']."-".$tab_new_user['new_jour'];
+           echo "$new_date_deb_grille<br>\n" ; */
+        $new_date_deb_grille =  getpost_variable("newschemed"); 
 
 		/*****************************/
 		/* INSERT dans conges_users  */

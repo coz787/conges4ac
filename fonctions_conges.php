@@ -5754,7 +5754,8 @@ function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
      corrompues par appli conges4ac jusque v2 ; elle retablit la sequence comme suit :
      deb1, deb2 - 1j, 
      deb2, deb3 - 1j, 
-     debn, 9999-12-31 
+     debn, finn ,
+     finn + 1j, 9999-12-31      --  ce schema est vide  sans jour programme 
      voir également  admin_modif_user.php::commit_update 
   */
   global $sendoftime,$aday ; 
@@ -5775,15 +5776,21 @@ ORDER BY a_date_debut_grille ASC";
         /* on passe en revue les rows en commençant par le dernier */ 
         while ($indrow >= 0 ) {
           $dactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
-          if ($indrow == $lastrow) { 
+          if ($indrow == $lastrow) { /* ds ce cas on ajoute un schemas vide */ 
             $snewfin = $sendoftime ; 
+            $dnewdeb = new DateTime($lrec_scheme[$indrow]['a_date_fin_grille']);
+            $dnewdeb->add($aday);
+            $snewdeb = $dnewdeb->format("Y-m-d") ; 
+            $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
+						VALUES ('$user', '$snewdeb', '$sendoftime') " ;
           } else { // on utilise la date de debut (suivant) - 1 j 
             $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
             $dnewfin->sub($aday);
             $snewfin = $dnewfin->format("Y-m-d") ; 
-          }
-          $sql3n = "UPDATE conges_artt SET a_date_fin_grille='$snewfin' 
+            $sql3n = "UPDATE conges_artt SET a_date_fin_grille='$snewfin' 
 WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+          }
+
           $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
           $indrow -= 1 ; 
         }
