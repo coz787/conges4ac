@@ -5782,7 +5782,7 @@ ORDER BY a_date_debut_grille ASC";
             $dnewdeb->add($aday);
             $snewdeb = $dnewdeb->format("Y-m-d") ; 
             $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
-						VALUES ('$user', '$snewdeb', '$sendoftime') " ;
+						VALUES ('$user', '$snewdeb', '$sendoftime') ; " ;
           } else { // on utilise la date de debut (suivant) - 1 j 
             $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
             $dnewfin->sub($aday);
@@ -5800,7 +5800,7 @@ WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
   } else { // pas de schemas artt creation d'1 par defaut 
     $stoday = conges_get_date_fmt1(False) ; 
     $sql3ins = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
-						VALUES ('$user', '$stoday', '$sendoftime') " ;
+						VALUES ('$user', '$stoday', '$sendoftime') ; " ;
     $result3ins = requete_mysql($sql3ins, $mysql_link, "commit_update", $DEBUG);
     log_action(0, "", $user, "correct_artt_scheme init", $mysql_link, $DEBUG);
   }
