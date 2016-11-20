@@ -843,19 +843,30 @@ function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 		$date_deb_grille=$resultat1['a_date_debut_grille'];
 		$date_fin_grille=$resultat1['a_date_fin_grille'];
 	}
-    /* _admin_mod_artt_ */ 
-    $ddeb_grille = new DateTime($date_deb_grille); 
-    /* _endur_ */ 
-    $dmindate = $ddeb_grille ;   $dmindate->add($aday);
-    $dmaxdate = new DateTime(conges_get_date_fmt1(False)) ; $dmaxdate->add($a30day);
+    /* _admin_mod_artt_ : determination plage saisie de date de debut 
+       si saisie initiale : mindate est debut annee courante 
+       sinon                mindate est ddebut_grille_encours + 1 j 
+
+       maxdate est date du jour + 30 jours permettant anticiper */
+
+    if ($date_deb_grille) { 
+      $ddeb_grille = new DateTime($date_deb_grille); 
+      $dmindate = $ddeb_grille ;   $dmindate->add($aday);
+      $smindate = $dmindate->format('Y-m-d') ; 
+    } else { 
+      $ltoday = conges_get_date(False); 
+      $smindate = sprintf("%02d-%02d-%02d",$ltoday['year'],1,1) ; 
+    }
+    $dmaxdate = new DateTime(conges_get_date_fmt1(False)) ; 
+    $dmaxdate->add($a30day);
     
     $oconfigartt = array("user" => $login , 
                          "date_deb_grille_actu" => $date_deb_grille ,
-                         "smindate" => $dmindate->format('Y-m-d'), 
+                         "smindate" => $smindate , 
                          "smaxdate" => $dmaxdate->format('Y-m-d')
                          );
 
-    echo "<div id=\"oconfigartt\"  class=\"tech\">\n"; 
+    echo "<div id=\"oconfigartt\" class=\"tech\" > \n"; /*  */
     echo json_encode($oconfigartt);
     echo "</div>\n"; 
 

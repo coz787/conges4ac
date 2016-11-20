@@ -521,6 +521,8 @@ $LANG['15_Modules Externes']		= "15 Modules Externes";
 $LANG['16_Int_calendar']		= "16 Integration Calendar";
 // parametres de config
 $LANG['config_comment_installed_version']	= "numéro de version installée";
+$LANG['config_comment_installed_state']	    = "etat technique version / maj - moe ";
+
 $LANG['config_comment_url_conges_assistance']	= "// url pointant une page optionnelle d'assistance pour les utilisateurs "; 
 $LANG['config_comment_message_for_all'] = "// message de service pour tout user accèdant à la page de login " ; 
 $LANG['config_comment_lang']				= "// LANGUE / LANGUAGE<br>\n//---------------------------<br>\n// fr = français<br>\n// test = seulement pour les developpeurs de php_conges (only for php_conges developpers)";

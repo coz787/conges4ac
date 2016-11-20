@@ -256,6 +256,7 @@ CREATE TABLE IF NOT EXISTS `conges_config` (
 #
 
 INSERT INTO `conges_config` VALUES ('installed_version', '0', '00_php_conges', 'texte', 'config_comment_installed_version');
+INSERT INTO `conges_config` VALUES ('installed_state', 'v3rc14', '00_php_conges', 'texte', 'config_comment_installed_state');
 # 
 INSERT INTO `conges_config` VALUES ('url_conges_assistance', 'http://portail-dgac.aviation-civile.gouv.fr/portal/server.pt/', '00_php_conges', 	'texte', 'config_comment_url_conges_assistance'); 
 INSERT INTO `conges_config` VALUES ('message_for_all', '', '00_php_conges',     'texte', 'config_comment_message_for_all'); 

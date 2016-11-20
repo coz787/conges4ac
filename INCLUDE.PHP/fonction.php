@@ -263,6 +263,12 @@ function session_saisie_user_password($erreur, $session_username, $session_passw
 	$config_texte_page_login        =$_SESSION['config']['texte_page_login'];
 //	$config_php_conges_version      =$_SESSION['config']['php_conges_version'];
 	$config_php_conges_version      =$_SESSION['config']['installed_version'];
+    if ( array_key_exists('installed_state', $_SESSION['config']) ) {
+      $config_php_conges_state      =$_SESSION['config']['installed_state'];
+    } else {
+      $config_php_conges_state      = "--" ; 
+    }
+
 	$config_url_site_web_php_conges =$_SESSION['config']['url_site_web_php_conges'];
 	$config_stylesheet_file         =$_SESSION['config']['stylesheet_file'];
 
@@ -392,7 +398,7 @@ function session_saisie_user_password($erreur, $session_username, $session_passw
         };        
         echo "<td align=\"right\">\n";
 			echo "<br><br>";
-			echo "<a href=\"$config_url_site_web_php_conges/\">PHP_CONGES v $config_php_conges_version</a>\n";
+			echo "<a href=\"$config_url_site_web_php_conges/\">PHP_CONGES v $config_php_conges_version $config_php_conges_state</a>\n";
 		echo "</td></tr>\n";
 		echo "</table>\n";
 	}
