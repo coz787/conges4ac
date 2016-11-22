@@ -1,13 +1,17 @@
 # -*- mode: python; coding: utf-8 -*-  
-'''mvmpt_lib.py: embodies TransformFactory and set of class built
-to make the real transformation (attempt to design it as a Strategy dPattern) '''
+'''cg_etl_lib.py: embodies TransformFactory and set of class built
+to make the real transformation (designed as a Strategy dPattern) '''
 
-import sys, os, pprint, re, string, sys, time # , getopt
+import copy, sys, os, pprint, re, string, sys, time # , getopt
 from decimal import Decimal 
-from datetime  import date
+from datetime  import date,timedelta,datetime
 # import datetime  
 from traceback import print_exc
 import MySQLdb
+dtimenow = datetime.now()
+dnow = dtimenow.date() # datetime.date du jour 
+nthisyear = dtimenow.year
+# print dnow , nthisyear
 
 def msd2string(omsdata):
     ''' mysql data to latin1 ''' 
@@ -270,8 +274,46 @@ class AbsTransformFactory:
                 # ocdest.execute(aorder)
                 # uni_aorder = aorder.decode(osrc['charset']).encode(odest['charset'])
                 # print type(aorder),type(uni_aorder)
-                
             
+    def build_simple_user_list(self,ddbsrc):
+        ''' set self.luser ordered to be used by other method '''
+        ocursor = ddbsrc['std']
+        # this 3 instructions only for _TU_ 
+        self.luser0 = ['michele.mariaud'] 
+        self.luser1 = ['annick.cadet', 
+                      'carole.cesto', 
+                      'gilles.paris', 
+                      'isabelle.weiss', 
+                      'marie-claude.potiron', 
+                      'michele.mariaud', 
+                      'natalia.de-castro', 
+                      'nathalie.leonoff', 
+                      'patricia.valentin', 
+                      'reza.djafarian', 
+                      'sandrine.horvath', 
+                      'selma.ben-brahem', 
+                      'stephanie.cilia', 
+                      'sylvette.dufour', 
+                      'sylvie.ledeux', 
+                      'zelia.braz',
+                      'didier.pavet',
+                      'isabelle.pezzetta'
+        ] 
+        # return 
+        self.luser = [] 
+        try:
+            ocursor.execute("select u_login from conges_users ;")
+        except: 
+            sys.stderr.write("select u_login from conges_users  ;\n") 
+            print_exc()
+            sys.exit(1)
+        while 1  : 
+            lrow = ocursor.fetchone()
+            if lrow == None : 
+                break
+            self.luser.append(lrow[0]) 
+
+                
 class c4ac_2to3(AbsTransformFactory):
     def __init__(self):
         AbsTransformFactory.__init__(self)
@@ -282,6 +324,25 @@ class c4ac_2to3(AbsTransformFactory):
                         'keep_n_update' : KeepnUpdate() }
     def init_scheme(self,dscheme,ddbsrc=None) :
         self.std_scheme(dscheme) 
+    def nodo_apply(self,dopt,osrc,odest):
+        pass 
+
+class c4ac_2nsto3(AbsTransformFactory):
+    def __init__(self):
+        AbsTransformFactory.__init__(self)
+        self.name = "c4ac_2nsto3"
+        self.m_void_n_import_cartt  =  VoidnImportKwCartt()
+        self.dstrat = { 'void_n_import' : VoidnImportKw() ,
+                        'void_n_import_cartt' : self.m_void_n_import_cartt , 
+#                        'void_n_selectiveimport' : VoidnSelectiveImport() ,
+                        'void_n_import_gu' : VoidnImportGroupeUser() ,
+                        'keep_n_update' : KeepnUpdate() }
+    def init_scheme(self,dscheme,ddbsrc=None) :
+        self.std_scheme(dscheme) 
+        # building self.luser 
+        self.build_simple_user_list(ddbsrc)        
+        self.m_void_n_import_cartt.configure(self.luser)
+
     def nodo_apply(self,dopt,osrc,odest):
         pass 
 
@@ -567,6 +628,118 @@ to optional selection criteria , by keyword '''
             if bvalid_row: 
                 orecorder.append(self.insert_all_dict(stable,drow))
             nline += 1 
+
+class VoidnImportKwCartt(AbsTransform): 
+    '''delete all record and import element from source 
+WITH <<subtle correction of artt data>> '''
+    def configure(self,luser):
+        self.luser = luser 
+    def run(self,osrc,odest,stable,lpkey,orecorder,opt):
+        # common thing from parent class 
+        AbsTransform.run(self,osrc,odest,stable,lpkey,orecorder,opt)
+        # self.print_table_struct(osrc,odest,stable)
+        orecorder.append(self.truncate(stable)) 
+        # _specific_artt stable = conges_artt 
+        sql_select_star = "select * from %s where a_login='%s' ORDER BY a_date_fin_grille ASC ;"
+        sql_insert_all_dict = "insert into %s (%s) values (%s) ;"
+        ocursor = osrc['dict']
+        # no other where clause
+        # required constant 
+        sendoftime = "9999-12-31" 
+        dendoftime = date(9999,12,31)
+        doneday = timedelta(days=1)
+
+        # demptyartt to be cloned import copy
+        # dartt = copy.copy(demptyartt)   or copy.deepcopy(demptyartt) 
+        demptyartt = {'a_date_debut_grille': None,
+                      'a_date_fin_grille': None,
+                      'a_login': None,
+                      'sem_imp_di_am': None,
+                      'sem_imp_di_pm': None,
+                      'sem_imp_je_am': None,
+                      'sem_imp_je_pm': None,
+                      'sem_imp_lu_am': None,
+                      'sem_imp_lu_pm': None,
+                      'sem_imp_ma_am': None,
+                      'sem_imp_ma_pm': None,
+                      'sem_imp_me_am': None,
+                      'sem_imp_me_pm': None,
+                      'sem_imp_sa_am': None,
+                      'sem_imp_sa_pm': None,
+                      'sem_imp_ve_am': None,
+                      'sem_imp_ve_pm': None,
+                      'sem_p_di_am': None,
+                      'sem_p_di_pm': None,
+                      'sem_p_je_am': None,
+                      'sem_p_je_pm': None,
+                      'sem_p_lu_am': None,
+                      'sem_p_lu_pm': None,
+                      'sem_p_ma_am': None,
+                      'sem_p_ma_pm': None,
+                      'sem_p_me_am': None,
+                      'sem_p_me_pm': None,
+                      'sem_p_sa_am': None,
+                      'sem_p_sa_pm': None,
+                      'sem_p_ve_am': None,
+                      'sem_p_ve_pm': None}
+        # print pprint.pformat(self.luser)
+        for sauser in self.luser : 
+            ocursor.execute(sql_select_star  % (stable,sauser) )
+            self.lartt , self.newlartt = [], [] 
+            while 1 : # we store all row in a list 
+                drow = ocursor.fetchone()
+                if drow == None : 
+                    break
+                self.lartt.append(drow)
+                # print pprint.pformat(drow)
+                # return # prematuredend 
+            nrow = len(self.lartt) 
+            if nrow > 0 : # some artt exists 
+                nlast = nrow - 1 
+                # if (self.lartt[nlast]['a_date_fin_grille'] == sendoftime ) : 
+                idrow = 0 
+                dpreviousrow = None 
+                while idrow < nrow : 
+                    dcrow = self.lartt[idrow]
+                    if dcrow['a_date_debut_grille'] < dcrow['a_date_fin_grille'] :
+                        
+                        if dpreviousrow : 
+                            dcrow['a_date_debut_grille'] = \
+                               dpreviousrow['a_date_fin_grille'] + doneday
+                        dpreviousrow = dcrow 
+                        dnewartt = None 
+                        if idrow == nlast : 
+                            if dcrow['a_date_fin_grille'] != sendoftime :
+                                if dcrow['a_date_fin_grille'] < dnow :
+                                    dnewartt = copy.copy(demptyartt)
+                                    dnewartt['a_login'] = sauser 
+                                    dnewartt['a_date_fin_grille'] = dendoftime
+                                    dnewartt['a_date_debut_grille'] = \
+                                       dcrow['a_date_fin_grille'] + doneday
+                                else: # on force a endoftime 
+                                    dcrow['a_date_fin_grille'] = sendoftime
+                        # we add the current row
+                        self.newlartt.append(dcrow)
+                        if dnewartt : # if exists we add the new row
+                            self.newlartt.append(dnewartt)
+                    else : # otherwise item is discarded  
+                        print "# artt schema supprime %s, %s, %s " % \
+                            (sauser,dcrow['a_date_debut_grille'], dcrow['a_date_fin_grille'] )
+                    idrow += 1
+                #end while idrow < nrow 
+            else : # no artt we create one
+                print "# artt creation for %s" % sauser 
+                dnewartt = copy.copy(demptyartt)
+                dnewartt['a_login'] = sauser
+                dnewartt['a_date_fin_grille'] = dendoftime
+                dnewartt['a_date_debut_grille'] = date(nthisyear, 1, 1)
+                self.newlartt.append(dnewartt)
+            # we have a ready-to-inject list of artt 
+            for danewrow in self.newlartt:
+                orecorder.append(self.insert_all_dict(stable,danewrow))
+            #ending for sauser in self.luser :    
+        # theend
+        return 
 
 class VoidnImportSelUser(AbsTransform): 
     '''delete all record and import element from source that correspond
