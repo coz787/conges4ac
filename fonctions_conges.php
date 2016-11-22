@@ -5677,7 +5677,7 @@ ORDER BY a_date_debut_grille ASC";
   return $lrec_scheme ;  
 }
 
-function correct_artt_scheme_v0($user, $mysql_link, $DEBUG=FALSE)
+function attic_correct_artt_scheme_v0($user, $mysql_link, $DEBUG=FALSE)
 {
   /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
      corrompues par appli conges4ac jusque v2 ; elle ajoute un enregistrement final
@@ -5711,7 +5711,7 @@ ORDER BY a_date_debut_grille ASC";
     log_action(0, "", $user, "correct_artt_scheme", $mysql_link, $DEBUG);
   };
 }
-function correct_artt_scheme_v1($user, $mysql_link, $DEBUG=FALSE)
+function attic_correct_artt_scheme_v1($user, $mysql_link, $DEBUG=FALSE)
 {
   /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
      corrompues par appli conges4ac jusque v2 ; elle retablit la sequence comme suit :
@@ -5759,7 +5759,7 @@ ORDER BY a_date_debut_grille ASC";
     log_action(0, "", $user, "correct_artt_scheme init", $mysql_link, $DEBUG);
   }
 }
-function correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
+function attic_correct_artt_scheme($user, $mysql_link, $DEBUG=FALSE)
 {
   /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
      corrompues par appli conges4ac jusque v2 ; elle retablit la sequence comme suit :
@@ -5786,20 +5786,29 @@ ORDER BY a_date_debut_grille ASC";
         $indrow = $lastrow ; 
         /* on passe en revue les rows en commençant par le dernier */ 
         while ($indrow >= 0 ) {
-          $dactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
-          if ($indrow == $lastrow) { /* ds ce cas on ajoute un schemas vide */ 
-            $snewfin = $sendoftime ; 
-            $dnewdeb = new DateTime($lrec_scheme[$indrow]['a_date_fin_grille']);
-            $dnewdeb->add($aday);
-            $snewdeb = $dnewdeb->format("Y-m-d") ; 
-            $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
+          $sactufin = $lrec_scheme[$indrow]['a_date_fin_grille']; 
+          $sactudeb = $lrec_scheme[$indrow]['a_date_debut_grille']; 
+          if ($indrow == $lastrow) { 
+            $dactudeb = new DateTime($sactudeb);
+            $dactufin = new DateTime($sactufin);
+            if ($dactudeb < $dactufin) {  /* ds ce cas on ajoute un schemas vide */ 
+              $snewfin = $sendoftime ; 
+              $dnewdeb = clone($dactufin); /* new DateTime($lrec_scheme[$indrow]['a_date_fin_grille']); */ 
+              $dnewdeb->add($aday);
+              $snewdeb = $dnewdeb->format("Y-m-d") ; 
+              $sql3n = "INSERT INTO conges_artt (a_login, a_date_debut_grille, a_date_fin_grille )
 						VALUES ('$user', '$snewdeb', '$sendoftime') ; " ;
+            } else { /* cas parti ou date_fin anterieur date_deb 
+                      on force alors date_de_fin = end_of_time */
+              $sql3n = "UPDATE conges_artt SET a_date_fin_grille='$sendoftime' 
+WHERE a_login='$user' AND a_date_fin_grille='$sactufin' ; " ;
+            }
           } else { // on utilise la date de debut (suivant) - 1 j 
             $dnewfin = new DateTime($lrec_scheme[$indrow + 1 ]['a_date_debut_grille']); 
             $dnewfin->sub($aday);
             $snewfin = $dnewfin->format("Y-m-d") ; 
             $sql3n = "UPDATE conges_artt SET a_date_fin_grille='$snewfin' 
-WHERE a_login='$user' AND a_date_fin_grille='$dactufin' ; " ;
+WHERE a_login='$user' AND a_date_fin_grille='$sactufin' ; " ;
           }
 
           $result3n = requete_mysql($sql3n, $mysql_link, "commit_update", $DEBUG);
