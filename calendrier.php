@@ -1090,7 +1090,7 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 	{
 		// on propose la liste des groupes dont user est resp + groupes dont user est membre
 		$list_groupes_1=get_list_groupes_du_resp($_SESSION['userlogin'], $mysql_link, $DEBUG);
-		$list_groupes_2=get_list_groupes_du_user($_SESSION['userlogin'], $mysql_link, $DEBUG);
+		$list_groupes_2=get_list_groupes_du_user($_SESSION['userlogin'], $mysql_link, "", $DEBUG);
 		$list_groupes = $list_groupes_1.",".$list_groupes_2 ;
 
 		//correction de JBR: bug pour l' affichage du calendrier des grands responsables
@@ -1102,8 +1102,8 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 		         $list_groupes = $list_groupes_1.",".$list_groupes_2;
 	}
 	else {
-      		$list_groupes=get_list_groupes_du_user($_SESSION['userlogin'], $mysql_link, $DEBUG);
-  	     } ; 
+      $list_groupes=get_list_groupes_du_user($_SESSION['userlogin'], $mysql_link, "", $DEBUG);
+    } ; 
 	echo "<form action=\"$PHP_SELF?session=$session&printable=$printable&selected=$selected&year=$year&mois=$mois&first_jour=$first_jour\" method=\"POST\">\n";
 	$tab_groupes=array_unique(explode(",", $list_groupes));
 	echo $_SESSION['lang']['calendrier_afficher_groupe']." : ";
