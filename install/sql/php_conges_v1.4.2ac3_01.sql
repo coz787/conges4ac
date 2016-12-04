@@ -256,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `conges_config` (
 #
 
 INSERT INTO `conges_config` VALUES ('installed_version', '0', '00_php_conges', 'texte', 'config_comment_installed_version');
-INSERT INTO `conges_config` VALUES ('installed_state', 'v3rc14', '00_php_conges', 'texte', 'config_comment_installed_state');
+INSERT INTO `conges_config` VALUES ('installed_state', 'v3rc16', '00_php_conges', 'texte', 'config_comment_installed_state');
 # 
 INSERT INTO `conges_config` VALUES ('url_conges_assistance', 'http://portail-dgac.aviation-civile.gouv.fr/portal/server.pt/', '00_php_conges', 	'texte', 'config_comment_url_conges_assistance'); 
 INSERT INTO `conges_config` VALUES ('message_for_all', '', '00_php_conges',     'texte', 'config_comment_message_for_all'); 
@@ -299,11 +299,11 @@ INSERT INTO `conges_config` VALUES ('affiche_bouton_config_pour_admin', 'FALSE',
 INSERT INTO `conges_config` VALUES ('affiche_bouton_config_absence_pour_admin', 'FALSE', '07_Administrateur', 'boolean', 'config_comment_affiche_bouton_config_absence_pour_admin');
 INSERT INTO `conges_config` VALUES ('affiche_bouton_config_mail_pour_admin', 'FALSE', '07_Administrateur', 'boolean', 'config_comment_affiche_bouton_config_mail_pour_admin');
 
-INSERT INTO `conges_config` VALUES ('mail_new_demande_alerte_resp', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_new_demande_alerte_resp');
-INSERT INTO `conges_config` VALUES ('mail_valid_conges_alerte_user', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_valid_conges_alerte_user');
-INSERT INTO `conges_config` VALUES ('mail_prem_valid_conges_alerte_user', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_prem_valid_conges_alerte_user');
-INSERT INTO `conges_config` VALUES ('mail_refus_conges_alerte_user', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_refus_conges_alerte_user');
-INSERT INTO `conges_config` VALUES ('mail_annul_conges_alerte_user', 'FALSE', '08_Mail', 'boolean', 'config_comment_mail_annul_conges_alerte_user');
+INSERT INTO `conges_config` VALUES ('mail_new_demande_alerte_resp', 'TRUE', '08_Mail', 'boolean', 'config_comment_mail_new_demande_alerte_resp');
+INSERT INTO `conges_config` VALUES ('mail_valid_conges_alerte_user', 'TRUE', '08_Mail', 'boolean', 'config_comment_mail_valid_conges_alerte_user');
+INSERT INTO `conges_config` VALUES ('mail_prem_valid_conges_alerte_user', 'TRUE', '08_Mail', 'boolean', 'config_comment_mail_prem_valid_conges_alerte_user');
+INSERT INTO `conges_config` VALUES ('mail_refus_conges_alerte_user', 'TRUE', '08_Mail', 'boolean', 'config_comment_mail_refus_conges_alerte_user');
+INSERT INTO `conges_config` VALUES ('mail_annul_conges_alerte_user', 'TRUE', '08_Mail', 'boolean', 'config_comment_mail_annul_conges_alerte_user');
 INSERT INTO `conges_config` VALUES ('serveur_smtp', '', '08_Mail', 'texte', 'config_comment_serveur_smtp');
 INSERT INTO `conges_config` VALUES ('where_to_find_user_email', 'dbconges', '08_Mail', 'enum=dbconges/ldap', 'config_comment_where_to_find_user_email');
 INSERT INTO `conges_config` VALUES ('mail_echange_rtt_alerte_resp','TRUE','08_Mail','boolean','config_comment_mail_echange_rtt_alerte_resp');
