@@ -2366,34 +2366,40 @@ function alerte_mail($login_expediteur, $destinataire, $operiode, $objet, $mysql
 			foreach($tab_resp as $item_login => $item_presence)
 			{
 				// recherche de l'adresse mail du (des) responsable(s) :
-				$mail_array_dest=find_email_adress_for_user($item_login, $mysql_link, $DEBUG);
-				$mail_dest_name = $mail_array_dest[0];
-				$mail_dest_addr = $mail_array_dest[1];
-				if( $DEBUG==TRUE )
-					echo "TO = $mail_dest_addr<br>\n";
+              $mail_array_dest=find_email_adress_for_user($item_login, $mysql_link, $DEBUG);
+              $mail_dest_name = $mail_array_dest[0];
+              $mail_dest_addr = $mail_array_dest[1];
+              if( $DEBUG==TRUE )
+                echo "TO = $mail_dest_addr<br>\n";
 
-				if($mail_dest_addr=="")
-					echo "<b>ERROR : $mail_dest_name : no mail address !</b><br>\n";
-				else
-				{
-					// on change l'objet si c'est un "new_demande" à un resp absent et qu'on gere les absence de resp !
-					if( ($_SESSION['config']['gestion_cas_absence_responsable']==TRUE) && 
-                        ($item_presence=="absent") && ($objet=="new_demande") ) {  
-                                                    // $objet="new_demande" bug1
-                      $new_objet="new_demande_resp_absent";
-					} else { 
-                      $new_objet=$objet;
-                    }; 
+              if($mail_dest_addr=="") {
+                echo "<b>ERROR : $mail_dest_name : no mail address !</b><br>\n";
+              } else {
+                  // on change l'objet si c'est un "new_demande" à un resp absent et qu'on gere les absence de resp !
+                if( ($_SESSION['config']['gestion_cas_absence_responsable']==TRUE) && 
+                      ($item_presence=="absent") && ($objet=="new_demande") ) {  
+                    // $objet="new_demande" bug1
+                  $new_objet="new_demande_resp_absent";
+                } else { 
+                  $new_objet=$objet;
+                }; 
 
-                        // _dpa_dpa                        construct_and_send_mail($new_objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $operiode, $destinataire, $mysql_link, $DEBUG);
-                        construct_and_send_mail(
-      $new_objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, 
-      $mail_dest_addr, $operiode, $login_expediteur, $mysql_link, $DEBUG );
-				}
+                  // _dpa_dpa  construct_and_send_mail($new_objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, $mail_dest_addr, $operiode, $destinataire, $mysql_link, $DEBUG);
+                construct_and_send_mail(
+                    $new_objet, $mail_sender_name, $mail_sender_addr, $mail_dest_name, 
+                    $mail_dest_addr, $operiode, $login_expediteur, $mysql_link, $DEBUG );
+              }
 			}
-
+            // ac3 : _todo : forge un log pour suivre workflow user - > responsable
+            if ($objet=="new_demande") { 
+              $sccoment = "a valider par: " ; 
+              $l_resp = array_keys($tab_resp) ;
+              sort($l_resp); 
+              $sccoment .= join(',', $l_resp) ; 
+              log_action(0, "demande", $login_expediteur, $sccoment, $mysql_link, $DEBUG);
+            };
 		}
-		else   // c'est un message du responsale à un user
+		else   // c'est un message du responsable à un user
 		{
 			$dest_login = $destinataire ;
 			$mail_array_dest=find_email_adress_for_user($dest_login, $mysql_link, $DEBUG);
@@ -3652,7 +3658,7 @@ function get_list_users_des_groupes_du_user($user_login, $mysql_link, $DEBUG=FAL
 {
 	$list_users="";
 
-	$list_groups=get_list_groupes_du_user($user_login, $mysql_link, $DEBUG);
+	$list_groups=get_list_groupes_du_user($user_login, $mysql_link, 'membre', $DEBUG);
 	if($list_groups!="") // si $user_login est membre d'au moins un groupe
 	{   /* _ac3 : uniquement les liens de gu_nature = 'membre' */
 		$sql="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) and gu_nature='membre' ORDER BY gu_login ";
@@ -3671,13 +3677,18 @@ function get_list_users_des_groupes_du_user($user_login, $mysql_link, $DEBUG=FAL
 
 }
 
-// recup de la liste des groupes dont $resp_login est membre
+// recup de la liste des groupes dont $resp_login est $snature 
+// _adaptation a conges4acv3 
 // renvoit une liste de group_id séparés par des virgules
-function get_list_groupes_du_user($user_login, $mysql_link, $DEBUG=FALSE)
+function get_list_groupes_du_user($user_login, $mysql_link, $snature="membre",$DEBUG=FALSE)
 {
 	$list_group="";
-
-	$sql="SELECT gu_gid FROM conges_groupe_users WHERE gu_login='$user_login' ORDER BY gu_gid";
+    if  ($snature == "") {
+      $swhere = "" ; 
+    } else {
+      $swhere = "AND gu_nature='".$snature."'" ; 
+    }
+	$sql="SELECT gu_gid FROM conges_groupe_users WHERE gu_login='$user_login' ".$swhere. " ORDER BY gu_gid";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_du_user", $DEBUG);
 
 	while ($resultat1 = mysql_fetch_array($ReqLog1))
@@ -3763,7 +3774,7 @@ function get_tab_resp_du_user($user_login, $mysql_link, $DEBUG=FALSE)
 		// recup des resp des groupes du user
 		if($_SESSION['config']['gestion_groupes']==TRUE)
 		{
-			$list_groups=get_list_groupes_du_user($user_login, $mysql_link, $DEBUG);
+          $list_groups=get_list_groupes_du_user($user_login, $mysql_link, "membre", $DEBUG);
 			if($list_groups!="")
 			{
 				$tab_gid=explode(",", $list_groups);
@@ -3844,7 +3855,7 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp, $mysql_link, $DEB
 	// recup des resp des groupes du user
 	if($_SESSION['config']['gestion_groupes']==TRUE)
 	{
-		$list_groups=get_list_groupes_du_user($user_login, $mysql_link, $DEBUG);
+      $list_groups=get_list_groupes_du_user($user_login, $mysql_link, "membre", $DEBUG);
 		if($DEBUG==TRUE) { echo "list_groups : <br>$list_groups<br>\n"; }
 
 		if($list_groups!="")
