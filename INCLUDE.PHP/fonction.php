@@ -36,7 +36,6 @@ if(phpversion() > "5.1.2")
   else 
     include("../../controle_ids.php") ;
 }
-
 /*===============================================================================*/
 /*===============================================================================*/
 
@@ -170,19 +169,43 @@ function session_is_valid($session)
       session_name($session);
       session_start();
    }
+   $is_valid=FALSE;
+   // pour eviter risque d'utilisation croisee des applications sur un meme site
+   // first we compare $_SERVER["SCRIPT_FILENAME"] to $_SESSION['config']['php_conges_document_root']
+   $ssfn = $_SERVER["SCRIPT_FILENAME"] ;
+   $spdc = $_SESSION['config']['php_conges_document_root'] ; 
+   $lsfn = explode("/",$ssfn);
+   $idx = 0 ; 
+   while ($idx <= 2) { // poping at max 2 element  
+     $sexsfn = implode("/",$lsfn) ; // reassemble of the path 
+     if ($sexsfn == $spdc) { 
+       error_log("session_is_valid: ".$sexsfn." ".$spdc);
+       break ; // OK : good php_conges_document_root
+     } 
+     array_pop($lsfn); // we pop last element and loop 
+     $idx++ ; 
+   }
+   if ( $idx > 2 ) { 
+     /* we do not find the correct php_conges_document_root 
+        so we return FALSE */ 
+     return FALSE ; 
+   };
+     
+   if( (isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config'])) ) {
+     $difference = time() - $_SESSION['timestamp_last'];
 
-	$is_valid=FALSE;
-
-	if( (isset($_SESSION['timestamp_last'])) && (isset($_SESSION['config'])) )
-	{
-		$difference = time() - $_SESSION['timestamp_last'];
-		if ( ($session==session_id()) && ($difference < $_SESSION['config']['duree_session']) )
-		{
-			$is_valid=TRUE;
-		}
+     if ( ($session==session_id()) && ($difference < $_SESSION['config']['duree_session']) ) {
+       $is_valid=TRUE;
+     }
 	}
-
-	return $is_valid;
+   /* error_log("session_is_valid: ".$difference."-".$_SESSION['config']['duree_session']."-".$is_valid) ;
+    error_log("session_is_valid: ".$_SESSION['config']['script_filename']);
+    error_log("session_is_valid: SCRIPT_FILENAME: ".$_SERVER["SCRIPT_FILENAME"]); 
+    error_log("session_is_valid: script_filename: ".$_SESSION['config']['script_filename']); 
+    error_log("session_is_valid: php_conges_document_root: ".
+    $_SESSION['config']['php_conges_document_root']); */
+   
+   return $is_valid;
 }
 
 
@@ -194,18 +217,19 @@ function session_create($username)
 {
 	if ($username != "")
 	{
-		$session = "phpconges".md5(uniqid(rand()));
-		session_name($session);
-		session_id($session);
+      // $session = "phpconges".md5(uniqid(rand()));
+      $session = "c4ac-".md5(uniqid(rand()));
+      session_name($session);
+      session_id($session);
 
-		session_start();
-		$_SESSION['userlogin']=$username;
-		$maintenant=time();
-		$_SESSION['timestamp_start']=$maintenant;
-		$_SESSION['timestamp_last']=$maintenant;
-		if (function_exists('init_config_tab'))
-			$_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
-		//$session=session_id();
+      session_start();
+      $_SESSION['userlogin']=$username;
+      $maintenant=time();
+      $_SESSION['timestamp_start']=$maintenant;
+      $_SESSION['timestamp_last']=$maintenant;
+      if (function_exists('init_config_tab')) {
+        $_SESSION['config']=init_config_tab();      // on initialise le tableau des variables de config
+      };		//$session=session_id();
 
 	}
 	else

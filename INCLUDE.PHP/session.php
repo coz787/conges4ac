@@ -50,9 +50,6 @@ $DEBUG=FALSE;
 
 if($DEBUG==TRUE) { print_r($_SESSION); echo "<br><br>\n"; }
 
-
-
-
 if ($session != "") //  UNE SESSION EXISTE
 {
 	if($DEBUG==TRUE) { echo "session = $session<br><br>\n"; }
@@ -170,7 +167,7 @@ else    //  PAS DE SESSION   ($session == "")
 					if (valid_ldap_user($session_username)==TRUE) // LDAP ok, on vérifie ici que le compte existe dans la base de données des congés.
 					{
 						// on initialise la nouvelle session
-						session_create($session_username);
+                      session_create($session_username);
 
 						// on log la connexion du user 
 						if(!isset($mysql_link))
