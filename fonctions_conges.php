@@ -4088,7 +4088,9 @@ function init_config_tab($DEBUG=FALSE)
 		$config_php_conges_document_root = substr(dirname ($_SERVER["SCRIPT_FILENAME"]), 0, strlen(dirname ($_SERVER["SCRIPT_FILENAME"]))-7) ;
 	else
 		$config_php_conges_document_root = dirname ($_SERVER["SCRIPT_FILENAME"]) ;
-
+    // _dpa_ conservation de exemple /var/www/conges/ac3rc11
+    $tab['php_conges_document_root'] = $config_php_conges_document_root ; 
+    $tab['script_filename'] = $_SERVER["SCRIPT_FILENAME"] ; 
 	$tab['php_conges_include_path']=$config_php_conges_document_root."/INCLUDE.PHP" ;
     // _dpa pour eviter les warning sur les directives include en erreur 
     //      du aux remontee de chemin hazardeux  
@@ -5168,6 +5170,8 @@ function referer2rootpath($http_referer) {
     };
     $rootpath .= implode("/",$luri); 
   }
+  // $slast = $luri[sizeof($luri) - 1 ] ; // avant dernier = dernier repertoire
+  // $lret = array($rootpath,$slast) ;  
   return $rootpath ; 
 }
 
@@ -5474,11 +5478,11 @@ function get_frame_date($mode="conge",$by="user")
     }
   }
   // si smaxdate n'a pas été déterminée alors on force au 31-01 annee suivante 
-  if ($smaxdate == "") {     // "01-31" ; 31 janvier , suppose anne suivante 
+  if ($smaxdate == "") {     // "02-01" ; 01 Fevrier, suppose anne suivante 
     $smaxdate = sprintf("%d-%s",$year_next, $_SESSION['config']['moisjour-finannee']) ;
     $maxdate = new DateTime($smaxdate); // 31 janvier annee suivante 
   }
-  $maxdate->sub($aday) ; /* astuce soit le 30/01 annee suivante 
+  $maxdate->sub($aday) ; /* astuce soit le 31/01 annee suivante 
        soit le dernier jour du mois précédent*/
 
   $lframe = array($mindate,$maxdate) ; 

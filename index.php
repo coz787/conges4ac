@@ -71,7 +71,7 @@ include("INCLUDE.PHP/fonction.php");
 /************************************/
 
 // DEBUG
-//print_r($_SESSION); echo "<br><br>\n";echo "session= $session<br><br>\n";
+// print_r($_SESSION); echo "<br><br>\n";echo "session= $session<br><br>\n";
 
 // connexion database :
 $mysql_link=connexion_mysql();
@@ -91,7 +91,8 @@ if($_SESSION['config']['auth']==FALSE)    // si pas d'autentification (cf config
 		// on initialise la nouvelle session
 		ini_set("session.gc_maxlifetime", $_SESSION['config']['duree_session'] );
         ini_set("session.cookie_httponly", True);
-		session_create($login);
+        session_create($session_username); 
+		// session_create($login);
 	}
 }
 else
@@ -113,9 +114,9 @@ if(isset($_SESSION['userlogin']))
  	{  
 
       if (!isset($_SESSION['config']['php_conges_rootpath'])) {
-        $srootpath = referer2rootpath($_SERVER["HTTP_REFERER"]) ;
-        $_SESSION['config']['php_conges_rootpath'] = $srootpath ; 
-        error_log("definingrootpath:".$srootpath);
+        $rootpath = referer2rootpath($_SERVER["HTTP_REFERER"]) ;
+        $_SESSION['config']['php_conges_rootpath'] = $rootpath ; 
+        error_log("definingrootpath: ".$rootpath);
       }; 
 
 		$session=session_id();
