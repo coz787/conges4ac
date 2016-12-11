@@ -366,7 +366,7 @@ INSERT INTO `conges_config` VALUES ('hdeb_periode_pm', '140000', '16_Int_calenda
 INSERT INTO `conges_config` VALUES ('hfin_periode_pm', '180000', '16_Int_calendar', 'texte', 'config_comment_hfin_periode_pm');
 
 INSERT INTO `conges_config` VALUES ("moisjour-debutannee","01-01","12_Fonctionnement de l\'Etablissement","texte","config_comment_moisjour-debutannee");
-INSERT INTO `conges_config` VALUES ("moisjour-finannee","01-31","12_Fonctionnement de l\'Etablissement","texte","config_comment_moisjour-finannee");
+INSERT INTO `conges_config` VALUES ("moisjour-finannee","02-01","12_Fonctionnement de l\'Etablissement","texte","config_comment_moisjour-finannee");
 INSERT INTO `conges_config` VALUES ("rtt_retroactivite","2","12_Fonctionnement de l\'Etablissement","texte","config_comment_rtt_retroactivite");
 INSERT INTO `conges_config` VALUES ("rtt_anteactivite","2","12_Fonctionnement de l\'Etablissement","texte","config_comment_rtt_anteactivite");
 INSERT INTO `conges_config` VALUES ("conge_retroactivite","1","12_Fonctionnement de l\'Etablissement","texte","config_comment_conge_retroactivite");
