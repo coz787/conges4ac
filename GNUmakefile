@@ -1,9 +1,9 @@
 # GNUmakefile
 
 SHELL = /bin/bash
-DIST = 142ac3rc2
-WDIR = 142ac3rc2_utf
-MINIMIZER = /usr/local/bin/slimit 
+DIST = 142ac3rc17
+WDIR = conges4ac
+MINIMIZER = /usr/bin/slimit 
 WWWDIR = /var/www
 
 .PHONY: trash_list.txt md5sum md5check jquery_check 
