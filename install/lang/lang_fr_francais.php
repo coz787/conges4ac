@@ -713,7 +713,8 @@ $LANG['config_comment_autovalidation_conges_par_responsable']	= "// AUTOVALIDATI
 // <br>" ;  */
 
 $LANG['config_comment_moisjour-debutannee'] = "// date mois-jour marquant la date au plus tot pour saisir des conges <br>// sous la forme 01-01 " ; 
-$LANG['config_comment_moisjour-finannee'] = "// date mois-jour marquant la date au plus tard de l'année suivante <br>// pour saisir des conges  ; sous la forme 04-30 <br>" ; 
+$LANG['config_comment_moisjour-finannee'] = "// date mois-jour marquant la date au plus tard de l'année suivante pour saisir des conges <br>// ( - 1 jour) sous la forme 04-30 <br> 
+// 02-01 signifie jusqu'au 31 janvier" ; 
 $LANG['config_comment_rtt_retroactivite'] = "// nombre de mois permis pour déplacer des artt (déjà passés); <br>// example: si date du jour = 15/05/2015 et valeur vaut 2, alors on peut revenir sur les artt compris jusqu'au 01/03/2015" ; 
 $LANG['config_comment_rtt_anteactivite'] = "// nombre de mois permis pour utiliser des artt à venir; <br>// example: si date du jour = 15/05/2015 et valeur vaut 1, alors on peut modifier les artt à venir jusqu'au 30/06/2015 <br> -1 pour ne pas utiliser " ; 
 $LANG['config_comment_conge_retroactivite'] = "// nombre de mois permis pour saisir des conges ; <br>// example: si date du jour = 15/05/2015 et valeur vaut 1, alors on peut saisir des conges en mode user jusqu'au 01/04/2015 et 30/04/2016 si moisjour-finannee vaut 04-30 " ; 
