@@ -187,7 +187,7 @@ CREATE TABLE `conges_periode` (
   `p_login` varbinary(48) NOT NULL default '',
   `p_date_deb` date NOT NULL default '0000-00-00',
   `p_demi_jour_deb` enum('am','pm') NOT NULL default 'am',
-  `p_date_fin` date NOT NULL default '0000-00-00',
+  `p_date_fin` date default '0000-00-00',
   `p_demi_jour_fin` enum('am','pm') NOT NULL default 'pm',
   `p_nb_jours` decimal(5,2) NOT NULL default '0.00',
   `p_commentaire` varchar(50) default NULL,

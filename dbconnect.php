@@ -37,7 +37,7 @@ $mysql_user="congesdba" ;
 $mysql_pass="conges" ;
 //$mysql_database= "cdpa_142ac2_beta1" ;
 $mysql_database= "conges_142ac2c" ;
-$mysql_charset="latin1" ; // iso8859-1" new in _ac3 
+$mysql_charset="utf8" ; // iso8859-1" new in _ac3 
 
 ?>
  

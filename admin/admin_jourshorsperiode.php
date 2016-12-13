@@ -321,7 +321,7 @@ function update_hperiod($user,$hpmode,$spnum,$snewjhp,$mysql_link,$DEBUG)
   $jhpfinete = $_SESSION['config']['moisjour-finete'] ;
 
   $srefhpdate = $year_cur."-".$jhpfinete." 00:00:00" ;
-  $srefhpdatefin = "0000-00-00" ; 
+  /* $srefhpdatefin = "0000-00-00" ; */
   $newjhp = intval($snewjhp) ; 
 
   $snow = sprintf("%02d-%02d-%02d %02d:%02d:%02d",$lnow['year'],$lnow['mon'],$lnow['mday'],
@@ -329,7 +329,7 @@ function update_hperiod($user,$hpmode,$spnum,$snewjhp,$mysql_link,$DEBUG)
   $comment = "jours hors periode ". $year_cur ; 
   if ($hpmode == 'cre') {
     $sqlhp = "INSERT INTO conges_periode 
-SET p_login='$user', p_date_deb='$srefhpdate', p_demi_jour_deb='am', p_date_fin='$srefhpdatefin', p_demi_jour_fin='am', p_nb_jours=$newjhp, p_commentaire='$comment', p_type='$jhptype', p_etat='".HP_ETAT."', p_date_traitement='$snow' ; " ;
+SET p_login='$user', p_date_deb='$srefhpdate', p_demi_jour_deb='am', p_date_fin='$srefhpdate', p_demi_jour_fin='am', p_nb_jours=$newjhp, p_commentaire='$comment', p_type='$jhptype', p_etat='".HP_ETAT."', p_date_traitement='$snow' ; " ;
 
   } else if ($hpmode == 'mod'){
     $pnum = intval($spnum); 

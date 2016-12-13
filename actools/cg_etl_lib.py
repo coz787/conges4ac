@@ -25,7 +25,7 @@ def msd2string(omsdata):
     elif isinstance(omsdata, int)  :
         sret = "%d" % omsdata
     elif isinstance(omsdata, date)  :
-        # sret = "date" 
+        # sret = "date"
         sret = omsdata.strftime('"%Y:%m:%d"') # :%X")
     elif isinstance(omsdata, unicode) :
         slatin1 = str(omsdata.encode('latin-1', 'ignore'))
@@ -69,8 +69,9 @@ latin1 : among the possible value '''
         #     sday = omsdata.strftime('%Y:%m:%d') # :%X")
         # peut etre date ou datetime ; str retourne 
         # "2015-01-09" ou "2015-01-20 10:57:21"
-        sret = '"%s"' % str(omsdata)
         # print "py2msd::date ", sret 
+        # sret = '"%s"' % str(omsdata)
+        sret = omsdata.strftime('"%Y:%m:%d"')
     elif isinstance(omsdata, unicode) :
         # print "py2msd_char_set is %s for unicde data" % py2msd_char_set
         try:
@@ -625,6 +626,8 @@ to optional selection criteria , by keyword '''
             if drow == None : 
                 break
             bvalid_row = self.isvalid_row(stable,drow,lpkey,opt)
+            if drow['p_etat'] == "hp" : 
+                print drow 
             if bvalid_row: 
                 orecorder.append(self.insert_all_dict(stable,drow))
             nline += 1 
