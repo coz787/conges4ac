@@ -30,7 +30,15 @@ $lnow = conges_get_date();
 $year_cur = $lnow['year'] ; 
 
 $jhpfinete     = $_SESSION['config']['moisjour-finete'] ;
-$refhpdate = new DateTime($year_cur."-".$jhpfinete." 00:00:00"); 
+
+/* $refhpdate = new DateTime($year_cur."-".$jhpfinete." 00:00:00"); */
+/* distinction refhpdate pour l'enregistrement periode 
+               reffinete pour tri des periodes */ 
+$refhpdate   = new DateTime($year_cur."-12-31"." 00:00:00");
+$refhpdate_s = $refhpdate->format('Y-m-d'); 
+$reffinete   = new DateTime($year_cur."-".$jhpfinete." 00:00:00");
+$reffinete_s = $reffinete->format('Y-m-d');
+
 $jhptype = intval($_SESSION['config']['jourshorsperiodetype']) ; 
 
 function display_hperiod_tab($user,$nactualsolde,$mysql_link,$DEBUG)  // $nactualsolde,
@@ -39,7 +47,7 @@ function display_hperiod_tab($user,$nactualsolde,$mysql_link,$DEBUG)  // $nactua
 
   /*  $jhptype = intval($_SESSION['config']['jourshorsperiodetype']) ; */ 
   /* $jhpfinete     = $_SESSION['config']['moisjour-finete'] ; */ 
-  global $jhptype, $jhpfinete, $refhpdate, $lnow, $year_cur ; 
+  global $jhptype, $refhpdate, $refhpdate_s, $reffinete, $reffinete_s, $lnow, $year_cur ; 
   $jdebutannee   = $_SESSION['config']['moisjour-debutannee'] ;
   $jfinanneereel = $_SESSION['config']['moisjour-finanneereel'] ;
   $jdebutete     = $_SESSION['config']['moisjour-debutete'] ;
@@ -50,8 +58,8 @@ function display_hperiod_tab($user,$nactualsolde,$mysql_link,$DEBUG)  // $nactua
 
   /* $refhpdate = new DateTime($year_cur."-".$jhpfinete." 00:00:00");  */ 
   /* INUTILE $bodytag = str_replace("%body%", "black", "<body text='%body%'>"); 
-  $refhpdate_s = str_replace("-","/",$year_cur."-".$jhpfinete) */
-  $refhpdate_s = $year_cur."-".$jhpfinete ; 
+  $refhpdate_s = str_replace("-","/",$year_cur."-".$jhpfinete) 
+  $refhpdate_s = $year_cur."-".$jhpfinete ; */
   $refdebutannee = new DateTime($year_cur."-".$jdebutannee." 00:00:00");
   $refdebutannee_s = $year_cur."-".$jdebutannee ; 
   $reffinanneereel = new DateTime($year_cur."-".$jfinanneereel." 23:59:59"); 
@@ -59,8 +67,10 @@ function display_hperiod_tab($user,$nactualsolde,$mysql_link,$DEBUG)  // $nactua
   $refdebutete = new DateTime($year_cur."-".$jdebutete." 00:00:00"); 
   $refdebutete_s = $year_cur."-".$jdebutete; 
   
+  /*  $cphpvalid_select = "select p_nb_jours,p_num from conges_periode where 
+      p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='".$refhpdate->format('Y-m-d H:i:s')."' ; " ; */ 
   $cphpvalid_select = "select p_nb_jours,p_num from conges_periode where 
-p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='".$refhpdate->format('Y-m-d H:i:s')."' ; " ;
+p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='".$refhpdate_s."' ; " ;
 
   // echo "would select [". $cphpvalid_select . "]" ; 
   $cphpvalid_req = requete_mysql($cphpvalid_select,$mysql_link,"display_hperiod_tab", 
@@ -77,7 +87,7 @@ p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='
     $b_mngt_open = True ; 
     $leligperiode = get_eligible_cperiode($user,$jhptype,$refdebutannee,$refdebutannee_s,
                                           $refdebutete,$refdebutete_s,
-                                          $refhpdate,$refhpdate_s,
+                                          $reffinete,$reffinete_s,
                                           $reffinanneereel,$reffinanneereel_s,$mysql_link,$DEBUG) ;
     // $nactualsolde = 99 ;
     $neligjour = $leligperiode['nbjours'] + $nactualsolde ; 
@@ -315,13 +325,9 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
 
 function update_hperiod($user,$hpmode,$spnum,$snewjhp,$mysql_link,$DEBUG) 
 { 
-  global $lnow ,$year_cur ;
+  global $lnow ,$year_cur,$refhpdate, $refhpdate_s ;
 
   $jhptype = intval($_SESSION['config']['jourshorsperiodetype']) ; 
-  $jhpfinete = $_SESSION['config']['moisjour-finete'] ;
-
-  $srefhpdate = $year_cur."-".$jhpfinete." 00:00:00" ;
-  /* $srefhpdatefin = "0000-00-00" ; */
   $newjhp = intval($snewjhp) ; 
 
   $snow = sprintf("%02d-%02d-%02d %02d:%02d:%02d",$lnow['year'],$lnow['mon'],$lnow['mday'],
@@ -329,7 +335,7 @@ function update_hperiod($user,$hpmode,$spnum,$snewjhp,$mysql_link,$DEBUG)
   $comment = "jours hors periode ". $year_cur ; 
   if ($hpmode == 'cre') {
     $sqlhp = "INSERT INTO conges_periode 
-SET p_login='$user', p_date_deb='$srefhpdate', p_demi_jour_deb='am', p_date_fin='$srefhpdate', p_demi_jour_fin='am', p_nb_jours=$newjhp, p_commentaire='$comment', p_type='$jhptype', p_etat='".HP_ETAT."', p_date_traitement='$snow' ; " ;
+SET p_login='$user', p_date_deb='$refhpdate_s', p_demi_jour_deb='am', p_date_fin='$refhpdate_s', p_demi_jour_fin='am', p_nb_jours=$newjhp, p_commentaire='$comment', p_type='$jhptype', p_etat='".HP_ETAT."', p_date_traitement='$snow' ; " ;
 
   } else if ($hpmode == 'mod'){
     $pnum = intval($spnum); 
@@ -351,10 +357,10 @@ p_num='$pnum' ; " ;
 function get_hperiod($user,$mysql_link,$DEBUG) 
 {  
   global $jhptype; 
-  global $refhpdate;
+  global $refhpdate,$refhpdate_s;
 
   $cphpvalid_select = "select p_nb_jours from conges_periode where 
-p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='".$refhpdate->format('Y-m-d H:i:s')."' ; " ;
+p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='".$refhpdate_s."' ; " ;
 
   // echo "would select [". $cphpvalid_select . "]" ; 
   $cphpvalid_req = requete_mysql($cphpvalid_select,$mysql_link,"display_hperiod_tab", 

@@ -626,8 +626,8 @@ to optional selection criteria , by keyword '''
             if drow == None : 
                 break
             bvalid_row = self.isvalid_row(stable,drow,lpkey,opt)
-            if drow['p_etat'] == "hp" : 
-                print drow 
+            # if drow['p_etat'] == "hp" : 
+            #     print drow 
             if bvalid_row: 
                 orecorder.append(self.insert_all_dict(stable,drow))
             nline += 1 
