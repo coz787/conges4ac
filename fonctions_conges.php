@@ -5156,10 +5156,22 @@ $_SESSION['lang']['verif_solde_erreur_part_3']." (" . (float)$sql_solde_user_a_v
 
 	return $verif;
 }
-// typical usage referer2rootpath($_SERVER["HTTP_REFERER"]) to obtain 
-// eg. https://127.0.0.1:8080/conges/142ac2c/ 
+// typical usage referer2rootpath($_SERVER sur 
+// [REQUEST_SCHEME] [SERVER_ADDR] [REQUEST_URI]
+// http             127.0.0.1     /conges/ac3rc11/index.php
+// pour obtenir http://127.0.0.1/conges/ac3rc11/
 
-function referer2rootpath($http_referer) {
+function referer2rootpath($request_scheme,$server_addr,$request_uri) {
+  $rootpath = "" ; 
+  $lruri = explode("/",$request_uri);
+  if (end($lruri) == "index.php") { 
+      array_pop($lruri) ;
+      array_push($lruri,"") ; // trailing slash 
+    };
+  $rootpath = $request_scheme."://".$server_addr.implode("/",$lruri);
+  return $rootpath ; 
+}
+function attic_referer2rootpath_v1($http_referer) {
   $rootpath = "" ; 
   if (preg_match('/^([^:]+):\/\/(.+)$/',$http_referer,$match) ) {
     $rootpath = $match[1]."://" ; 

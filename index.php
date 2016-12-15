@@ -71,7 +71,9 @@ include("INCLUDE.PHP/fonction.php");
 /************************************/
 
 // DEBUG
-// print_r($_SESSION); echo "<br><br>\n";echo "session= $session<br><br>\n";
+/* print_r($_SESSION); */ 
+/* print_r($_SERVER); 
+   echo "<br><br>\n";echo "session= $session<br><br>\n"; */
 
 // connexion database :
 $mysql_link=connexion_mysql();
@@ -114,7 +116,11 @@ if(isset($_SESSION['userlogin']))
  	{  
 
       if (!isset($_SESSION['config']['php_conges_rootpath'])) {
-        $rootpath = referer2rootpath($_SERVER["HTTP_REFERER"]) ;
+        /* HOST plutot 
+           $rootpath = referer2rootpath($_SERVER["HTTP_REFERER"]) ;  */
+        $rootpath = referer2rootpath($_SERVER["REQUEST_SCHEME"],
+                                     $_SERVER["SERVER_ADDR"], 
+                                     $_SERVER["REQUEST_URI"]); 
         $_SESSION['config']['php_conges_rootpath'] = $rootpath ; 
         error_log("definingrootpath: ".$rootpath);
       }; 
