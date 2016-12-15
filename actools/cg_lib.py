@@ -126,7 +126,7 @@ class CDoer:
                  self.ldometh.append(sme[3:])
         self.ltechuser = ['admin', 'conges']
     def set_debug(self,ndbg):
-        ndebug = ndbg 
+        self.ndebug = ndbg 
 
     def get_ldometh(self):
         return self.ldometh
@@ -502,7 +502,7 @@ this version use odbcursordict and is flexible enough to cope with old version o
                 row = odbcursor.fetchone()
                 if row == None :
                     break
-                if ndebug: print row 
+                if self.ndebug: print row 
                 print sfmtval1.format(row[0], s2_latin1(row[1]), s2_latin1(row[2]), row[3] ,row[4] )
         except:
             print_exc()   
@@ -619,7 +619,7 @@ one user login per line '''
         else : 
             print "a file name should be given using --loginfile ; this file should be made of one user login per line"
             return -1 
-        if ndebug: print llogin
+        if self.ndebug: print llogin
         for salogin in llogin:
             safile = "cf_%s.txt" % salogin
             try: 
@@ -673,7 +673,8 @@ one user login per line '''
 --number opt
 --all means even pending conges_periodes 
 --login mean only for identifed user 
---typeabs mean only these type of abs ''' 
+--typeabs mean only these type of abs 
+--etat mean only periode in this 'etat' ''' 
         if dopt.has_key("all") : 
             nall =  1 
         else : 
@@ -691,6 +692,10 @@ one user login per line '''
             print_exc()
             print "option typeabs is not a number" 
             return -1
+        if dopt.has_key("etat") :
+            setat =  dopt["etat"] 
+        else :
+            setat = None
         try:
             if dopt.has_key("number") :
                 nlast = int(dopt["number"]) 
@@ -700,9 +705,9 @@ one user login per line '''
             print_exc()
             print "option number is invalid" 
             return -1
-        if ndebug: print "nlast %d" % nlast 
+        if self.ndebug: print "nlast %d" % nlast 
         ssql1 = "select p_date_traitement, p_date_deb,p_demi_jour_deb,p_date_fin,p_demi_jour_fin,p_nb_jours, p_type, p_etat, p_login, p_commentaire, p_num from conges_periode" 
-        if not nall or slogin != "" or ntypeabs != 0 :
+        if not nall or slogin != "" or ntypeabs != 0 or setat :
             ssql1 += " where" 
             lsqlcond = [] 
             if slogin != "" :
@@ -711,12 +716,14 @@ one user login per line '''
                 lsqlcond.append("p_etat='ok'")
             if ntypeabs != 0 :
                 lsqlcond.append("p_type=%d" % ntypeabs)
+            if setat : 
+                lsqlcond.append("p_etat='%s'" % setat )
             if len(lsqlcond) >= 1 :
                 for scond in lsqlcond[:-1] :
                     ssql1 += " %s " % scond + " and"
                 ssql1 += " %s " %   lsqlcond[len(lsqlcond)-1]
         ssql1 += " order by p_date_traitement desc"
-        if ndebug : print ssql1 
+        if self.ndebug : print ssql1 
         try:
             odbcursor.execute(ssql1)
             nnum = 0 
@@ -896,3 +903,89 @@ authentication is forced to congesdatabase '''
                 return -1
         print "do_set_dummy succeed."
         return 1 
+
+    def do_correct_hp_periode_record_2016(self, dopt, odbcursor, odbcursordict, ddcid):
+        ''' following v3 deployment : correct the conges_periode record to store
+hp number of days '''
+
+        if dopt.has_key("realrun") : 
+            breal = True 
+        else:
+            breal = False 
+        dcorrectdate = datetime.date(2016, 12, 31) 
+        scorrectdate = dcorrectdate.strftime("%Y-%m-%d") # "2016-12-31"
+        # print dcorrectdate, scorrectdate 
+        # ordonné par date desc 
+        sselperiode = "select p_date_deb,p_date_fin,p_etat,p_login,p_num,p_nb_jours from conges_periode where p_login='%s' and p_etat = 'hp' order by p_date_deb desc ; " 
+        supdateperiode  = "update conges_periode set p_date_deb ='%s', p_date_fin ='%s', p_nb_jours=%d where p_num=%s ; " 
+        sdeleteperiode = "delete from conges_periode where p_num=%s ; "
+        # pas besoin de cette donnees
+        # lerrdate = [datetime.date(2016,11,01),datetime.date(2016,10,31)]  
+        lrequete = [] 
+        # build list of user 
+        luser = [] 
+        try:
+            odbcursor.execute("select u_login from conges_users ;")
+        except: 
+            sys.stderr.write("select u_login from conges_users  ;\n") 
+            print_exc()
+            sys.exit(1)
+        while 1  : 
+            lrow = odbcursor.fetchone()
+            if lrow == None : 
+                break
+            luser.append(lrow[0]) 
+        
+        for sauser in luser :         # pour chaque user 
+            odbcursordict.execute(sselperiode % sauser)
+            ied = 0
+            newnb_jours,n1,n2 = Decimal('0.00'),Decimal('0.00'),Decimal('0.00')
+            # bfound1 = False 
+            nper_update = None 
+            lper_delete = [] 
+            while 1 : 
+                drow = odbcursordict.fetchone()
+                if drow == None : 
+                    break
+                print drow 
+                # si date different 
+                if drow['p_date_deb'] != dcorrectdate : 
+                    if not nper_update : # la premiere
+                        nper_update = drow['p_num']
+                        n1 = drow['p_nb_jours']
+                    else : # l'eventuel seconde 
+                        lper_delete.append(drow['p_num'])
+                        n2 = drow['p_nb_jours']
+                    # cumul des jours 
+                    newnb_jours += drow['p_nb_jours']                    
+            # end while periode
+            if nper_update :
+                sreq = supdateperiode % \
+                                (scorrectdate,scorrectdate,newnb_jours,nper_update)
+                lrequete.append(sreq)
+                if self.ndebug :
+                    print sreq 
+            if len(lper_delete) > 0 :
+                print "#multihp:%s;%d;%d" % ( sauser,n1,n2 )
+                for aper in lper_delete :
+                    sreq = sdeleteperiode % aper
+                    lrequete.append(sreq)
+                    if self.ndebug :
+                        print sreq 
+
+        # end for sauser
+        lrequete.append(" COMMIT ;")
+        print pprint.pformat(lrequete)
+        if breal : # real run 
+            for siorder in lrequete:
+                try:
+                    odbcursor.execute(siorder)
+                except:
+                    sys.stderr.write("sql_injection error on %s \n" % siorder)
+                    print_exc()
+        else : 
+            print "dryrun only : use --realrun to apply change" 
+
+        return 1 
+                
+       
