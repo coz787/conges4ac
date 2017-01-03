@@ -505,84 +505,87 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
           // si la derniere grille est ancienne, on l'update (on update la date de fin de grille)
           // sinon, si la derniere grille date d'aujourd'hui, on la supprime
 
-			// on regarde si la grille artt a deja été modifiée aujourd'hui :
-			$sql_grille="SELECT a_date_fin_grille FROM conges_artt
+          // on regarde si la grille artt a deja été modifiée aujourd'hui :
+          $sql_grille="SELECT a_date_fin_grille FROM conges_artt
 					WHERE a_login='$u_login_to_update' AND a_date_debut_grille='$new_date_deb_grille'";
-			$result_grille = requete_mysql($sql_grille, $mysql_link, "commit_update", $DEBUG);
+          $result_grille = requete_mysql($sql_grille, $mysql_link, "commit_update", $DEBUG);
 
-			$count_grille=mysql_num_rows($result_grille);
+          $count_grille=mysql_num_rows($result_grille);
 
-			if($count_grille==0) {// si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
-              $date_fin_grille = new DateTime($new_date_deb_grille) ;
-              $date_fin_grille->sub($aday) ;  /* jour avant */ 
-              $new_date_fin_grille = $date_fin_grille->format('Y-m-d') ; 
-				// UPDATE de la table conges_artt
-				// en fait, on update la dernière grille (on update la date de fin de grille), et on ajoute une nouvelle
-				// grille (avec sa date de début de grille)
+          if($count_grille==0) {// si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
+            $date_fin_grille = new DateTime($new_date_deb_grille) ;
+            $date_fin_grille->sub($aday) ;  /* jour avant */ 
+            $new_date_fin_grille = $date_fin_grille->format('Y-m-d') ; 
+            // UPDATE de la table conges_artt
+            // en fait, on update la dernière grille (on update la date de fin de grille), et on ajoute une nouvelle
+            // grille (avec sa date de début de grille)
 
-				// on update la dernière grille (on update la date de fin de grille)
-				$sql2 = "UPDATE conges_artt SET a_date_fin_grille='$new_date_fin_grille'
+            // on update la dernière grille (on update la date de fin de grille)
+            $sql2 = "UPDATE conges_artt SET a_date_fin_grille='$new_date_fin_grille'
 						WHERE a_login='$u_login_to_update' AND a_date_fin_grille='9999-12-31'" ;
-				$result2 = requete_mysql($sql2, $mysql_link, "commit_update", $DEBUG);
+            $result2 = requete_mysql($sql2, $mysql_link, "commit_update", $DEBUG);
+            error_log("cup: update new_date_fin_grille");
+            if($result2==FALSE)
+              $result==FALSE;
+          } else  { // si une grille modifiée aujourd'hui : on delete cette grille
+            $sql_suppr_grille="DELETE FROM conges_artt WHERE a_login='$u_login_to_update' AND a_date_debut_grille='$new_date_deb_grille'";
+            $result_suppr_grille = requete_mysql($sql_suppr_grille, $mysql_link, "commit_update", $DEBUG);
+            if($result_suppr_grille==FALSE)
+              $result==FALSE;
+          }
 
-				if($result2==FALSE)
-					$result==FALSE;
-			} else  { // si une grille modifiée aujourd'hui : on delete cette grille
-				$sql_suppr_grille="DELETE FROM conges_artt WHERE a_login='$u_login_to_update' AND a_date_debut_grille='$new_date_deb_grille'";
-				$result_suppr_grille = requete_mysql($sql_suppr_grille, $mysql_link, "commit_update", $DEBUG);
-				if($result_suppr_grille==FALSE)
-					$result==FALSE;
-			}
-
-			/****************************/
-			/***   phase 2 :  ***/
-			// on Insert la nouvelle grille (celle qui commence aujourd'hui)
-			//  on met à 'Y' les demi-journées de rtt (et seulement celles là)
-			$list_columns="";
-			$list_valeurs="";
-			$i=0;
-			if($tab_checkbox_sem_imp!="") {
-				while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
-					//echo "$key => $val<br>\n";
-					if($i!=0)
-					{
-						$list_columns=$list_columns.", ";
-						$list_valeurs=$list_valeurs.", ";
-					}
-					$list_columns=$list_columns." $key ";
-					$list_valeurs=$list_valeurs." '$val' ";
-					$i=$i+1;
-				}
-			}
-			if($tab_checkbox_sem_p!="") {
-				while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
-					//echo "$key => $val<br>\n";
-					if($i!=0)
-					{
-						$list_columns=$list_columns.", ";
-						$list_valeurs=$list_valeurs.", ";
-					}
-					$list_columns=$list_columns." $key ";
-					$list_valeurs=$list_valeurs." '$val' ";
-					$i=$i+1;
-				}
-			}
-			if( ($list_columns!="") && ($list_valeurs!="") )
-			{
-				$sql3 = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille )
+          /****************************/
+          /***   phase 2 :  ***/
+          // on Insert la nouvelle grille (celle qui commence aujourd'hui)
+          //  on met à 'Y' les demi-journées de rtt (et seulement celles là)
+          $list_columns="";
+          $list_valeurs="";
+          $i=0;
+          if($tab_checkbox_sem_imp!="") {
+            while (list ($key, $val) = each ($tab_checkbox_sem_imp)) {
+              //echo "$key => $val<br>\n";
+              if($i!=0)
+                {
+                  $list_columns=$list_columns.", ";
+                  $list_valeurs=$list_valeurs.", ";
+                }
+              $list_columns=$list_columns." $key ";
+              $list_valeurs=$list_valeurs." '$val' ";
+              $i=$i+1;
+            }
+          }
+          if($tab_checkbox_sem_p!="") {
+            while (list ($key, $val) = each ($tab_checkbox_sem_p)) {
+              //echo "$key => $val<br>\n";
+              if($i!=0)
+                {
+                  $list_columns=$list_columns.", ";
+                  $list_valeurs=$list_valeurs.", ";
+                }
+              $list_columns=$list_columns." $key ";
+              $list_valeurs=$list_valeurs." '$val' ";
+              $i=$i+1;
+            }
+          }
+          /* if( ($list_columns!="") && ($list_valeurs!="") ) { */ 
+          error_log("cup: insert new_grille");
+          if( $list_valeurs!="" ) {
+            $sql3 = "INSERT INTO conges_artt (a_login, $list_columns, a_date_debut_grille )
 						VALUES ('$u_login_to_update', $list_valeurs, '$new_date_deb_grille') " ;
-                /*   `a_date_fin_grille` est peuplé à '9999-12-31' par défaut */ 
-				$result3 = requete_mysql($sql3, $mysql_link, "commit_update", $DEBUG);
+          } else { /* grille vierge donc */ 
+            $sql3 = "INSERT INTO conges_artt (a_login, a_date_debut_grille )
+						VALUES ('$u_login_to_update', '$new_date_deb_grille') " ;
+          }   /*   `a_date_fin_grille` est peuplé à '9999-12-31' par defaut */ 
 
-				if($result3==FALSE)
-					$result==FALSE;
-			}
-		}
+          $result3 = requete_mysql($sql3, $mysql_link, "commit_update", $DEBUG);
+
+          if($result3==FALSE)
+            $result==FALSE;
+		} /* _admin_mod_artt_ */ 
 
 		// Si changement du login, (on a dèja updaté la table users) on update toutes les autres tables
 		// (les grilles artt, les periodes de conges et les échanges de rtt, etc ....) avec le nouveau login
-		if($tab_new_user['login'] != $u_login_to_update)
-		{
+		if($tab_new_user['login'] != $u_login_to_update) {
 			// update table artt
 			$sql_upd_artt = "UPDATE conges_artt SET a_login='".$tab_new_user['login']."' WHERE a_login='$u_login_to_update'" ;
 			$result4 = requete_mysql($sql_upd_artt, $mysql_link, "commit_update", $DEBUG);
@@ -675,7 +678,7 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 }
 
 
-function get_current_grille_rtt($u_login_to_update, $mysql_link, $DEBUG=FALSE)
+function attic_get_current_grille_rtt($u_login_to_update, $mysql_link, $DEBUG=FALSE)
 {
 	$tab_grille=array();
 
@@ -723,6 +726,7 @@ function get_current_grille_rtt($u_login_to_update, $mysql_link, $DEBUG=FALSE)
 
 	return $tab_grille;
 }
+
 
 
 function tab_grille_rtt_from_checkbox($tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=FALSE)

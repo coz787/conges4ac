@@ -770,6 +770,74 @@ function atic_affiche_cellule_calendrier_echange_presence_saisie_semaine($val_ma
 	}
 }
 
+function get_current_grille_rtt($u_login_to_update, $mysql_link, $DEBUG=FALSE)
+/* force la correction du bug apparu en v3rc17 : dernier enregistrement cree
+   sans date de fin a 9999-12-31 */ 
+{
+  $sendoftime = "9999-12-31" ;
+  $tab_grille=array();
+  /* on recherche le dernier enreg par date_de_fin */ 
+  $sql1 = "SELECT * FROM conges_artt WHERE a_login='$u_login_to_update' ORDER BY a_date_fin_grille DESC"; 
+  $ReqLog1 = requete_mysql($sql1, $mysql_link, "get_current_grille_rtt", $DEBUG);
+  $resultat1 = mysql_fetch_array($ReqLog1) ; 
+
+  if ( $resultat1 ) { 
+    if ($resultat1['a_date_fin_grille'] != $sendoftime ) { 
+      /* on reecrit la date de fin correct */
+      $sql3correctdate = "UPDATE conges_artt SET a_date_fin_grille='$sendoftime' 
+WHERE a_login='$u_login_to_update' AND a_date_fin_grille='".$resultat1['a_date_fin_grille']."' ; " ;
+      
+      $result3 = requete_mysql($sql3correctdate, $mysql_link, "commit_update", $DEBUG);
+      $result3commit = requete_mysql("commit ; ", $mysql_link, "commit_update", $DEBUG);
+      log_action(0, "", $u_login_to_update,"get_current_grille_rtt correct", 
+                 $mysql_link, $DEBUG);
+    }
+    /* ds ts les cas on charge tab_grille avec cet enregistrement */ 
+    $tab_grille['sem_imp_lu_am'] = $resultat1['sem_imp_lu_am'] ;
+    $tab_grille['sem_imp_lu_pm'] = $resultat1['sem_imp_lu_pm'] ;
+    $tab_grille['sem_imp_ma_am'] = $resultat1['sem_imp_ma_am'] ;
+    $tab_grille['sem_imp_ma_pm'] = $resultat1['sem_imp_ma_pm'] ;
+    $tab_grille['sem_imp_me_am'] = $resultat1['sem_imp_me_am'] ;
+    $tab_grille['sem_imp_me_pm'] = $resultat1['sem_imp_me_pm'] ;
+    $tab_grille['sem_imp_je_am'] = $resultat1['sem_imp_je_am'] ;
+    $tab_grille['sem_imp_je_pm'] = $resultat1['sem_imp_je_pm'] ;
+    $tab_grille['sem_imp_ve_am'] = $resultat1['sem_imp_ve_am'] ;
+    $tab_grille['sem_imp_ve_pm'] = $resultat1['sem_imp_ve_pm'] ;
+    $tab_grille['sem_imp_sa_am'] = $resultat1['sem_imp_sa_am'] ;
+    $tab_grille['sem_imp_sa_pm'] = $resultat1['sem_imp_sa_pm'] ;
+    $tab_grille['sem_imp_di_am'] = $resultat1['sem_imp_di_am'] ;
+    $tab_grille['sem_imp_di_pm'] = $resultat1['sem_imp_di_pm'] ;
+
+    $tab_grille['sem_p_lu_am'] = $resultat1['sem_p_lu_am'] ;
+    $tab_grille['sem_p_lu_pm'] = $resultat1['sem_p_lu_pm'] ;
+    $tab_grille['sem_p_ma_am'] = $resultat1['sem_p_ma_am'] ;
+    $tab_grille['sem_p_ma_pm'] = $resultat1['sem_p_ma_pm'] ;
+    $tab_grille['sem_p_me_am'] = $resultat1['sem_p_me_am'] ;
+    $tab_grille['sem_p_me_pm'] = $resultat1['sem_p_me_pm'] ;
+    $tab_grille['sem_p_je_am'] = $resultat1['sem_p_je_am'] ;
+    $tab_grille['sem_p_je_pm'] = $resultat1['sem_p_je_pm'] ;
+    $tab_grille['sem_p_ve_am'] = $resultat1['sem_p_ve_am'] ;
+    $tab_grille['sem_p_ve_pm'] = $resultat1['sem_p_ve_pm'] ;
+    $tab_grille['sem_p_sa_am'] = $resultat1['sem_p_sa_am'] ;
+    $tab_grille['sem_p_sa_pm'] = $resultat1['sem_p_sa_pm'] ;
+    $tab_grille['sem_p_di_am'] = $resultat1['sem_p_di_am'] ;
+    $tab_grille['sem_p_di_pm'] = $resultat1['sem_p_di_pm'] ;
+
+    $tab_grille['a_date_debut_grille'] = $resultat1['a_date_debut_grille'] ;
+    $tab_grille['a_date_fin_grille'] = $sendoftime ; /* whatever */
+  } else { /* resultat1 est vide */ 
+    error_log("get_current_grille_rtt resultat1vide"); 
+  }
+
+  if($DEBUG==TRUE)	{
+      echo "get_current_grille_rtt :<br>\n";
+      print_r($tab_grille);
+      echo "<br>\n";
+  }
+
+  return $tab_grille;
+}
+
 // saisie de la grille des jours d'abscence ARTT ou temps partiel:
 function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 {
@@ -807,42 +875,43 @@ function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 	/*********************************************/
 
 	// recup des données de la dernière table artt du user :
-	$sql1 = "SELECT * FROM conges_artt WHERE a_login='$login' AND a_date_fin_grille='9999-12-31' "  ;
-	$ReqLog1 = requete_mysql($sql1, $mysql_link, "saisie_jours_absence_temps_partiel", $DEBUG);
+    $resultat1 = get_current_grille_rtt($login, $mysql_link, $DEBUG) ; 
+	// $sql1 = "SELECT * FROM conges_artt WHERE a_login='$login' AND a_date_fin_grille='9999-12-31' "  ;
+	// $ReqLog1 = requete_mysql($sql1, $mysql_link, "saisie_jours_absence_temps_partiel", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
-		if($resultat1['sem_imp_lu_am']=="Y") $checked_option_sem_imp_lu_am=" checked";
-		if($resultat1['sem_imp_lu_pm']=="Y") $checked_option_sem_imp_lu_pm=" checked";
-		if($resultat1['sem_imp_ma_am']=="Y") $checked_option_sem_imp_ma_am=" checked";
-		if($resultat1['sem_imp_ma_pm']=="Y") $checked_option_sem_imp_ma_pm=" checked";
-		if($resultat1['sem_imp_me_am']=="Y") $checked_option_sem_imp_me_am=" checked";
-		if($resultat1['sem_imp_me_pm']=="Y") $checked_option_sem_imp_me_pm=" checked";
-		if($resultat1['sem_imp_je_am']=="Y") $checked_option_sem_imp_je_am=" checked";
-		if($resultat1['sem_imp_je_pm']=="Y") $checked_option_sem_imp_je_pm=" checked";
-		if($resultat1['sem_imp_ve_am']=="Y") $checked_option_sem_imp_ve_am=" checked";
-		if($resultat1['sem_imp_ve_pm']=="Y") $checked_option_sem_imp_ve_pm=" checked";
-		if($resultat1['sem_imp_sa_am']=="Y") $checked_option_sem_imp_sa_am=" checked";
-		if($resultat1['sem_imp_sa_pm']=="Y") $checked_option_sem_imp_sa_pm=" checked";
-		if($resultat1['sem_imp_di_am']=="Y") $checked_option_sem_imp_di_am=" checked";
-		if($resultat1['sem_imp_di_pm']=="Y") $checked_option_sem_imp_di_pm=" checked";
+	// while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+    if($resultat1['sem_imp_lu_am']=="Y") $checked_option_sem_imp_lu_am=" checked";
+    if($resultat1['sem_imp_lu_pm']=="Y") $checked_option_sem_imp_lu_pm=" checked";
+    if($resultat1['sem_imp_ma_am']=="Y") $checked_option_sem_imp_ma_am=" checked";
+    if($resultat1['sem_imp_ma_pm']=="Y") $checked_option_sem_imp_ma_pm=" checked";
+    if($resultat1['sem_imp_me_am']=="Y") $checked_option_sem_imp_me_am=" checked";
+    if($resultat1['sem_imp_me_pm']=="Y") $checked_option_sem_imp_me_pm=" checked";
+    if($resultat1['sem_imp_je_am']=="Y") $checked_option_sem_imp_je_am=" checked";
+    if($resultat1['sem_imp_je_pm']=="Y") $checked_option_sem_imp_je_pm=" checked";
+    if($resultat1['sem_imp_ve_am']=="Y") $checked_option_sem_imp_ve_am=" checked";
+    if($resultat1['sem_imp_ve_pm']=="Y") $checked_option_sem_imp_ve_pm=" checked";
+    if($resultat1['sem_imp_sa_am']=="Y") $checked_option_sem_imp_sa_am=" checked";
+    if($resultat1['sem_imp_sa_pm']=="Y") $checked_option_sem_imp_sa_pm=" checked";
+    if($resultat1['sem_imp_di_am']=="Y") $checked_option_sem_imp_di_am=" checked";
+    if($resultat1['sem_imp_di_pm']=="Y") $checked_option_sem_imp_di_pm=" checked";
 
-		if($resultat1['sem_p_lu_am']=="Y") $checked_option_sem_p_lu_am=" checked";
-		if($resultat1['sem_p_lu_pm']=="Y") $checked_option_sem_p_lu_pm=" checked";
-		if($resultat1['sem_p_ma_am']=="Y") $checked_option_sem_p_ma_am=" checked";
-		if($resultat1['sem_p_ma_pm']=="Y") $checked_option_sem_p_ma_pm=" checked";
-		if($resultat1['sem_p_me_am']=="Y") $checked_option_sem_p_me_am=" checked";
-		if($resultat1['sem_p_me_pm']=="Y") $checked_option_sem_p_me_pm=" checked";
-		if($resultat1['sem_p_je_am']=="Y") $checked_option_sem_p_je_am=" checked";
-		if($resultat1['sem_p_je_pm']=="Y") $checked_option_sem_p_je_pm=" checked";
-		if($resultat1['sem_p_ve_am']=="Y") $checked_option_sem_p_ve_am=" checked";
-		if($resultat1['sem_p_ve_pm']=="Y") $checked_option_sem_p_ve_pm=" checked";
-		if($resultat1['sem_p_sa_am']=="Y") $checked_option_sem_p_sa_am=" checked";
-		if($resultat1['sem_p_sa_pm']=="Y") $checked_option_sem_p_sa_pm=" checked";
-		if($resultat1['sem_p_di_am']=="Y") $checked_option_sem_p_di_am=" checked";
-		if($resultat1['sem_p_di_pm']=="Y") $checked_option_sem_p_di_pm=" checked";
-		$date_deb_grille=$resultat1['a_date_debut_grille'];
-		$date_fin_grille=$resultat1['a_date_fin_grille'];
-	}
+    if($resultat1['sem_p_lu_am']=="Y") $checked_option_sem_p_lu_am=" checked";
+    if($resultat1['sem_p_lu_pm']=="Y") $checked_option_sem_p_lu_pm=" checked";
+    if($resultat1['sem_p_ma_am']=="Y") $checked_option_sem_p_ma_am=" checked";
+    if($resultat1['sem_p_ma_pm']=="Y") $checked_option_sem_p_ma_pm=" checked";
+    if($resultat1['sem_p_me_am']=="Y") $checked_option_sem_p_me_am=" checked";
+    if($resultat1['sem_p_me_pm']=="Y") $checked_option_sem_p_me_pm=" checked";
+    if($resultat1['sem_p_je_am']=="Y") $checked_option_sem_p_je_am=" checked";
+    if($resultat1['sem_p_je_pm']=="Y") $checked_option_sem_p_je_pm=" checked";
+    if($resultat1['sem_p_ve_am']=="Y") $checked_option_sem_p_ve_am=" checked";
+    if($resultat1['sem_p_ve_pm']=="Y") $checked_option_sem_p_ve_pm=" checked";
+    if($resultat1['sem_p_sa_am']=="Y") $checked_option_sem_p_sa_am=" checked";
+    if($resultat1['sem_p_sa_pm']=="Y") $checked_option_sem_p_sa_pm=" checked";
+    if($resultat1['sem_p_di_am']=="Y") $checked_option_sem_p_di_am=" checked";
+    if($resultat1['sem_p_di_pm']=="Y") $checked_option_sem_p_di_pm=" checked";
+    $date_deb_grille=$resultat1['a_date_debut_grille'];
+    $date_fin_grille=$resultat1['a_date_fin_grille'];
+
     /* _admin_mod_artt_ : determination plage saisie de date de debut 
        si saisie initiale : mindate est debut annee courante 
        sinon                mindate est ddebut_grille_encours + 1 j 
@@ -3652,13 +3721,14 @@ function get_list_groupes_double_valid_du_grand_resp($resp_login, $mysql_link, $
 
 }
 
-// recup de la liste des users des groupes dont $user_login est membre
+// recup de la liste des users des groupes dont $user_login est :
+// membre par defaut ou visiteur si "" 
 // renvoit une liste de login entre quotes et séparés par des virgules
-function get_list_users_des_groupes_du_user($user_login, $mysql_link, $DEBUG=FALSE)
+function get_list_users_des_groupes_du_user($user_login,$snature="membre",$mysql_link, $DEBUG=FALSE)
 {
 	$list_users="";
 
-	$list_groups=get_list_groupes_du_user($user_login, $mysql_link, 'membre', $DEBUG);
+	$list_groups=get_list_groupes_du_user($user_login,$snature, $mysql_link, $DEBUG);
 	if($list_groups!="") // si $user_login est membre d'au moins un groupe
 	{   /* _ac3 : uniquement les liens de gu_nature = 'membre' */
 		$sql="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) and gu_nature='membre' ORDER BY gu_login ";
@@ -3680,7 +3750,7 @@ function get_list_users_des_groupes_du_user($user_login, $mysql_link, $DEBUG=FAL
 // recup de la liste des groupes dont $resp_login est $snature 
 // _adaptation a conges4acv3 
 // renvoit une liste de group_id séparés par des virgules
-function get_list_groupes_du_user($user_login, $mysql_link, $snature="membre",$DEBUG=FALSE)
+function get_list_groupes_du_user($user_login,$snature="membre",$mysql_link, $DEBUG=FALSE)
 {
 	$list_group="";
     if  ($snature == "") {
@@ -3774,7 +3844,7 @@ function get_tab_resp_du_user($user_login, $mysql_link, $DEBUG=FALSE)
 		// recup des resp des groupes du user
 		if($_SESSION['config']['gestion_groupes']==TRUE)
 		{
-          $list_groups=get_list_groupes_du_user($user_login, $mysql_link, "membre", $DEBUG);
+          $list_groups=get_list_groupes_du_user($user_login,"membre",$mysql_link,$DEBUG);
 			if($list_groups!="")
 			{
 				$tab_gid=explode(",", $list_groups);
@@ -3855,7 +3925,7 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp, $mysql_link, $DEB
 	// recup des resp des groupes du user
 	if($_SESSION['config']['gestion_groupes']==TRUE)
 	{
-      $list_groups=get_list_groupes_du_user($user_login, $mysql_link, "membre", $DEBUG);
+      $list_groups=get_list_groupes_du_user($user_login,"membre", $mysql_link, $DEBUG);
 		if($DEBUG==TRUE) { echo "list_groups : <br>$list_groups<br>\n"; }
 
 		if($list_groups!="")
@@ -5157,9 +5227,10 @@ $_SESSION['lang']['verif_solde_erreur_part_3']." (" . (float)$sql_solde_user_a_v
 	return $verif;
 }
 // typical usage referer2rootpath($_SERVER sur 
-// [REQUEST_SCHEME] [SERVER_ADDR] [REQUEST_URI]
-// http             127.0.0.1     /conges/ac3rc11/index.php
-// pour obtenir http://127.0.0.1/conges/ac3rc11/
+// [REQUEST_SCHEME] http 
+// [SERVER_NAME]    forge-dev2.sigp.aviation-civile.gouv.fr 
+// [REQUEST_URI]    /conges/ac3rc11/index.php
+// pour obtenir http://forge-dev2.sigp.aviation-civile.gouv.fr/conges/ac3rc11/
 
 function referer2rootpath($request_scheme,$server_addr,$request_uri) {
   $rootpath = "" ; 

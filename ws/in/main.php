@@ -45,6 +45,7 @@ include("../../fonctions_calcul.php");
 include("../../fonctions_conges.php");
 
 $session_req = (isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : NULL ));   /* session should be set through GET or POST otherwise value is NULL */ 
+error_log("ws/in/main.php session_req ".$session_req);
 
 session_name($session_req);
 session_start();

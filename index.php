@@ -118,8 +118,9 @@ if(isset($_SESSION['userlogin']))
       if (!isset($_SESSION['config']['php_conges_rootpath'])) {
         /* HOST plutot 
            $rootpath = referer2rootpath($_SERVER["HTTP_REFERER"]) ;  */
+        /* ne pas utiliser "SERVER_ADDR" */ 
         $rootpath = referer2rootpath($_SERVER["REQUEST_SCHEME"],
-                                     $_SERVER["SERVER_ADDR"], 
+                                     $_SERVER["SERVER_NAME"], 
                                      $_SERVER["REQUEST_URI"]); 
         $_SESSION['config']['php_conges_rootpath'] = $rootpath ; 
         error_log("definingrootpath: ".$rootpath);

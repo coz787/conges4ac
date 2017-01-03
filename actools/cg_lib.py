@@ -42,7 +42,8 @@ def msd2string(omsdata):
         # sret = "date" 
         sret = omsdata.strftime('"%Y:%m:%d"') # :%X")
     elif isinstance(omsdata, unicode) :
-        sret = '"%s"' % str(omsdata.encode('latin-1', 'ignore'))
+        # sret = '"%s"' % str(omsdata.encode('latin-1', 'ignore'))
+        sret = '"%s"' % str(omsdata.encode('utf8', 'ignore'))
     elif isinstance(omsdata, str):
         sret = '"%s"' %  omsdata 
     else:
@@ -858,6 +859,8 @@ su_login ='%s' and su_abs_id=%d ;"
                     if row[1] == sdfgrillet :
                         b_has_sdfgrillet = True 
                     lartt.append(row) 
+                if re.match(".*bassien.*",auser) :
+                    print "do_detect_w_artt : bassien \n%s\n" % pprint.pformat(lartt)
                 nartt = len(lartt)
                 try:
                     sdfg = lartt[nartt-1][1] 

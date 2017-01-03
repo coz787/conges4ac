@@ -36,6 +36,7 @@ if(phpversion() > "5.1.2")
   else 
     include("../../controle_ids.php") ;
 }
+define('SESSIONPREFIXE','c4ac-'); /* caractere,chiffre,tiret uniquement */ 
 /*===============================================================================*/
 /*===============================================================================*/
 
@@ -218,7 +219,7 @@ function session_create($username)
 	if ($username != "")
 	{
       // $session = "phpconges".md5(uniqid(rand()));
-      $session = "c4ac-".md5(uniqid(rand()));
+      $session = SESSIONPREFIXE.md5(uniqid(rand()));
       session_name($session);
       session_id($session);
 

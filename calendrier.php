@@ -30,6 +30,7 @@ $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session']
 include("fonctions_conges.php") ;
 include("INCLUDE.PHP/fonction.php");
 
+/* _dpa_ pourquoi ce test : ok permet la consultation calendrier sans se connecter 
 if(substr($session, 0, 9)!="phpconges")
 {
 	session_start();
@@ -41,8 +42,8 @@ if(substr($session, 0, 9)!="phpconges")
 		exit;
 	}
 }
-else
-	include("INCLUDE.PHP/session.php");
+else  */ 
+include("INCLUDE.PHP/session.php");
 
 $DEBUG=FALSE;
 //$DEBUG=TRUE ;
@@ -1090,7 +1091,7 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 	{
 		// on propose la liste des groupes dont user est resp + groupes dont user est membre
 		$list_groupes_1=get_list_groupes_du_resp($_SESSION['userlogin'], $mysql_link, $DEBUG);
-		$list_groupes_2=get_list_groupes_du_user($_SESSION['userlogin'], $mysql_link, "", $DEBUG);
+		$list_groupes_2=get_list_groupes_du_user($_SESSION['userlogin'],"",$mysql_link,$DEBUG);
 		$list_groupes = $list_groupes_1.",".$list_groupes_2 ;
 
 		//correction de JBR: bug pour l' affichage du calendrier des grands responsables
@@ -1102,7 +1103,7 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 		         $list_groupes = $list_groupes_1.",".$list_groupes_2;
 	}
 	else {
-      $list_groupes=get_list_groupes_du_user($_SESSION['userlogin'], $mysql_link, "", $DEBUG);
+      $list_groupes=get_list_groupes_du_user($_SESSION['userlogin'],"",$mysql_link,$DEBUG);
     } ; 
 	echo "<form action=\"$PHP_SELF?session=$session&printable=$printable&selected=$selected&year=$year&mois=$mois&first_jour=$first_jour\" method=\"POST\">\n";
 	$tab_groupes=array_unique(explode(",", $list_groupes));
@@ -1221,7 +1222,7 @@ function recup_tableau_des_users_a_afficher($select_groupe, $mysql_link, $DEBUG=
 						{
 							$sql = $sql." AND ( u_login = '".$_SESSION['userlogin']."' ";
 							//recup de la liste des users des groupes dont le user est membre
-							$list_users=get_list_users_des_groupes_du_user($_SESSION['userlogin'], $mysql_link);
+							$list_users=get_list_users_des_groupes_du_user($_SESSION['userlogin'],"membre",$mysql_link);
 							if($list_users!="")  //si la liste n'est pas vide ( serait le cas si n'est membre d'aucun groupe)
 								$sql = $sql." OR u_login IN ($list_users) ";
 							$sql = $sql." ) ";
@@ -1243,7 +1244,7 @@ function recup_tableau_des_users_a_afficher($select_groupe, $mysql_link, $DEBUG=
 							if( ($_SESSION['config']['gestion_groupes']==TRUE) && ($_SESSION['config']['affiche_groupe_in_calendrier']==TRUE) )
 							{
 								//recup de la liste des users des groupes dont le user est membre
-								$list_users=get_list_users_des_groupes_du_user($_SESSION['userlogin'], $mysql_link);
+                              $list_users=get_list_users_des_groupes_du_user($_SESSION['userlogin'], "", $mysql_link);
 								if($list_users!="")  //si la liste n'est pas vide ( serait le cas si n'est membre d'aucun groupe)
 									$sql = $sql." OR u_login IN ($list_users) ";
 

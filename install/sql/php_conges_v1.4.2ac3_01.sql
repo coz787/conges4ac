@@ -202,6 +202,9 @@ CREATE TABLE `conges_periode` (
   PRIMARY KEY  (`p_num`)
 )  ;
 
+ALTER TABLE `conges_periode`  ADD INDEX (p_login, p_etat,p_date_deb ) ; 
+
+
 #
 # Contenu de la table `conges_periode`
 #
