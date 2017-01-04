@@ -1109,6 +1109,9 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
 	$tab_groupes=array_unique(explode(",", $list_groupes));
 	echo $_SESSION['lang']['calendrier_afficher_groupe']." : ";
 	echo "<select name=select_groupe>\n";
+	//option pour retour a l'affichage normal ...
+	echo "<option value=\"0\">".$_SESSION['lang']['divers_normal_maj_1']."</option>\n";
+
     $lgroup_s = array();
     // ['groupename'] = groupeid 
 	foreach($tab_groupes as $grp)
@@ -1124,8 +1127,6 @@ function affiche_select_groupe($select_groupe, $selected, $printable, $year, $mo
       else
         echo "<option value=\"$idgrp\">".$namegrp."</option>\n";
 	}
-	//option pour retour a l'affichage normal ...
-	echo "<option value=\"0\">".$_SESSION['lang']['divers_normal_maj_1']."</option>\n";
 
 	echo "</select>\n";
 	echo "<input type=\"submit\" value=\"ok\">\n";
