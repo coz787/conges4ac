@@ -859,8 +859,8 @@ su_login ='%s' and su_abs_id=%d ;"
                     if row[1] == sdfgrillet :
                         b_has_sdfgrillet = True 
                     lartt.append(row) 
-                if re.match(".*bassien.*",auser) :
-                    print "do_detect_w_artt : bassien \n%s\n" % pprint.pformat(lartt)
+                #if re.match(".*bassien.*",auser) :
+                #    print "do_detect_w_artt : bassien \n%s\n" % pprint.pformat(lartt)
                 nartt = len(lartt)
                 try:
                     sdfg = lartt[nartt-1][1] 

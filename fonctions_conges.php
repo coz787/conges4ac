@@ -5526,8 +5526,8 @@ function get_frame_date($mode="conge",$by="user")
 
   // en mode user et une retroactivite max est defini 
   if  ( $by=="resp" ) { // mode responsable 
-    // $yearmin_start -= 1 ;  // le responsable peut saisir sur année n-1 
-    // non trop complique _dirtyweeknumber_
+    $yearmin_start -= 1 ;  // le responsable peut saisir sur année n-1 
+    // attention pb _dirtyweeknumber_ sur année comme 15/16 
   } else if ( $by=="user" && $lretromonth >= 0 ) { 
     $month_cur = $lnow['mon'] ;
     // error_log("get_frame_date:".$year_cur.$month_cur); 
