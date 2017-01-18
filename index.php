@@ -121,6 +121,7 @@ if(isset($_SESSION['userlogin']))
         /* ne pas utiliser "SERVER_ADDR" */ 
         $rootpath = referer2rootpath($_SERVER["REQUEST_SCHEME"],
                                      $_SERVER["SERVER_NAME"], 
+                                     $_SERVER["SERVER_PORT"], 
                                      $_SERVER["REQUEST_URI"]); 
         $_SESSION['config']['php_conges_rootpath'] = $rootpath ; 
         error_log("definingrootpath: ".$rootpath);

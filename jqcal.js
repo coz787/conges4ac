@@ -458,7 +458,7 @@ function query_conge() {
               },
               cb_calc_joursnsolde); */
         $.ajax({
-               url: osession.rootpath+"/ws/in/main.php", 
+               url: osession.rootpath+"ws/in/main.php", 
                type: "GET",
                data: {"rq":"calc_joursnsolde",
                       "session":osession.session,

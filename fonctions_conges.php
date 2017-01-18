@@ -5229,17 +5229,18 @@ $_SESSION['lang']['verif_solde_erreur_part_3']." (" . (float)$sql_solde_user_a_v
 // typical usage referer2rootpath($_SERVER sur 
 // [REQUEST_SCHEME] http 
 // [SERVER_NAME]    forge-dev2.sigp.aviation-civile.gouv.fr 
+// [SERVER_PORT]    80 ou 443 ou autre (redirection de port)
 // [REQUEST_URI]    /conges/ac3rc11/index.php
 // pour obtenir http://forge-dev2.sigp.aviation-civile.gouv.fr/conges/ac3rc11/
 
-function referer2rootpath($request_scheme,$server_addr,$request_uri) {
+function referer2rootpath($request_scheme,$server_addr,$server_port,$request_uri) {
   $rootpath = "" ; 
   $lruri = explode("/",$request_uri);
   if (end($lruri) == "index.php") { 
       array_pop($lruri) ;
       array_push($lruri,"") ; // trailing slash 
     };
-  $rootpath = $request_scheme."://".$server_addr.implode("/",$lruri);
+  $rootpath = $request_scheme."://".$server_addr.":".$server_port.implode("/",$lruri);
   return $rootpath ; 
 }
 function attic_referer2rootpath_v1($http_referer) {
