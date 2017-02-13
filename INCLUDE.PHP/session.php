@@ -31,9 +31,10 @@ if(phpversion() > "5.1.2")
 	else
 		include("../controle_ids.php") ;
 }
-
+error_log("request_uri is ".$_SERVER["REQUEST_URI"]); 
 //
 // MAIN
+
 //
 
 /*** initialisation des variables ***/
@@ -44,6 +45,29 @@ $session_password="";
 //
 // recup du num  de session (mais on ne sais pas s'il est passé en GET ou POST
 $session=(isset($_GET['session']) ? $_GET['session'] : ((isset($_POST['session'])) ? $_POST['session'] : "") ) ;
+
+if (isset($_GET['websso']) ) { 
+  $gwebsso = strtolower($_GET['websso']) ; 
+} else { 
+  $gwebsso = "yes" ; // default 
+}
+
+$luri = explode("/",$_SERVER["REQUEST_URI"]);
+$urin = array_pop($luri); 
+$urin_1 = array_pop($luri); 
+error_log("urin_1 is ".$urin_1);
+
+/* websso  vrai alors on utilise la configuration, 
+           faux alors on bypass principe websso */ 
+if (in_array($urin_1, ["config"])) { 
+  $bwebsso = FALSE ; 
+} else { 
+  if ( $gwebsso == "no")  { 
+    $bwebsso = FALSE ; 
+  } else {
+    $bwebsso = TRUE  ; 
+  }
+}
 
 $DEBUG=FALSE;
 //$DEBUG=TRUE;
@@ -90,7 +114,8 @@ else    //  PAS DE SESSION   ($session == "")
       //};
     }
     // error_log("SPSP: ". $session_password) ; 
-	if ( ($_SESSION['config']['how_to_connect_user'] == "CAS") && ($session_username != "admin") )
+	if ( ($_SESSION['config']['how_to_connect_user'] == "CAS") && 
+         ($session_username != "admin")  && ($bwebsso)          )
 	{
 		if($DEBUG==TRUE) { echo "autentification CAS !<br><br>\n"; }
 		
