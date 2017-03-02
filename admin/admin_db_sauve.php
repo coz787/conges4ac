@@ -271,8 +271,8 @@ function commit_sauvegarde($type_sauvegarde, $DEBUG=FALSE)
 
 	//recup de la liste des tables
 	$sql="SHOW TABLES";
-	$ReqLog = mysql_query($sql, $mysql_link) or die("ERREUR : ".$sql."<br>\n".mysql_error());
-	while ($resultat = mysql_fetch_array($ReqLog))
+	$ReqLog = mysqli_query($mysql_link,$sql) or die("ERREUR : ".$sql."<br>\n".mysqli_error());
+	while ($resultat = mysqli_fetch_array($ReqLog))
 	{
 		$table=$resultat[0] ;
 
@@ -289,7 +289,7 @@ function commit_sauvegarde($type_sauvegarde, $DEBUG=FALSE)
 		}
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 }
 
@@ -422,11 +422,11 @@ function restaure($fichier_restaure_name, $fichier_restaure_tmpname, $fichier_re
 				//execution de la requete sql:
 				$sql=$line;
 				//echo "$sql<br>";
-				$ReqLog = mysql_query($sql, $mysql_link) or die("ERREUR : RESTAURATION : <br>\n $sql<br>\n<br>\n".mysql_error());
+				$ReqLog = mysqli_query($sql, $mysql_link) or die("ERREUR : RESTAURATION : <br>\n $sql<br>\n<br>\n".mysql_error());
 			}
 		}
 */
-		mysql_close($mysql_link);
+		mysqli_close($mysql_link);
 
 		echo "<form action=\"\" method=\"POST\">\n";
 		echo "<table>\n";
@@ -465,10 +465,10 @@ function get_table_structure($table, $mysql_link, $DEBUG=FALSE)
 
 	// description des champs :
 	$sql_champs="SHOW FIELDS FROM $table";
-	$ReqLog_champs = mysql_query($sql_champs, $mysql_link) or die("ERREUR : get_table_structure() <br>\n".mysql_error());
-	$count_champs=mysql_num_rows($ReqLog_champs);
+	$ReqLog_champs = mysqli_query($mysql_link,$sql_champs) or die("ERREUR : get_table_structure() <br>\n".mysqli_error());
+	$count_champs=mysqli_num_rows($ReqLog_champs);
 	$i=0;
-	while ($resultat_champs = mysql_fetch_array($ReqLog_champs))
+	while ($resultat_champs = mysqli_fetch_array($ReqLog_champs))
 	{
 		$sql_field=$resultat_champs['Field'];
 		$sql_type=$resultat_champs['Type'];
@@ -496,8 +496,8 @@ function get_table_structure($table, $mysql_link, $DEBUG=FALSE)
 
 	// description des index :
 	$sql_index = "SHOW KEYS FROM $table";
-	$ReqLog_index = mysql_query($sql_index, $mysql_link) or die("ERREUR : get_table_structure() <br>\n".mysql_error());
-	$count_index=mysql_num_rows($ReqLog_index);
+	$ReqLog_index = mysqli_query($mysql_link,$sql_index) or die("ERREUR : get_table_structure() <br>\n".mysqli_error());
+	$count_index=mysqli_num_rows($ReqLog_index);
 	$i=0;
 
 	// il faut faire une liste pour prendre les PRIMARY, le nom de la colonne et
@@ -508,7 +508,7 @@ function get_table_structure($table, $mysql_link, $DEBUG=FALSE)
 	$list_primary="";
 	$list_unique="";
 	$list_key="";
-	while ($resultat_index = mysql_fetch_array($ReqLog_index))
+	while ($resultat_index = mysqli_fetch_array($ReqLog_index))
 	{
 		$sql_key_name=$resultat_index['Key_name'];
 		$sql_column_name=$resultat_index['Column_name'];
@@ -568,7 +568,7 @@ function get_table_data($table, $mysql_link, $DEBUG=FALSE)
 	$sql_data="SELECT * FROM $table";
 	$ReqLog_data = requete_mysql($sql_data, $mysql_link, "get_table_data", $DEBUG);
 
-	while ($resultat_data = mysql_fetch_array($ReqLog_data))
+	while ($resultat_data = mysqli_fetch_array($ReqLog_data))
 	{
 		$count_fields=count($resultat_data)/2;   // on divise par 2 car c'est un tableau indexé (donc compte key+valeur)
 		$chaine_insert = "INSERT INTO `$table` VALUES ( ";

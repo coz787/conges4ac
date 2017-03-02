@@ -62,7 +62,7 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	elseif($choix_action=="commit")
 		commit_saisie($tab_checkbox_j_chome, $mysql_link, $DEBUG);
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 
@@ -495,11 +495,11 @@ function verif_year_deja_saisie($tab_checkbox_j_chome, $mysql_link, $DEBUG=FALSE
 	$year=substr($date_1, 0, 4);
 	//echo "year= $year<br>\n";
 	$sql_select="SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE '$year%' ;";
-	$relog = mysql_query($sql_select, $mysql_link);
+	$relog = mysqli_query($mysql_link,$sql_select);
 //	attention ne fonctionne pas avec requete_mysql
 //	$relog = requete_mysql($sql_select, $mysql_link, "verif_year_deja_saisie", $DEBUG);
 
-	$count=mysql_num_rows($relog);
+	$count=mysqli_num_rows($relog);
 	if($count==0)
 		return FALSE;
 	else
@@ -511,14 +511,14 @@ function verif_year_deja_saisie($tab_checkbox_j_chome, $mysql_link, $DEBUG=FALSE
 function get_tableau_jour_feries($year, &$tab_year, $mysql_link, $DEBUG=FALSE)
 {
 	$sql_select=" SELECT jf_date FROM conges_jours_feries WHERE jf_date LIKE '$year-%' ;" ;
-	$res_select = mysql_query($sql_select, $mysql_link);
+	$res_select = mysqli_query($mysql_link,$sql_select);
 //	attention ne fonctionne pas avec requete_mysql
 //	$res_select = requete_mysql($sql_select, $mysql_link, "get_tableau_jour_feries", $DEBUG);
-	$num_select = mysql_num_rows($res_select);
+	$num_select = mysqli_num_rows($res_select);
 
 	if($num_select!=0)
 	{
-		while($result_select = mysql_fetch_array($res_select))
+		while($result_select = mysqli_fetch_array($res_select))
 		{
 			$tab_year[]=$result_select["jf_date"];
 		}

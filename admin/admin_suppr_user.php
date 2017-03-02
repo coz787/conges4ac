@@ -88,7 +88,7 @@ echo "</head>\n";
 		header("Location: admin_index.php?session=$session&onglet=admin-users");
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 echo "<hr align=\"center\" size=\"2\" width=\"90%\">\n";
 
@@ -123,7 +123,7 @@ function confirmer($u_login, $mysql_link, $DEBUG=FALSE)
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "confirmer", $DEBUG);
 
 	echo "<tr align=\"center\">\n";
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		echo "<td class=\"histo\">".$resultat1["u_login"]."</td>\n";
 		echo "<td class=\"histo\">".$resultat1["u_nom"]."</td>\n";

@@ -180,7 +180,7 @@ echo "</head>\n";
 		$tab_new_user[0]['new_year']= getpost_variable("new_year") ;
 	}
 
-/* _protectsql_ : protection par mysql_escape_string realise ailleurs */ 
+/* _protectsql_ : protection par mysqli_escape_string realise ailleurs */ 
    $new_group_name=getpost_variable("new_group_name") ;
    $new_group_libelle=getpost_variable("new_group_libelle") ; 
     $new_group_double_valid= getpost_variable("new_group_double_valid") ;
@@ -369,7 +369,7 @@ echo "</td>\n";
 		affichage($onglet, $new_group_name, $new_group_libelle, $choix_group, $choix_user, $choix_resp, $tab_new_user[0], $tab_new_jours_an, $tab_new_solde, $mysql_link, $DEBUG);
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 	echo "</CENTER>\n";
@@ -515,8 +515,8 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		$motdepasse = md5($tab_new_user['password1']);
 		$sql1 = "INSERT INTO conges_users SET ";
 		$sql1=$sql1."u_login='".$tab_new_user['login']."', ";
-		$sql1=$sql1."u_nom='".mysql_escape_string($tab_new_user['nom'])."', ";
-		$sql1=$sql1."u_prenom='".mysql_escape_string($tab_new_user['prenom'])."', ";
+		$sql1=$sql1."u_nom='".mysqli_real_escape_string($mysql_link,$tab_new_user['nom'])."', ";
+		$sql1=$sql1."u_prenom='".mysqli_real_escape_string($mysql_link,$tab_new_user['prenom'])."', ";
 		$sql1=$sql1."u_is_resp='".$tab_new_user['is_resp']."', ";
 		$sql1=$sql1."u_resp_login='".$tab_new_user['resp_login']."', ";
 		$sql1=$sql1."u_is_admin='".$tab_new_user['is_admin']."', ";
@@ -579,7 +579,7 @@ function ajout_user(&$tab_new_user, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, 
 		else
 			echo $_SESSION['lang']['form_modif_not_ok']."<br><br> \n";
 
-		$comment_log = "ajout_user : ".$tab_new_user['login']." / ".mysql_escape_string($tab_new_user['nom'])." ".mysql_escape_string($tab_new_user['prenom'])." (".$tab_new_user['quotite']." %)" ;
+		$comment_log = "ajout_user : ".$tab_new_user['login']." / ".mysqli_real_escape_string($mysql_link,$tab_new_user['nom'])." ".mysqli_real_escape_string($mysql_link,$tab_new_user['prenom'])." (".$tab_new_user['quotite']." %)" ;
 		log_action(0, "", $tab_new_user['login'], $comment_log, $mysql_link, $DEBUG);
 
 		/* APPEL D'UNE AUTRE PAGE */
@@ -664,7 +664,7 @@ function verif_new_param(&$tab_new_user, &$tab_new_jours_an, &$tab_new_solde, $m
       // verif si le login demande n'existe pas deja dans la base ....
       $sql_verif="SELECT u_login FROM conges_users WHERE u_login='".$tab_new_user['login']."' ";
       $ReqLog_verif = requete_mysql($sql_verif, $mysql_link, "verif_new_param", $DEBUG);
-      $num_verif = mysql_num_rows($ReqLog_verif);
+      $num_verif = mysqli_num_rows($ReqLog_verif);
       
       // verif si le login existe dans l'annuaire 
       if ($_SESSION['config']['check_user_in_ldap']) { 
@@ -927,7 +927,7 @@ function affiche_formulaire_ajout_user(&$tab_new_user, &$tab_new_jours_an, &$tab
 	$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom, u_prenom"  ;
 	$ReqLog2 = requete_mysql($sql2, $mysql_link, "affiche_formulaire_ajout_user", $DEBUG);
 
-	while ($resultat2 = mysql_fetch_array($ReqLog2)) {
+	while ($resultat2 = mysqli_fetch_array($ReqLog2)) {
 		$current_resp_login=$resultat2["u_login"];
 		if($tab_new_user['resp_login']==$current_resp_login)
 			$text_resp_login=$text_resp_login."<option value=\"$current_resp_login\" selected>".$resultat2["u_nom"]." ".$resultat2["u_prenom"]."</option>";
@@ -1092,7 +1092,7 @@ function affiche_gestion_groupes($new_group_name, $new_group_libelle, $mysql_lin
 	echo "</tr>\n";
 
 	$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_gestion_groupes", $DEBUG);
-	while ($resultat_gr = mysql_fetch_array($ReqLog_gr))
+	while ($resultat_gr = mysqli_fetch_array($ReqLog_gr))
 	{
 
 		$sql_gid=$resultat_gr["g_gid"] ;
@@ -1164,8 +1164,8 @@ function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_val
 	$session=session_id();
 
     /* _protectsql_ dpa */ 
-    $new_group_name = mysql_escape_string( $new_group_name);
-    $new_group_libelle = mysql_escape_string( $new_group_libelle);
+    $new_group_name = mysqli_real_escape_string($mysql_link, $new_group_name);
+    $new_group_libelle = mysqli_real_escape_string($mysql_link, $new_group_libelle);
 
 	if(verif_new_param_group($new_group_name, $new_group_libelle, $mysql_link, $DEBUG)==0)  // verif si les nouvelles valeurs sont coohérentes et n'existe pas déjà
 	{
@@ -1175,7 +1175,7 @@ function ajout_groupe($new_group_name, $new_group_libelle, $new_group_double_val
 		$sql1 = "INSERT INTO conges_groupe SET g_groupename='$new_group_name', g_comment='$new_group_libelle', g_double_valid ='$new_group_double_valid' " ;
 		$result = requete_mysql($sql1, $mysql_link, "ajout_groupe", $DEBUG);
 
-		$new_gid=mysql_insert_id($mysql_link);
+		$new_gid=mysqli_insert_id($mysql_link);
 		// par défaut le responsable virtuel est resp de tous les groupes !!!
 		$sql2 = "INSERT INTO conges_groupe_resp SET gr_gid=$new_gid, gr_login='conges' " ;
 		$result = requete_mysql($sql2, $mysql_link, "ajout_groupe", $DEBUG);
@@ -1219,7 +1219,7 @@ function verif_new_param_group($new_group_name, $new_group_libelle, $mysql_link,
 		// verif si le groupe demandé n'existe pas déjà ....
 		$sql_verif="select g_groupename from conges_groupe where g_groupename='$new_group_name' ";
 		$ReqLog_verif = requete_mysql($sql_verif, $mysql_link, "verif_new_param_group", $DEBUG);
-		$num_verif = mysql_num_rows($ReqLog_verif);
+		$num_verif = mysqli_num_rows($ReqLog_verif);
 		if ($num_verif!=0)
 		{
 			echo "<H3> ".$_SESSION['lang']['admin_verif_groupe_invalide']." </H3>\n" ;
@@ -1294,7 +1294,7 @@ function affiche_choix_groupes_users($mysql_link, $DEBUG=FALSE)
 	echo "</tr>\n";
 
 	$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_choix_groupes_users", $DEBUG);
-	while ($resultat_gr = mysql_fetch_array($ReqLog_gr))
+	while ($resultat_gr = mysqli_fetch_array($ReqLog_gr))
 	{
 
 		$sql_gid=$resultat_gr["g_gid"] ;
@@ -1329,7 +1329,7 @@ function affiche_gestion_groupes_users($choix_group, $mysql_link, $DEBUG=FALSE)
 	// Récuperation des informations :
 	$sql_gr = "SELECT g_groupename, g_comment FROM conges_groupe WHERE g_gid=$choix_group "  ;
 	$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_gestion_groupes_users", $DEBUG);
-	$resultat_gr = mysql_fetch_array($ReqLog_gr);
+	$resultat_gr = mysqli_fetch_array($ReqLog_gr);
 	$sql_group=$resultat_gr["g_groupename"] ;
 	$sql_comment=$resultat_gr["g_comment"] ;
 
@@ -1360,7 +1360,7 @@ function affiche_gestion_groupes_users($choix_group, $mysql_link, $DEBUG=FALSE)
 	$sql_users = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_login!='admin' ORDER BY u_nom, u_prenom "  ;
 	$ReqLog_users = requete_mysql($sql_users, $mysql_link, "affiche_gestion_groupes_users", $DEBUG);
 
-	while($resultat_users=mysql_fetch_array($ReqLog_users))
+	while($resultat_users=mysqli_fetch_array($ReqLog_users))
 	{
 		$tab_u=array();
 		$tab_u["login"]=$resultat_users["u_login"];
@@ -1373,7 +1373,7 @@ function affiche_gestion_groupes_users($choix_group, $mysql_link, $DEBUG=FALSE)
 	$sql_gu = "SELECT gu_login,gu_nature FROM conges_groupe_users WHERE gu_gid='$choix_group' ORDER BY gu_login "  ;
 	$ReqLog_gu = requete_mysql($sql_gu, $mysql_link, "affiche_gestion_groupes_users", $DEBUG);
 
-	while($resultat_gu=mysql_fetch_array($ReqLog_gu))
+	while($resultat_gu=mysqli_fetch_array($ReqLog_gu))
 	{
       /*  _ac3 $tab_group[]=$resultat_gu["gu_login"]; */
 		$tab_group[$resultat_gu["gu_login"]]=$resultat_gu["gu_nature"];
@@ -1495,7 +1495,7 @@ function affiche_choix_user_groupes($mysql_link, $DEBUG=FALSE)
 
 	$ReqLog_user = requete_mysql($sql_user, $mysql_link, "affiche_choix_user_groupes", $DEBUG);
 
-	while ($resultat_user = mysql_fetch_array($ReqLog_user))
+	while ($resultat_user = mysqli_fetch_array($ReqLog_user))
 	{
 
 		$sql_login=$resultat_user["u_login"] ;
@@ -1529,7 +1529,7 @@ function affiche_gestion_user_groupes($choix_user, $mysql_link, $DEBUG=FALSE)
 	$sql_u = "SELECT u_nom, u_prenom FROM conges_users WHERE u_login='$choix_user'"  ;
 	$ReqLog_u = requete_mysql($sql_u, $mysql_link, "affiche_gestion_user_groupes", $DEBUG);
 
-	$resultat_u = mysql_fetch_array($ReqLog_u);
+	$resultat_u = mysqli_fetch_array($ReqLog_u);
 	$sql_nom=$resultat_u["u_nom"] ;
 	$sql_prenom=$resultat_u["u_prenom"] ;
 */
@@ -1581,7 +1581,7 @@ function affiche_tableau_affectation_user_groupes($choix_user, $mysql_link, $DEB
 	$sql_g = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
 	$ReqLog_g = requete_mysql($sql_g, $mysql_link, "affiche_gestion_user_groupes", $DEBUG);
 
-	while($resultat_g=mysql_fetch_array($ReqLog_g))
+	while($resultat_g=mysqli_fetch_array($ReqLog_g))
 	{
 		$tab_gg=array();
 		$tab_gg["gid"]=$resultat_g["g_gid"];
@@ -1598,7 +1598,7 @@ function affiche_tableau_affectation_user_groupes($choix_user, $mysql_link, $DEB
 		$sql_gu = "SELECT gu_gid,gu_nature FROM conges_groupe_users WHERE gu_login='$choix_user' ORDER BY gu_gid "  ;
 		$ReqLog_gu = requete_mysql($sql_gu, $mysql_link, "affiche_gestion_user_groupes", $DEBUG);
 
-		while($resultat_gu=mysql_fetch_array($ReqLog_gu))
+		while($resultat_gu=mysqli_fetch_array($ReqLog_gu))
 		{
 			$tab_user[$resultat_gu["gu_gid"]]=$resultat_gu["gu_nature"];
 		}
@@ -1761,7 +1761,7 @@ function affiche_choix_groupes_responsables($mysql_link, $DEBUG=FALSE)
 
 	$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_choix_groupes_responsables", $DEBUG);
 
-	while ($resultat_gr = mysql_fetch_array($ReqLog_gr))
+	while ($resultat_gr = mysqli_fetch_array($ReqLog_gr))
 	{
 		$sql_gid=$resultat_gr["g_gid"] ;
 		$sql_groupename=$resultat_gr["g_groupename"] ;
@@ -1795,7 +1795,7 @@ function affiche_gestion_groupes_responsables($choix_group, $mysql_link, $DEBUG=
 	$sql_gr = "SELECT g_groupename, g_comment, g_double_valid FROM conges_groupe WHERE g_gid=$choix_group " ;
 	$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_gestion_groupes_responsables", $DEBUG);
 
-	$resultat_gr = mysql_fetch_array($ReqLog_gr);
+	$resultat_gr = mysqli_fetch_array($ReqLog_gr);
 	$sql_groupename=$resultat_gr["g_groupename"] ;
 	$sql_comment=$resultat_gr["g_comment"] ;
 	$sql_double_valid=$resultat_gr["g_double_valid"] ;
@@ -1809,7 +1809,7 @@ function affiche_gestion_groupes_responsables($choix_group, $mysql_link, $DEBUG=
 	$sql_resp = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login!='conges' AND u_is_resp='Y' ORDER BY u_nom, u_prenom "  ;
 	$ReqLog_resp = requete_mysql($sql_resp, $mysql_link, "affiche_gestion_groupes_responsables", $DEBUG);
 
-	while($resultat_resp=mysql_fetch_array($ReqLog_resp))
+	while($resultat_resp=mysqli_fetch_array($ReqLog_resp))
 	{
 		$tab_r=array();
 		$tab_r["login"]=$resultat_resp["u_login"];
@@ -1843,7 +1843,7 @@ function affiche_gestion_groupes_responsables($choix_group, $mysql_link, $DEBUG=
 		$sql_gr = "SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=$choix_group ORDER BY gr_login "  ;
 		$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_gestion_groupes_responsables", $DEBUG);
 
-		while($resultat_gr=mysql_fetch_array($ReqLog_gr))
+		while($resultat_gr=mysqli_fetch_array($ReqLog_gr))
 		{
 			$tab_group[]=$resultat_gr["gr_login"];
 		}
@@ -1902,7 +1902,7 @@ function affiche_gestion_groupes_responsables($choix_group, $mysql_link, $DEBUG=
 			$sql_ggr = "SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid=$choix_group ORDER BY ggr_login "  ;
 			$ReqLog_ggr = requete_mysql($sql_ggr, $mysql_link, "affiche_gestion_groupes_responsables", $DEBUG);
 
-			while($resultat_ggr=mysql_fetch_array($ReqLog_ggr))
+			while($resultat_ggr=mysqli_fetch_array($ReqLog_ggr))
 			{
 				$tab_group_grd[]=$resultat_ggr["ggr_login"];
 			}
@@ -2032,7 +2032,7 @@ function affiche_choix_responsable_groupes($mysql_link, $DEBUG=FALSE)
 	echo "	<td class=\"titre\">&nbsp;".$_SESSION['lang']['divers_login']."&nbsp;</td>\n";
 	echo "</tr>\n";
 
-	while ($resultat_resp = mysql_fetch_array($ReqLog_resp))
+	while ($resultat_resp = mysqli_fetch_array($ReqLog_resp))
 	{
 
 		$sql_login=$resultat_resp["u_login"] ;
@@ -2067,7 +2067,7 @@ function affiche_gestion_responsable_groupes($choix_resp, $mysql_link, $DEBUG=FA
 	$sql_r = "SELECT u_nom, u_prenom FROM conges_users WHERE u_login='$choix_resp'"  ;
 	$ReqLog_r = requete_mysql($sql_r, $mysql_link, "affiche_gestion_responsable_groupes", $DEBUG);
 
-	$resultat_r = mysql_fetch_array($ReqLog_r);
+	$resultat_r = mysqli_fetch_array($ReqLog_r);
 	$sql_nom=$resultat_r["u_nom"] ;
 	$sql_prenom=$resultat_r["u_prenom"] ;
 
@@ -2079,7 +2079,7 @@ function affiche_gestion_responsable_groupes($choix_resp, $mysql_link, $DEBUG=FA
 	$sql_groupe = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe ORDER BY g_groupename "  ;
 	$ReqLog_groupe = requete_mysql($sql_groupe, $mysql_link, "affiche_gestion_responsable_groupes", $DEBUG);
 
-	while($resultat_groupe=mysql_fetch_array($ReqLog_groupe))
+	while($resultat_groupe=mysqli_fetch_array($ReqLog_groupe))
 	{
 		$tab_g=array();
 		$tab_g["gid"]=$resultat_groupe["g_gid"];
@@ -2093,7 +2093,7 @@ function affiche_gestion_responsable_groupes($choix_resp, $mysql_link, $DEBUG=FA
 	$sql_g2 = "SELECT g_gid, g_groupename, g_comment FROM conges_groupe WHERE g_double_valid='Y' ORDER BY g_groupename "  ;
 	$ReqLog_g2 = requete_mysql($sql_g2, $mysql_link, "affiche_gestion_user_groupes", $DEBUG);
 
-	while($resultat_groupe_2=mysql_fetch_array($ReqLog_g2))
+	while($resultat_groupe_2=mysqli_fetch_array($ReqLog_g2))
 	{
 		$tab_g_2=array();
 		$tab_g_2["gid"]=$resultat_groupe_2["g_gid"];
@@ -2128,7 +2128,7 @@ function affiche_gestion_responsable_groupes($choix_resp, $mysql_link, $DEBUG=FA
 		$sql_r = "SELECT gr_gid FROM conges_groupe_resp WHERE gr_login='$choix_resp' ORDER BY gr_gid "  ;
 		$ReqLog_r = requete_mysql($sql_r, $mysql_link, "affiche_gestion_responsable_groupes", $DEBUG);
 
-		while($resultat_r=mysql_fetch_array($ReqLog_r))
+		while($resultat_r=mysqli_fetch_array($ReqLog_r))
 		{
 			$tab_resp[]=$resultat_r["gr_gid"];
 		}
@@ -2188,7 +2188,7 @@ function affiche_gestion_responsable_groupes($choix_resp, $mysql_link, $DEBUG=FA
 			$sql_gr = "SELECT ggr_gid FROM conges_groupe_grd_resp WHERE ggr_login='$choix_resp' ORDER BY ggr_gid "  ;
 			$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "affiche_gestion_responsable_groupes", $DEBUG);
 
-			while($resultat_gr=mysql_fetch_array($ReqLog_gr))
+			while($resultat_gr=mysqli_fetch_array($ReqLog_gr))
 			{
 				$tab_grd_resp[]=$resultat_gr["ggr_gid"];
 			}

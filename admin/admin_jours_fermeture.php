@@ -180,7 +180,7 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	elseif($choix_action=="commit_annul_fermeture")
 	        commit_annul_fermeture($fermeture_id, $groupe_id, $mysql_link, $DEBUG);
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	echo "</center>\n";
 	echo "</body>\n";
@@ -255,7 +255,7 @@ function saisie_groupe_fermeture($mysql_link, $DEBUG=FALSE)
 			echo "<td valign=\"top\">\n";
 			$ReqLog_gr = requete_mysql($sql_gr, $mysql_link, "saisie_groupe_fermeture", $DEBUG);
 			echo "<select name=\"groupe_id\">";
-			while ($resultat_gr = mysql_fetch_array($ReqLog_gr))
+			while ($resultat_gr = mysqli_fetch_array($ReqLog_gr))
 			{
 				$sql_gid=$resultat_gr["g_gid"] ;
 				$sql_group=$resultat_gr["g_groupename"] ;
@@ -862,7 +862,7 @@ function commit_annul_fermeture($fermeture_id, $groupe_id, $mysql_link, $DEBUG=F
 		// on recupère les infos de la periode ....
 		$sql_credit="SELECT p_num, p_nb_jours, p_type FROM conges_periode WHERE p_login='$current_login' AND p_fermeture_id='$fermeture_id' ";
 		$result_credit = requete_mysql($sql_credit, $mysql_link, "commit_annul_fermeture", $DEBUG);
-		$row_credit = mysql_fetch_array($result_credit);
+		$row_credit = mysqli_fetch_array($result_credit);
 		$sql_num_periode=$row_credit['p_num'];
 		$sql_nb_jours_a_crediter=$row_credit['p_nb_jours'];
 		$sql_type_abs=$row_credit['p_type'];
@@ -935,15 +935,15 @@ function get_tableau_jour_fermeture($year, &$tab_year,  $groupe_id, $mysql_link,
 	else
 		$sql_select = $sql_select."AND  (jf_gid = $groupe_id OR jf_gid =0 ) ";
 	$res_select = requete_mysql($sql_select, $mysql_link, "get_tableau_jour_fermeture", $DEBUG);
-//	$res_select = mysql_query($sql_select, $mysql_link);
+//	$res_select = mysqli_query($sql_select, $mysql_link);
 //	attention ne fonctionne pas avec requete_mysql
 //	$res_select = requete_mysql($sql_select, $mysql_link, "get_tableau_jour_feries", $DEBUG);
 
-	$num_select = mysql_num_rows($res_select);
+	$num_select = mysqli_num_rows($res_select);
 
 	if($num_select!=0)
 	{
-	        while($result_select = mysql_fetch_array($res_select))
+	        while($result_select = mysqli_fetch_array($res_select))
 		{
 		        $tab_year[]=$result_select["jf_date"];
 		}
@@ -959,11 +959,11 @@ function get_tableau_periodes_fermeture(&$tab_periodes_fermeture, $groupe_id, $m
   		" ORDER BY conges_periode.p_date_deb DESC ";
    $res_1 = requete_mysql($req_1, $mysql_link, "get_tableau_periodes_fermeture", $DEBUG);
 
-	$num_select = mysql_num_rows($res_1);
+	$num_select = mysqli_num_rows($res_1);
 
 	if($num_select!=0)
 	{
-	    while($result_select = mysql_fetch_array($res_1))
+	    while($result_select = mysqli_fetch_array($res_1))
 		{
 			$tab_periode=array();
 			$tab_periode['date_deb']=$result_select["p_date_deb"];
@@ -981,7 +981,7 @@ function get_last_fermeture_id($mysql_link, $DEBUG=FALSE)
 {
    $req_1="SELECT MAX(jf_id) FROM conges_jours_fermeture ";
    $res_1 = requete_mysql($req_1, $mysql_link, "get_last_fermeture_id", $DEBUG);
-   $row_1 = mysql_fetch_row($res_1);
+   $row_1 = mysqli_fetch_row($res_1);
    if(!$row_1)
       return 0;     // si la table est vide, on renvoit 0
    else

@@ -75,7 +75,7 @@ p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='
   // echo "would select [". $cphpvalid_select . "]" ; 
   $cphpvalid_req = requete_mysql($cphpvalid_select,$mysql_link,"display_hperiod_tab", 
                                  $DEBUG);
-  $cphpvalid_res  = mysql_fetch_array($cphpvalid_req );
+  $cphpvalid_res  = mysqli_fetch_array($cphpvalid_req );
   if ($cphpvalid_res) { 
     $b_creation = False ; 
     // echo "a record hpvalid exist <br>" ; 
@@ -203,7 +203,7 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
     $cphpok_req = requete_mysql($cphpok_select,$mysql_link,"get_eligible_cperiode",
                                 $DEBUG);
     $leligibledata = array("nbjours" => 0, "lperiode" => array()) ; 
-    while ( $cphpok_row  = mysql_fetch_array($cphpok_req) ) {
+    while ( $cphpok_row  = mysqli_fetch_array($cphpok_req) ) {
       $ddeb = new DateTime($cphpok_row['p_date_deb']); 
       $dfin = new DateTime($cphpok_row['p_date_fin']); 
       if (($ddeb >= $ddebutannee && $ddeb < $ddebutete ) || 
@@ -224,7 +224,7 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
     $cphpok_req = requete_mysql($cphpok_select,$mysql_link,"get_eligible_cperiode",
                                 $DEBUG);
     $leligibledata = array("nbjours" => 0, "lperiode" => array()) ; 
-    while ( $cphpok_row  = mysql_fetch_array($cphpok_req) ) {
+    while ( $cphpok_row  = mysqli_fetch_array($cphpok_req) ) {
       $n_elig_day = -1  ; 
       $comment = "" ; 
       $ddeb = new DateTime($cphpok_row['p_date_deb']); 
@@ -265,7 +265,7 @@ from conges_periode where p_login='$user' and p_etat ='ok' and p_type='$jhptype'
     $cphpok_req = requete_mysql($cphpok_select,$mysql_link,"get_eligible_cperiode",
                                 $DEBUG);
     $leligibledata = array("nbjours" => 0, "lperiode" => array()) ; 
-    while ( $cphpok_row  = mysql_fetch_array($cphpok_req) ) {
+    while ( $cphpok_row  = mysqli_fetch_array($cphpok_req) ) {
       $n_elig_day = -1  ; 
       $comment = "" ; 
       $ddeb = new DateTime($cphpok_row['p_date_deb']);
@@ -365,7 +365,7 @@ p_login='$user' and p_etat ='".HP_ETAT."' and p_type='$jhptype' and p_date_deb='
   // echo "would select [". $cphpvalid_select . "]" ; 
   $cphpvalid_req = requete_mysql($cphpvalid_select,$mysql_link,"display_hperiod_tab", 
                                  $DEBUG);
-  $cphpvalid_res  = mysql_fetch_array($cphpvalid_req );
+  $cphpvalid_res  = mysqli_fetch_array($cphpvalid_req );
   if ($cphpvalid_res) { 
     return $cphpvalid_res['p_nb_jours'] ; 
     // echo "a record hpvalid exist <br>" ; 

@@ -86,7 +86,7 @@ echo "</head>\n";
 		}
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 echo "<hr align=\"center\" size=\"2\" width=\"95%\">\n";
 
@@ -125,7 +125,7 @@ function modifier($u_login, $mysql_link, $DEBUG=FALSE)
 	$sql1 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_login = '$u_login' " ;
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "modifier", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
 			$text_pwd1="<input type=\"password\" name=\"new_pwd1\" size=\"10\" maxlength=\"30\" value=\"\">" ;
 			$text_pwd2="<input type=\"password\" name=\"new_pwd2\" size=\"10\" maxlength=\"30\" value=\"\">" ;
 			echo  "<td class=\"histo\">".$resultat1["u_login"]."</td><td class=\"histo\">".$resultat1["u_nom"]."</td><td class=\"histo\">".$resultat1["u_prenom"]."</td><td class=\"histo\">$text_pwd1</td><td class=\"histo\">$text_pwd2</td>\n";

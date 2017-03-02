@@ -234,7 +234,7 @@ function modifier($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=F
 	$sql2 = "SELECT u_login, u_nom, u_prenom FROM conges_users WHERE u_is_resp = \"Y\" ORDER BY u_nom,u_prenom"  ;
 	$ReqLog2 = requete_mysql($sql2, $mysql_link, "modifier", $DEBUG);
 
-	while ($resultat2 = mysql_fetch_array($ReqLog2)) {
+	while ($resultat2 = mysqli_fetch_array($ReqLog2)) {
 			if($resultat2["u_login"]==$tab_user['resp_login'] )
 				$text_resp_login=$text_resp_login."<option value=\"".$resultat2["u_login"]."\" selected>".$resultat2["u_nom"]." ".$resultat2["u_prenom"]."</option>";
 			else
@@ -348,7 +348,7 @@ function modifier($u_login, $tab_checkbox_sem_imp, $tab_checkbox_sem_p, $DEBUG=F
 	echo "<input type=\"submit\" value=\"".$_SESSION['lang']['form_cancel']."\">\n";
 	echo "</form>\n" ;
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 }
 /* dpacomment : cette fonction est pourrie _refactorrequired_ */ 
@@ -422,8 +422,8 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 	{
 		// UPDATE de la table conges_users
 		$sql1 = "UPDATE conges_users
-			SET	u_nom='".mysql_escape_string($tab_new_user['nom'])."',
-				u_prenom='".mysql_escape_string($tab_new_user['prenom'])."',
+			SET	u_nom='".mysqli_real_escape_string($mysql_link,$tab_new_user['nom'])."',
+				u_prenom='".mysqli_real_escape_string($mysql_link,$tab_new_user['prenom'])."',
 				u_is_resp='".$tab_new_user['is_resp']."',
 				u_resp_login='".$tab_new_user['resp_login']."',
 				u_is_admin='".$tab_new_user['is_admin']."',
@@ -510,7 +510,7 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 					WHERE a_login='$u_login_to_update' AND a_date_debut_grille='$new_date_deb_grille'";
           $result_grille = requete_mysql($sql_grille, $mysql_link, "commit_update", $DEBUG);
 
-          $count_grille=mysql_num_rows($result_grille);
+          $count_grille=mysqli_num_rows($result_grille);
 
           if($count_grille==0) {// si pas de grille modifiée aujourd'hui : on update la date de fin de la derniere grille
             $date_fin_grille = new DateTime($new_date_deb_grille) ;
@@ -663,7 +663,7 @@ function commit_update($u_login_to_update, &$tab_new_user, &$tab_new_jours_an, &
 		echo $_SESSION['lang']['form_modif_not_ok']." !<br><br> \n";
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	if($DEBUG==TRUE)
 	{
@@ -685,7 +685,7 @@ function attic_get_current_grille_rtt($u_login_to_update, $mysql_link, $DEBUG=FA
 	$sql1 = "SELECT * FROM conges_artt WHERE a_login='$u_login_to_update' AND a_date_fin_grille='9999-12-31' "  ;
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "get_current_grille_rtt", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
 		$tab_grille['sem_imp_lu_am'] = $resultat1['sem_imp_lu_am'] ;
 		$tab_grille['sem_imp_lu_pm'] = $resultat1['sem_imp_lu_pm'] ;
 		$tab_grille['sem_imp_ma_am'] = $resultat1['sem_imp_ma_am'] ;

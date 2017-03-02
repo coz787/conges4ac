@@ -88,7 +88,7 @@ if ($new_double_valid=="") {
 		header("Location: admin_index.php?session=$session&onglet=admin-group");
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 echo "<hr align=\"center\" size=\"2\" width=\"90%\">\n";
 
@@ -120,7 +120,7 @@ function modifier($group, $mysql_link, $DEBUG=FALSE)
 	echo "</tr>\n";
 
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "modifier", $DEBUG);
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$sql_groupename=$resultat1["g_groupename"];
 		$sql_comment=$resultat1["g_comment"];
@@ -176,8 +176,8 @@ function commit_update($group_to_update, $new_groupname, $new_comment, $new_doub
 
 	$result=TRUE;
 
-	$new_comment = mysql_escape_string($new_comment);
-    $new_groupname = mysql_escape_string($new_groupname);
+	$new_comment = mysqli_real_escape_string($mysql_link,$new_comment);
+    $new_groupname = mysqli_real_escape_string($mysql_link,$new_groupname);
 	echo "$group_to_update---$new_groupname---$new_comment---$new_double_valid<br>\n";
 
 

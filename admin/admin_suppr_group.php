@@ -52,7 +52,7 @@ echo "</head>\n";
 	echo "<CENTER>\n";
 
 	/*************************************/
-	// recup des parametres reçus :	mysql_close($mysql_link);
+	// recup des parametres reçus :	mysqli_close($mysql_link);
 
 	// SERVER
 	$PHP_SELF=$_SERVER['PHP_SELF'];
@@ -82,7 +82,7 @@ echo "</head>\n";
 		header("Location: admin_index.php?session=$session&onglet=admin-group");
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 echo "<hr align=\"center\" size=\"2\" width=\"90%\">\n";
 
@@ -118,7 +118,7 @@ function confirmer($group, $mysql_link, $DEBUG=FALSE)
 		echo "	<td class=\"histo\"><b>".$_SESSION['lang']['admin_groupes_double_valid']."</b></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
 		$sql_groupname=$resultat1["g_groupename"];
 		$sql_comment=$resultat1["g_comment"];
 		$sql_double_valid=$resultat1["g_double_valid"] ;
