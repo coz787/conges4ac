@@ -98,7 +98,7 @@ class uPDF extends tFPDF {
 	$comment_log = "edition PDF (num_edition = $edit_id) ($user_login) ";
 	log_action(0, "", $user_login, $comment_log, $mysql_link, $DEBUG);
 	
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	
 	
@@ -209,9 +209,9 @@ function edition_pdf($login, $edit_id, $mysql_link, $DEBUG=FALSE)
 			$sql2=$sql2."FROM conges_periode ";
 			$sql2=$sql2."WHERE p_edition_id = $edit_id ";
 			$sql2=$sql2."ORDER BY p_date_deb ASC ";
-			$ReqLog2 = mysql_query($sql2, $mysql_link) or die("ERREUR : mysql_query : ".$sql2." --> ".mysql_error());
+			$ReqLog2 = mysqli_query($mysql_link,$sql2) or die("ERREUR : mysqli_query : ".$sql2." --> ".mysqli_error());
 	
-			$count2=mysql_num_rows($ReqLog2);
+			$count2=mysqli_num_rows($ReqLog2);
 			if($count2==0)
 			{
 				$pdf->Cell(0, 5, $_SESSION['lang']['editions_aucun_conges']." ...",0,1,'C');
@@ -407,7 +407,7 @@ function affiche_tableau_conges_avec_date_traitement(&$pdf, $ReqLog2, $decalage,
 	$pdf->Cell($size_cell_fin, 5, $_SESSION['lang']['divers_fin_maj_1'], 1, 0, 'C', 1);
 	$pdf->Cell($size_cell_comment, 5, $_SESSION['lang']['divers_comment_maj_1'], 1, 1, 'C', 1);
 				
-	while ($resultat2 = mysql_fetch_array($ReqLog2)) 
+	while ($resultat2 = mysqli_fetch_array($ReqLog2)) 
 	{
 		$sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
 		$sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
@@ -500,7 +500,7 @@ function affiche_tableau_conges_normal(&$pdf, $ReqLog2, $decalage, $tab_type_all
 	$pdf->Cell($size_cell_fin, 5, $_SESSION['lang']['divers_fin_maj_1'], 1, 0, 'C', 1);
 	$pdf->Cell($size_cell_comment, 5, $_SESSION['lang']['divers_comment_maj_1'], 1, 1, 'C', 1);
 				
-	while ($resultat2 = mysql_fetch_array($ReqLog2)) 
+	while ($resultat2 = mysqli_fetch_array($ReqLog2)) 
 	{
 		$sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
 		$sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];

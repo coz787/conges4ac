@@ -34,7 +34,7 @@ function enregistrement_edition($login, $mysql_link, $DEBUG=FALSE)
 	$sql1 = "SELECT su_abs_id, su_solde FROM conges_solde_user where su_login = '$login' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "enregistrement_edition", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) 
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) 
 	{
 		$sql_id=$resultat1["su_abs_id"];
 		$tab_solde_user[$sql_id]=$resultat1["su_solde"];
@@ -82,7 +82,7 @@ function enregistrement_edition($login, $mysql_link, $DEBUG=FALSE)
 	$ReqLog_list = requete_mysql($sql_list, $mysql_link, "enregistrement_edition", $DEBUG);
 
 	$list_abs_id="";
-	while($resultat_list = mysql_fetch_array($ReqLog_list))
+	while($resultat_list = mysqli_fetch_array($ReqLog_list))
 	{
 		if($list_abs_id=="")
 			$list_abs_id=$resultat_list['ta_id'] ;
@@ -108,13 +108,13 @@ function get_last_edition_id($mysql_link, $DEBUG=FALSE)
 	$sql1 = "SELECT ep_id FROM conges_edition_papier ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "get_last_edition_id", $DEBUG);
 
-	if(mysql_num_rows($ReqLog1)==0) 
+	if(mysqli_num_rows($ReqLog1)==0) 
 		return 0;    // c'est qu'il n'y a pas encore d'edition 
 	else
 	{
 		$sql2 = "SELECT MAX(ep_id) FROM conges_edition_papier ";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "get_last_edition_id", $DEBUG);
-		return mysql_result($ReqLog2, 0);
+		return mysqli_result($ReqLog2, 0);
 	}	
 }
 
@@ -125,13 +125,13 @@ function get_num_last_edition_user($login, $mysql_link, $DEBUG=FALSE)
 	$sql1 = "SELECT ep_num_for_user FROM conges_edition_papier WHERE ep_login='$login' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "get_num_last_edition_user", $DEBUG);
 
-	if(mysql_num_rows($ReqLog1)==0) 
+	if(mysqli_num_rows($ReqLog1)==0) 
 		return 0;    // c'est qu'il n'y a pas encore d'edition pour ce user
 	else
 	{
 		$sql2 = "SELECT MAX(ep_num_for_user) FROM conges_edition_papier WHERE ep_login='$login' ";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "get_num_last_edition_user", $DEBUG);
-		return mysql_result($ReqLog2, 0);
+		return mysqli_result($ReqLog2, 0);
 	}
 }
 
@@ -143,7 +143,7 @@ function get_id_edition_precedente_user($login, $edition_id, $mysql_link, $DEBUG
 	$sql1 = "SELECT * FROM conges_edition_papier WHERE ep_login='$login' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "get_id_edition_precedente_user", $DEBUG);
 
-	$resultat1 = mysql_num_rows($ReqLog1) ;
+	$resultat1 = mysqli_num_rows($ReqLog1) ;
 	if($resultat1<=1)    // une seule edition pour ce user
 		return 0;
 	else
@@ -151,7 +151,7 @@ function get_id_edition_precedente_user($login, $edition_id, $mysql_link, $DEBUG
 		$sql2 = "SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login='$login' AND ep_id<$edition_id ";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "get_id_edition_precedente_user", $DEBUG);
 
-		return mysql_result($ReqLog2, 0);
+		return mysqli_result($ReqLog2, 0);
 	}
 }
 
@@ -165,7 +165,7 @@ function recup_solde_conges_of_edition($edition_id, $mysql_link, $DEBUG=FALSE)
 	$ReqLog_ed = requete_mysql($sql_ed, $mysql_link, "recup_solde_conges_of_edition", $DEBUG);
 
 	$tab=array();
-	while ($resultat_ed = mysql_fetch_array($ReqLog_ed)) 
+	while ($resultat_ed = mysqli_fetch_array($ReqLog_ed)) 
 	{
 		$id_absence=$resultat_ed["se_id_absence"];
 		$tab[$id_absence]=$resultat_ed["se_solde"];
@@ -182,7 +182,7 @@ function recup_info_user_pour_edition($login, $mysql_link, $DEBUG=FALSE)
 	$sql_user = "SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = '$login' ";
 	$ReqLog_user = requete_mysql($sql_user, $mysql_link, "recup_info_user_pour_edition", $DEBUG);
 
-	while ($resultat_user = mysql_fetch_array($ReqLog_user)) {
+	while ($resultat_user = mysqli_fetch_array($ReqLog_user)) {
 		$tab['nom']=$resultat_user["u_nom"];
 		$tab['prenom']=$resultat_user["u_prenom"];
 		$tab['quotite']=$sql_quotite=$resultat_user["u_quotite"];
@@ -204,7 +204,7 @@ function recup_info_edition($edit_id, $mysql_link, $DEBUG=FALSE)
 	$sql_edition= "SELECT ep_date, ep_num_for_user FROM conges_edition_papier where ep_id = $edit_id ";
 	$ReqLog_edition = requete_mysql($sql_edition, $mysql_link, "recup_info_edition", $DEBUG);
 
-	if($resultat_edition = mysql_fetch_array($ReqLog_edition)) 
+	if($resultat_edition = mysqli_fetch_array($ReqLog_edition)) 
 	{
 		$tab['date']=$resultat_edition["ep_date"];
 		$tab['num_for_user'] = $resultat_edition["ep_num_for_user"];
@@ -227,9 +227,9 @@ function recup_editions_user($login, $mysql_link, $DEBUG=FALSE)
 	$sql2=$sql2."ORDER BY ep_num_for_user DESC ";
 	$ReqLog2 = requete_mysql($sql2, $mysql_link, "recup_editions_user", $DEBUG);
 
-	if(mysql_num_rows($ReqLog2) != 0)
+	if(mysqli_num_rows($ReqLog2) != 0)
 	{
-		while ($resultat2 = mysql_fetch_array($ReqLog2)) 
+		while ($resultat2 = mysqli_fetch_array($ReqLog2)) 
 		{
 			$tab=array();
 			$sql_id = $resultat2["ep_id"];

@@ -68,7 +68,7 @@ echo "</head>\n";
 
 	echo "</CENTER>\n";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 echo "</body>\n";
@@ -89,7 +89,7 @@ function affichage($login, $mysql_link, $DEBUG=FALSE)
 	$sql1 = "SELECT u_nom, u_prenom, u_quotite FROM conges_users where u_login = '$login' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
 		$sql_nom=$resultat1["u_nom"];
 		$sql_prenom=$resultat1["u_prenom"];
 		$sql_quotite=$resultat1["u_quotite"];
@@ -134,7 +134,7 @@ function affiche_nouvelle_edition($login, $mysql_link, $DEBUG=FALSE)
 
 	echo "<h3>".$_SESSION['lang']['editions_last_edition']." :</h3>\n";
 
-	$count2=mysql_num_rows($ReqLog2);
+	$count2=mysqli_num_rows($ReqLog2);
 	if($count2==0)
 	{
 		echo "<b>".$_SESSION['lang']['editions_aucun_conges']."</b><br>\n";
@@ -159,7 +159,7 @@ function affiche_nouvelle_edition($login, $mysql_link, $DEBUG=FALSE)
 		}
 		echo "</tr>\n";
 
-		while ($resultat2 = mysql_fetch_array($ReqLog2)) {
+		while ($resultat2 = mysqli_fetch_array($ReqLog2)) {
 				$sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"]);
 				$sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
 				if($sql_p_demi_jour_deb=="am") $demi_j_deb="mat";  else $demi_j_deb="aprm";
