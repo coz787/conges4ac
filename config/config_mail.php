@@ -92,7 +92,7 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	echo "</body>";
 	echo "</html>";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 
@@ -126,7 +126,7 @@ function affichage($tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG);
 
 	echo "    <form action=\"$URL\" method=\"POST\"> \n";
-	while ($data = mysql_fetch_array($ReqLog1))
+	while ($data = mysqli_fetch_array($ReqLog1))
 	{
 	 	$mail_nom = stripslashes($data['mail_nom']);
 		$mail_subject = stripslashes($data['mail_subject']);

@@ -72,7 +72,7 @@ if($DEBUG==TRUE) { echo "SESSION = "; print_r($_SESSION); echo "<br>\n";}
 	else
 		affichage($mysql_link, $session, $DEBUG);
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 
@@ -120,7 +120,7 @@ function affichage($mysql_link, $session, $DEBUG=FALSE)
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG);
 
 	$old_groupe="";
-	while ($data = mysql_fetch_array($ReqLog1))
+	while ($data = mysqli_fetch_array($ReqLog1))
 	{
 		$conf_nom = $data['conf_nom'];
 		$conf_valeur = $data['conf_valeur'];
@@ -253,7 +253,7 @@ function commit_saisie(&$tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 			$sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
 			$ReqLog_abs = requete_mysql($sql_abs, $mysql_link, "commit_saisie", $DEBUG);
 
-			if(mysql_num_rows($ReqLog_abs)!=0)
+			if(mysqli_num_rows($ReqLog_abs)!=0)
 			{
 				echo "<b>".$_SESSION['lang']['config_abs_desactive_cong_excep_impossible']."</b><br>\n";
 				$value = "TRUE" ;

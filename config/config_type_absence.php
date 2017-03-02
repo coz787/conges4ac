@@ -100,7 +100,7 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	echo "</body>";
 	echo "</html>";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 
@@ -155,7 +155,7 @@ function affichage($tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 			$sql1 = "SELECT * FROM conges_type_absence WHERE ta_type = '$ta_type'";
 			$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG);
 
-			if(mysql_num_rows($ReqLog1)!=0)
+			if(mysqli_num_rows($ReqLog1)!=0)
 			{
 				echo "    <table cellpadding=\"2\" class=\"tablo\" >\n";
 				echo "    <tr>\n";
@@ -165,7 +165,7 @@ function affichage($tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 				echo "    <td></td>\n";
 				echo "    </tr>\n";
 
-				while ($data = mysql_fetch_array($ReqLog1))
+				while ($data = mysqli_fetch_array($ReqLog1))
 				{
 				 	$ta_id = $data['ta_id'];
 					$ta_libelle = $data['ta_libelle'];
@@ -277,7 +277,7 @@ function modifier(&$tab_new_values, $mysql_link, $session, $id_to_update, $DEBUG
 
 	$ReqLog_cong = requete_mysql($sql_cong, $mysql_link, "modifier", $DEBUG);
 
-	if($resultat_cong = mysql_fetch_array($ReqLog_cong))
+	if($resultat_cong = mysqli_fetch_array($ReqLog_cong))
 	{
 		$sql_type=$resultat_cong['ta_type'];
 		$sql_libelle= $resultat_cong['ta_libelle'];
@@ -391,7 +391,7 @@ function supprimer($mysql_link, $session, $id_to_update, $DEBUG=FALSE)
 	$sql1 = "SELECT p_num FROM conges_periode WHERE p_type='$id_to_update' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "commit_suppr", $DEBUG);
 
-	$count= mysql_num_rows($ReqLog1) ;
+	$count= mysqli_num_rows($ReqLog1) ;
 
 	if( $count!=0 )
 	{
@@ -521,7 +521,7 @@ function commit_ajout(&$tab_new_values, $mysql_link, $session, $DEBUG=FALSE)
 
 				$ReqLog_users = requete_mysql($sql_users, $mysql_link, "commit_ajout", $DEBUG);
 
-				while ($resultat1 = mysql_fetch_array($ReqLog_users))
+				while ($resultat1 = mysqli_fetch_array($ReqLog_users))
 				{
 					$current_login=$resultat1["u_login"];
 

@@ -102,7 +102,7 @@ verif_droits_user($session, "is_admin", $DEBUG);
 	echo "</body>";
 	echo "</html>";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 

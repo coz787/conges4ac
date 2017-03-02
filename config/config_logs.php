@@ -81,7 +81,7 @@ if($DEBUG==TRUE) { echo "SESSION = "; print_r($_SESSION); echo "<br>\n";}
 	echo "</body>";
 	echo "</html>";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 
 
@@ -111,7 +111,7 @@ function affichage($login_par, $mysql_link, $session, $DEBUG=FALSE)
 
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG);
 
-	if(mysql_num_rows($ReqLog1)!=0)
+	if(mysqli_num_rows($ReqLog1)!=0)
 	{
 		echo "<center>\n";
 
@@ -138,7 +138,7 @@ function affichage($login_par, $mysql_link, $session, $DEBUG=FALSE)
 		echo "</tr>\n";
 
 		// affichage des logs
-		while ($data = mysql_fetch_array($ReqLog1))
+		while ($data = mysqli_fetch_array($ReqLog1))
 		{
 			$log_login_par = $data['log_user_login_par'];
 			$log_login_pour = $data['log_user_login_pour'];
