@@ -176,7 +176,7 @@ function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_res
 			"ORDER BY p_date_deb";
 	$ReqLog2 = requete_mysql($sql2, $mysql_link, "affichage", $DEBUG);
 		
-	$count2=mysql_num_rows($ReqLog2);
+	$count2=mysqli_num_rows($ReqLog2);
 	if($count2==0)
 	{
 		echo "<b>".$_SESSION['lang']['resp_traite_user_aucune_demande']."</b><br><br>\n";		
@@ -206,7 +206,7 @@ function affiche_etat_demande_user_for_resp($user_login, $tab_user, $tab_grd_res
 		echo "</tr>\n";
 		
 		$tab_checkbox=array();
-		while ($resultat2 = mysql_fetch_array($ReqLog2)) 
+		while ($resultat2 = mysqli_fetch_array($ReqLog2)) 
 		{
 			$sql_date_deb=eng_date_to_fr($resultat2["p_date_deb"]) ;
 			$sql_demi_jour_deb=$resultat2["p_demi_jour_deb"] ;
@@ -280,7 +280,7 @@ function affiche_etat_demande_2_valid_user_for_resp($user_login, $mysql_link, $D
 				"WHERE p_login = '$user_login' AND p_etat ='valid' ORDER BY p_date_deb";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "affichage", $DEBUG);
 			
-		$count2=mysql_num_rows($ReqLog2);
+		$count2=mysqli_num_rows($ReqLog2);
 		if($count2==0)
 		{
 			echo "<b>".$_SESSION['lang']['resp_traite_user_aucune_demande']."</b><br><br>\n";		
@@ -310,7 +310,7 @@ function affiche_etat_demande_2_valid_user_for_resp($user_login, $mysql_link, $D
 			echo "</tr>\n";
 			
 			$tab_checkbox=array();
-			while ($resultat2 = mysql_fetch_array($ReqLog2)) 
+			while ($resultat2 = mysqli_fetch_array($ReqLog2)) 
 			{
 				$sql_date_deb=eng_date_to_fr($resultat2["p_date_deb"]) ;
 				$sql_demi_jour_deb=$resultat2["p_demi_jour_deb"] ;
@@ -375,7 +375,7 @@ function affiche_etat_conges_user_for_resp($user_login, $tri_date, $mysql_link, 
 		
 	$ReqLog3 = requete_mysql($sql3, $mysql_link, "affiche_etat_conges_user_for_resp", $DEBUG);
 
-	$count3=mysql_num_rows($ReqLog3);
+	$count3=mysqli_num_rows($ReqLog3);
 	if($count3==0)
 	{
 		echo "<b>".$_SESSION['lang']['resp_traite_user_aucun_conges']."</b><br><br>\n";		
@@ -412,7 +412,7 @@ function affiche_etat_conges_user_for_resp($user_login, $tri_date, $mysql_link, 
 		}
 		echo "</tr>\n";
 		$tab_checkbox=array();
-		while ($resultat3 = mysql_fetch_array($ReqLog3)) 
+		while ($resultat3 = mysqli_fetch_array($ReqLog3)) 
 		{
 				$sql_login=$resultat3["p_login"] ;
 				$sql_date_deb=eng_date_to_fr($resultat3["p_date_deb"]) ;
@@ -514,7 +514,7 @@ function annule_conges($user_login, $tab_checkbox_annule, $tab_text_annul, $mysq
 		$numero_int=(int) $numero;
 		$user_type_abs_id=$champs[2];
         /* _protectsql_ dpa $motif_annul=addslashes($tab_text_annul[$numero_int]); */ 
-		$motif_annul = mysql_escape_string($tab_text_annul[$numero_int] );
+		$motif_annul = mysqli_real_escape_string($mysql_link,$tab_text_annul[$numero_int] );
 		
 		if($DEBUG==TRUE) { echo "<br><br>conges numero :$numero ---> login : $user_login --- nb de jours : $user_nb_jours_pris_float --- type : $user_type_abs_id ---> ANNULER <br>"; }
 
@@ -626,7 +626,7 @@ function traite_demandes($user_login, $tab_radio_traite_demande, $tab_text_refus
 		{
 			// recup di motif de refus
           /* _protectsql_ dpa $motif_refus=addslashes($tab_text_refus[$numero_int]); */
-          $motif_refus = mysql_escape_string($tab_text_refus[$numero_int]);
+          $motif_refus = mysqli_real_escape_string($mysql_link,$tab_text_refus[$numero_int]);
 
 			//$sql3 = "UPDATE conges_periode SET p_etat=\"refus\" WHERE p_num=$numero_int" ;
 			$sql3 = "UPDATE conges_periode SET p_etat=\"refus\", p_motif_refus='$motif_refus', p_date_traitement=NOW() WHERE p_num=$numero_int" ;

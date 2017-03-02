@@ -113,7 +113,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $mysql_link, $DEBUG=FAL
 		
 		$ReqLog1 = requete_mysql($sql1, $mysql_link, "affiche_all_demandes_en_cours", $DEBUG) ;
 	
-		$count1=mysql_num_rows($ReqLog1);
+		$count1=mysqli_num_rows($ReqLog1);
 		if($count1!=0)
 		{
 			// AFFICHAGE TABLEAU DES DEMANDES EN COURS
@@ -149,7 +149,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $mysql_link, $DEBUG=FAL
 			echo "</tr>\n";
 			
 			$tab_bt_radio=array();
-			while ($resultat1 = mysql_fetch_array($ReqLog1)) 
+			while ($resultat1 = mysqli_fetch_array($ReqLog1)) 
 			{
 				/** sur la ligne ,   **/
 				/** le 1er bouton radio est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--OK"> */
@@ -233,7 +233,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $mysql_link, $DEBUG=FAL
 			
 			$ReqLog2 = requete_mysql($sql2, $mysql_link, "affiche_all_demandes_en_cours", $DEBUG) ;
 	
-			$count2=mysql_num_rows($ReqLog2);
+			$count2=mysqli_num_rows($ReqLog2);
 			if($count2!=0)
 			{
 				// AFFICHAGE TABLEAU DES DEMANDES EN COURS POUR DEUXIEME VALIDATION
@@ -264,7 +264,7 @@ function affiche_all_demandes_en_cours($tab_type_conges, $mysql_link, $DEBUG=FAL
 				echo "</tr>\n";
 				
 				$tab_bt_radio=array();
-				while ($resultat2 = mysql_fetch_array($ReqLog2)) 
+				while ($resultat2 = mysqli_fetch_array($ReqLog2)) 
 				{
 					/** sur la ligne ,   **/
 					/** le 1er bouton radio est <input type="radio" name="tab_bt_radio[valeur de p_num]" value="[valeur de p_login]--[valeur p_nb_jours]--$type--OK"> */
@@ -358,7 +358,7 @@ function traite_all_demande_en_cours($mysql_link, $tab_bt_radio, $tab_text_refus
 
     $sqlanl = "SELECT p_etat FROM conges_periode WHERE p_num=$numero_int FOR UPDATE ;" ;
     $reqanl = requete_mysql($sqlanl, $mysql_link, "traite_all_demande_en_cours", $DEBUG) ;
-    $selanl = mysql_fetch_array( $reqanl ); // 1 objet 
+    $selanl = mysqli_fetch_array( $reqanl ); // 1 objet 
 
     if (!$selanl) {
       error_log("#error traite_all_demande_en_cours en erreur"); 
@@ -405,7 +405,7 @@ function traite_all_demande_en_cours($mysql_link, $tab_bt_radio, $tab_text_refus
         /* recup du motif de refus
         $motif_refus=addslashes($tab_text_refus[$numero_int]); */
         /* _protectsql_ dpa */ 
-        $motif_refus = mysql_escape_string($tab_text_refus[$numero_int]);
+        $motif_refus = mysqli_real_escape_string($mysql_link,$tab_text_refus[$numero_int]);
 
         $sql1 = "UPDATE conges_periode SET p_etat=\"refus\", p_motif_refus='$motif_refus', p_date_traitement=NOW() WHERE p_num=$numero_int" ;
         //echo "$sql1<br>\n");

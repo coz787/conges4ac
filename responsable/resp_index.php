@@ -194,7 +194,7 @@ echo "</td>\n";
 	{
 		$sql1 = "SELECT u_nom, u_prenom FROM conges_users where u_login = '".$_SESSION['userlogin']."' ";
 		$ReqLog1 = requete_mysql($sql1, $mysql_link, "resp_main", $DEBUG);
-		$resultat1 = mysql_fetch_array($ReqLog1); 
+		$resultat1 = mysqli_fetch_array($ReqLog1); 
 		
 		echo "<H1>".$_SESSION['lang']['resp_menu_titre']." ".$resultat1["u_prenom"]." ".$resultat1["u_nom"]."</H1>\n\n";
 	}
@@ -349,7 +349,7 @@ error_log("resp: ". $_SESSION['userlogin']." ".is_gest($_SESSION['userlogin'],$m
 	}
 	
 	// fermeture connexion mysql
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 	
 	/*************************************/
 	/***  fin de la page             ***/

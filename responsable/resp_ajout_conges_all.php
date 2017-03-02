@@ -300,7 +300,7 @@ function affichage_saisie_globale_groupe($tab_type_conges, $mysql_link, $DEBUG=F
 			$sql_group = "SELECT g_gid, g_groupename FROM conges_groupe WHERE g_gid IN ($list_group) ORDER BY g_groupename "  ;
 			$ReqLog_group = requete_mysql($sql_group, $mysql_link, "saisie", $DEBUG) ;
 				
-			while ($resultat_group = mysql_fetch_array($ReqLog_group)) 
+			while ($resultat_group = mysqli_fetch_array($ReqLog_group)) 
 			{
 				$current_group_id=$resultat_group["g_gid"];
 				$current_group_name=$resultat_group["g_groupename"];
@@ -376,7 +376,7 @@ function ajout_conges($tab_champ_saisie, $tab_commentaire_saisie, $mysql_link, $
             } else { 
               /* _protectsql_ dpa 
                  $commentaire = $tab_commentaire_saisie[$user_name] ; */ 
-              $commentaire = mysql_escape_string($tab_commentaire_saisie[$user_name]);
+              $commentaire = mysqli_real_escape_string($mysql_link,$tab_commentaire_saisie[$user_name]);
             }
 			insert_ajout_dans_periode($DEBUG, $user_name, $user_nb_jours_ajout_float, $id_conges, $commentaire, $mysql_link);
 	      }
@@ -427,7 +427,7 @@ function ajout_global($tab_new_nb_conges_all, $tab_calcul_proportionnel, $tab_ne
 			$sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users_du_resp) ORDER BY u_login ";
 			$ReqLog1 = requete_mysql($sql1, $mysql_link, "ajout_global", $DEBUG);
 				
-			while($resultat1 = mysql_fetch_array($ReqLog1)) 
+			while($resultat1 = mysqli_fetch_array($ReqLog1)) 
 			{
 				$current_login  =$resultat1["u_login"];
 				$current_quotite=$resultat1["u_quotite"];
@@ -505,7 +505,7 @@ function ajout_global_groupe($choix_groupe, $tab_new_nb_conges_all, $tab_calcul_
 			$sql1="SELECT u_login, u_quotite FROM conges_users WHERE u_login IN ($list_users) ORDER BY u_login ";
 			$ReqLog1 = requete_mysql($sql1, $mysql_link, "ajout_global_groupe", $DEBUG);
 				
-			while ($resultat1 = mysql_fetch_array($ReqLog1)) 
+			while ($resultat1 = mysqli_fetch_array($ReqLog1)) 
 			{
 				$current_login  =$resultat1["u_login"];
 				$current_quotite=$resultat1["u_quotite"];
