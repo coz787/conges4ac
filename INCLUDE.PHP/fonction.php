@@ -97,21 +97,24 @@ define('SESSIONPREFIXE','c4ac-'); /* caractere,chiffre,tiret uniquement */
 //
 function  connexion_mysql()
 {
-   $mysql_link = MYSQL_CONNECT($_SESSION['config']['mysql_serveur'],$_SESSION['config']['mysql_user'],$_SESSION['config']['mysql_pass']);
+   $mysql_link = mysqli_connect($_SESSION['config']['mysql_serveur'],
+                                $_SESSION['config']['mysql_user'],
+                                $_SESSION['config']['mysql_pass']);
    if (! $mysql_link)
    {
-      die("connexion_mysql() : ".$_SESSION['lang']['mysql_srv_connect_failed']."<br>\n".mysql_error());
+      die("connexion_mysql() : ".$_SESSION['lang']['mysql_srv_connect_failed'].
+          "<br>\n".mysqli_error($mysql_link));
    }
     // _ac3 
-    if ( ! mysql_set_charset($_SESSION['config']['mysql_charset'],$mysql_link) ) {
+   if ( ! mysqli_set_charset($mysql_link, $_SESSION['config']['mysql_charset']) ) {
       die("mysql_set_charset() : set_charset ".$_SESSION['config']['mysql_charset'].
-          " en erreur ". mysql_error($mysql_link));
+          " en erreur ". mysqli_error($mysql_link));
     };
    
-   $dbselect   = mysql_select_db($_SESSION['config']['mysql_database'],$mysql_link);
+   $dbselect   = mysqli_select_db($mysql_link, $_SESSION['config']['mysql_database']);
    if (! $dbselect)
    {
-      die("connexion_mysql() : ".$_SESSION['lang']['mysql_db_connect_failed']."<br>\n".mysql_error());
+      die("connexion_mysql() : ".$_SESSION['lang']['mysql_db_connect_failed']."<br>\n".mysqli_error($mysql_link));
    }
 
    return $mysql_link;
@@ -134,19 +137,19 @@ function    requete_mysql($requete,$mysql_link,$fonction_name,$debug=FALSE)
 
    if ($debug != TRUE)
    {
-      $res = mysql_query($requete,$mysql_link)   or die("$fonction_name() : Erreur :<br>\n'" . mysql_error($mysql_link) . "'<br>\n sur '$requete' <BR>");
+      $res = mysqli_query($mysql_link,$requete)   or die("$fonction_name() : Erreur :<br>\n'" . mysqli_error($mysql_link) . "'<br>\n sur '$requete' <BR>");
    }
    else
    {
       echo "DEBUG : $fonction_name() : requete='$requete'<BR>\n";
       if(eregi("^.*SELECT.+FROM.+$", $requete))
       {
-         $res = mysql_query($requete,$mysql_link)   or die("$fonction_name() : Erreur :<br>\n'" . mysql_error($mysql_link) . "'<br>\n sur '$requete' <BR>");
+         $res = mysqli_query($mysql_link,$requete)   or die("$fonction_name() : Erreur :<br>\n'" . mysqli_error($mysql_link) . "'<br>\n sur '$requete' <BR>");
       	 echo "requete executée ...<BR>\n";
       }
       elseif(eregi("^.*DESCRIBE.*$",$requete))
       {
-         $res = mysql_query($requete,$mysql_link)   or die("$fonction_name() : Erreur :<br>\n'" . mysql_error($mysql_link) . "'<br>\n sur '$requete' <BR>");
+         $res = mysqli_query($mysql_link,$requete)   or die("$fonction_name() : Erreur :<br>\n'" . mysqli_error($mysql_link) . "'<br>\n sur '$requete' <BR>");
       	 echo "requete non executée ...<BR>\n";
       }
       else
@@ -452,8 +455,8 @@ function autentification_passwd_conges($username,$password)
 	$req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND ( u_passwd='$password_md5' OR u_passwd=PASSWORD('$password') ) " ;
 	// $req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND ( u_passwd='$password_md5' OR u_passwd=PASSWORD('".$password."') ) " ;
 
-	$res_conges = mysql_query($req_conges,$mysql_link) or die("autentification_passwd_conges() : Erreur ".mysql_error());
-	$num_row_conges = mysql_num_rows($res_conges);
+	$res_conges = mysqli_query($mysql_link,$req_conges) or die("autentification_passwd_conges() : Erreur ".mysqli_error($mysql_link));
+	$num_row_conges = mysqli_num_rows($res_conges);
 	if ($num_row_conges !=0)
 	{
 		$username_password_ok=$username;
@@ -489,9 +492,9 @@ function make_mysql_password($password)
    $mysqlpassword="";
 
    $req_password = "SELECT OLD_PASSWORD('$password'),PASSWORD('$password')";
-   $res_password = mysql_query($req_password,$mysql_link) or die("make_mysql_password() : Erreur ".mysql_error());
+   $res_password = mysqli_query($mysql_link,$req_password) or die("make_mysql_password() : Erreur ".mysqli_error($mysql_link));
 
-   if ($row_password = mysql_fetch_array($res_password))  /* si un enregistrement deja dans la table unix */
+   if ($row_password = mysqli_fetch_array($res_password))  /* si un enregistrement deja dans la table unix */
    {
       $mysql_old_password=$row_password["OLD_PASSWORD('$password')"];
       $mysql_new_password=$row_password["PASSWORD('$password')"];
@@ -581,8 +584,8 @@ function authentification_passwd_conges_CAS()
 
 	//ON VERIFIE ICI QUE L'UTILISATEUR EST DEJA ENREGISTRE SOUS DBCONGES
 	$req_conges = "SELECT u_login FROM conges_users WHERE u_login='$usernameCAS'";
-	$res_conges = mysql_query($req_conges,$mysql_link) or die("authentification_passwd_conges_CAS() : Erreur :<br>\n$req_conges<br>\n".mysql_error());
-	$num_row_conges = mysql_num_rows($res_conges);
+	$res_conges = mysqli_query($mysql_link,$req_conges) or die("authentification_passwd_conges_CAS() : Erreur :<br>\n$req_conges<br>\n".mysqli_error($mysql_link));
+	$num_row_conges = mysqli_num_rows($res_conges);
 	if($num_row_conges !=0)
 		$username_password_ok = $usernameCAS;
 

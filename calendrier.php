@@ -156,7 +156,7 @@ function cacher(id)
 	echo "   </td>\n";
 	echo "</tr>\n";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	echo "<tr>\n";
 	echo "   <td align=\"center\">\n";
@@ -648,7 +648,7 @@ function affichage_calendrier($year, $mois, $first_jour, $timestamp_today, $prin
 
 		echo "</table>\n\n";
 
-		mysql_close($mysql_link);
+		mysqli_close($mysql_link);
 }
 
 
@@ -1006,8 +1006,8 @@ function recup_tableau_periodes($mois, $first_jour, $year, $mysql_link, $DEBUG=F
 		//echo "user_periode_sql = $user_periode_sql<br>\n";
 		$user_periode_request = requete_mysql($user_periode_sql, $mysql_link, "recup_tableau_periodes", $DEBUG);
 
-		$nb_resultat_periode = mysql_num_rows($user_periode_request);
-		while($resultat_periode=mysql_fetch_array($user_periode_request))
+		$nb_resultat_periode = mysqli_num_rows($user_periode_request);
+		while($resultat_periode=mysqli_fetch_array($user_periode_request))
 		{
 			$tab_periode=array();
 			$tab_periode["p_login"]=$resultat_periode["p_login"];
@@ -1046,8 +1046,8 @@ function recup_tableau_periodes($mois, $first_jour, $year, $mysql_link, $DEBUG=F
 			//echo "user_periode_sql = $user_periode_sql<br>\n";
 			$user_periode_request = requete_mysql($user_periode_sql, $mysql_link, "recup_tableau_periodes", $DEBUG);
 
-			$nb_resultat_periode = mysql_num_rows($user_periode_request);
-			while($resultat_periode=mysql_fetch_array($user_periode_request))
+			$nb_resultat_periode = mysqli_num_rows($user_periode_request);
+			while($resultat_periode=mysqli_fetch_array($user_periode_request))
 			{
 				$tab_periode=array();
 				$tab_periode["p_login"]=$resultat_periode["p_login"];
@@ -1268,7 +1268,7 @@ function recup_tableau_des_users_a_afficher($select_groupe, $mysql_link, $DEBUG=
 
 		$ReqLog = requete_mysql($sql, $mysql_link, "affichage_calendrier", $DEBUG);
 		$tab_all_users=array();
-		while ($resultat = mysql_fetch_array($ReqLog))
+		while ($resultat = mysqli_fetch_array($ReqLog))
 		{
 			$tab_user=array();
 			$tab_user['nom']=$resultat["u_nom"];

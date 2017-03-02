@@ -147,14 +147,14 @@ function old_autentification_passwd_conges($username,$password)
 	$username_password_ok="";
 	
 	$req_conges="SELECT u_passwd   FROM conges_users   WHERE u_login='$username' AND u_passwd=password('$password') " ;
-	$res_conges = mysql_query($req_conges,$mysql_link) or die("autentification_passwd_conges() : Erreur ".mysql_error());
-	$num_row_conges = mysql_num_rows($res_conges);
+	$res_conges = mysqli_query($req_conges,$mysql_link) or die("autentification_passwd_conges() : Erreur ".mysqli_error());
+	$num_row_conges = mysqli_num_rows($res_conges);
 	if ($num_row_conges !=0)
 	{
 		$username_password_ok=$username;
 	}
 	
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	return   $username_password_ok;
 }
@@ -168,14 +168,14 @@ function update_password($username,$password)
 	
 	$passwd_md5=md5($password);
 	$sql1 = "UPDATE conges_users  SET u_passwd='$passwd_md5' WHERE u_login='$username'" ;
-	$result = mysql_query($sql1, $mysql_link) or die("ERREUR : mysql_query : ".$sql1." --> ".mysql_error());
+	$result = mysqli_query($sql1, $mysql_link) or die("ERREUR : mysqli_query : ".$sql1." --> ".mysqli_error());
 
 	if($result==TRUE)
 		printf("<center> Changements pris en compte avec succes !<br><br> </center>\n");
 	else
 		printf("<center> ERREUR ! Changements NON pris en compte !<br><br> </center>\n");
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 	
 	/* APPEL D'UNE AUTRE PAGE */
 	echo "<center><a href=\"".$_SESSION['config']['URL_ACCUEIL_CONGES']."/\">aller à PHP_CONGES ...</a><center>\n";

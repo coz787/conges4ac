@@ -779,7 +779,7 @@ function get_current_grille_rtt($u_login_to_update, $mysql_link, $DEBUG=FALSE)
   /* on recherche le dernier enreg par date_de_fin */ 
   $sql1 = "SELECT * FROM conges_artt WHERE a_login='$u_login_to_update' ORDER BY a_date_fin_grille DESC"; 
   $ReqLog1 = requete_mysql($sql1, $mysql_link, "get_current_grille_rtt", $DEBUG);
-  $resultat1 = mysql_fetch_array($ReqLog1) ; 
+  $resultat1 = mysqli_fetch_array($ReqLog1) ; 
 
   if ( $resultat1 ) { 
     if ($resultat1['a_date_fin_grille'] != $sendoftime ) { 
@@ -879,7 +879,7 @@ function saisie_jours_absence_temps_partiel($login, $mysql_link, $DEBUG=FALSE)
 	// $sql1 = "SELECT * FROM conges_artt WHERE a_login='$login' AND a_date_fin_grille='9999-12-31' "  ;
 	// $ReqLog1 = requete_mysql($sql1, $mysql_link, "saisie_jours_absence_temps_partiel", $DEBUG);
 
-	// while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	// while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
     if($resultat1['sem_imp_lu_am']=="Y") $checked_option_sem_imp_lu_am=" checked";
     if($resultat1['sem_imp_lu_pm']=="Y") $checked_option_sem_imp_lu_pm=" checked";
     if($resultat1['sem_imp_ma_am']=="Y") $checked_option_sem_imp_ma_am=" checked";
@@ -2199,11 +2199,11 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
 		$sql_echange_rtt="SELECT e_absence FROM conges_echange_rtt WHERE e_login='$sql_login' AND e_date_jour='$date_j' ";
 		$res_echange_rtt = requete_mysql($sql_echange_rtt, $mysql_link, "recup_infos_artt_du_jour", $DEBUG);
 
-		$num_echange_rtt = mysql_num_rows($res_echange_rtt);
+		$num_echange_rtt = mysqli_num_rows($res_echange_rtt);
 		// si le jour est l'objet d'un echange, on tient compte de l'échange
 		if($num_echange_rtt!=0)
 		{
-			$result_echange_rtt = mysql_fetch_array($res_echange_rtt);
+			$result_echange_rtt = mysqli_fetch_array($res_echange_rtt);
 			if ($result_echange_rtt["e_absence"]=='J') // jour entier
 			{
 				$val_matin='Y';
@@ -2239,7 +2239,7 @@ function recup_infos_artt_du_jour($sql_login, $j_timestamp, &$val_matin, &$val_a
 			$sql_artt="SELECT $key_artt_matin, $key_artt_aprem FROM conges_artt
 						WHERE a_login='$sql_login' AND a_date_debut_grille<='$date_j' AND a_date_fin_grille>='$date_j' ";
 			$res_artt = requete_mysql($sql_artt, $mysql_link, "recup_infos_artt_du_jour", $DEBUG);
-			$result_artt = mysql_fetch_array($res_artt);
+			$result_artt = mysqli_fetch_array($res_artt);
 			if($result_artt["$key_artt_matin"]=='Y')
 				$val_matin='Y';
 			else
@@ -2572,7 +2572,7 @@ function construct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $
 
           $req_cer_fin = requete_mysql($select_c_echanges_rtt . "'".$num_periode['fin']."'",
                                        $mysql_link, "construct_and_send_mail", $DEBUG);
-          $res_cer_fin = mysql_fetch_array($req_cer_fin);  // doit exister ! 
+          $res_cer_fin = mysqli_fetch_array($req_cer_fin);  // doit exister ! 
           // echo "res_cer_fin = <br>" ;
           // print_r($res_cer_fin); 
           $sql_commentaire = $res_cer_fin["e_comment"] ; 
@@ -2595,7 +2595,7 @@ function construct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $
           // _todo 
           $req_cer_deb = requete_mysql($select_c_echanges_rtt . "'".$num_periode['deb']."'",
                                        $mysql_link, "construct_and_send_mail", $DEBUG);
-          $res_cer_deb = mysql_fetch_array($req_cer_deb);
+          $res_cer_deb = mysqli_fetch_array($req_cer_deb);
           $sql_date_deb = join( " / ", explode("-", $num_periode['deb'] ));
           $deb_presence = $res_cer_deb["e_presence"] ;
           if ($deb_presence == "M") {
@@ -2628,12 +2628,12 @@ function construct_and_send_mail($objet, $mail_sender_name, $mail_sender_addr, $
 					FROM   conges_periode
 					WHERE  p_num=$num_periode ;" ;          
           $res_abs = requete_mysql($select_abs, $mysql_link, "construct_and_send_mail", $DEBUG);
-          $rec_abs = mysql_fetch_array($res_abs);
+          $rec_abs = mysqli_fetch_array($res_abs);
           $p_type = $rec_abs["p_type"];
 
           $select_typea = "SELECT  ta_libelle FROM  conges_type_absence WHERE ta_id = $p_type ;" ; 
           $res_typabs = requete_mysql($select_typea, $mysql_link, "construct_and_send_mail", $DEBUG);
-          $rec_typabs = mysql_fetch_array($res_typabs);
+          $rec_typabs = mysqli_fetch_array($res_typabs);
 
           $tab_date_deb= explode("-", $rec_abs["p_date_deb"]);
           // affiche : "23 / 01 / 2008 (am)"
@@ -2804,7 +2804,7 @@ function find_email_adress_for_user($login, $mysql_lk, $DEBUG=FALSE)
 		
 	$req = "SELECT u_nom, u_prenom, u_email FROM conges_users WHERE u_login='$login' ";
 	$res = requete_mysql($req, $mysql_link, "find_email_adress_for_user", $DEBUG);
-	$rec = mysql_fetch_array($res);
+	$rec = mysqli_fetch_array($res);
 
 	$sql_nom = $rec["u_nom"];
 	$sql_prenom = $rec["u_prenom"];
@@ -2844,11 +2844,11 @@ function recup_tableau_rtt_echange($mois, $first_jour, $year, $mysql_link, $DEBU
 		$sql_echange_rtt="SELECT e_login, e_absence FROM conges_echange_rtt WHERE e_date_jour='$date_j' ";
 		$res_echange_rtt = requete_mysql($sql_echange_rtt, $mysql_link, "recup_tableau_rtt_echange", $DEBUG);
 
-		$num_echange_rtt = mysql_num_rows($res_echange_rtt);
+		$num_echange_rtt = mysqli_num_rows($res_echange_rtt);
 		// si le jour est l'objet d'un echange, on tient compte de l'échange
 		if($num_echange_rtt!=0)
 		{
-			while($result_echange_rtt = mysql_fetch_array($res_echange_rtt))
+			while($result_echange_rtt = mysqli_fetch_array($res_echange_rtt))
 			{
 				$tab_echange=array();
 				$login=$result_echange_rtt["e_login"];
@@ -2889,11 +2889,11 @@ function recup_tableau_rtt_echange($mois, $first_jour, $year, $mysql_link, $DEBU
 
 			$sql_echange_rtt="SELECT e_login, e_absence FROM conges_echange_rtt WHERE e_date_jour='$date_j' ";
 			$res_echange_rtt = requete_mysql($sql_echange_rtt, $mysql_link, "recup_tableau_rtt_echange", $DEBUG);
-			$num_echange_rtt = mysql_num_rows($res_echange_rtt);
+			$num_echange_rtt = mysqli_num_rows($res_echange_rtt);
 			// si le jour est l'objet d'un echange, on tient compte de l'échange
 			if($num_echange_rtt!=0)
 			{
-				while($result_echange_rtt = mysql_fetch_array($res_echange_rtt))
+				while($result_echange_rtt = mysqli_fetch_array($res_echange_rtt))
 				{
 					$tab_echange=array();
 					$login=$result_echange_rtt["e_login"];
@@ -2947,8 +2947,8 @@ function recup_tableau_rtt_planifiees($mois, $first_jour, $year, $mysql_link, $D
 	$req_artt_login="SELECT DISTINCT(a_login) FROM conges_artt ";
 	$res_artt_login = requete_mysql($req_artt_login, $mysql_link, "recup_tableau_rtt_planifiees", $DEBUG);
 
-	//$num_artt_login = mysql_num_rows($res_artt_login);
-	while($result_artt_login = mysql_fetch_array($res_artt_login)) // pour chaque login trouvé
+	//$num_artt_login = mysqli_num_rows($res_artt_login);
+	while($result_artt_login = mysqli_fetch_array($res_artt_login)) // pour chaque login trouvé
 	{
 		$sql_artt_login=$result_artt_login["a_login"];
 		$tab_user_grille=array();
@@ -2956,8 +2956,8 @@ function recup_tableau_rtt_planifiees($mois, $first_jour, $year, $mysql_link, $D
 		$req_artt = "SELECT * FROM conges_artt WHERE a_login='$sql_artt_login' ";
 		$res_artt = requete_mysql($req_artt, $mysql_link, "recup_tableau_rtt_planifiees", $DEBUG);
 
-		$num_artt = mysql_num_rows($res_artt);
-		while($result_artt = mysql_fetch_array($res_artt))
+		$num_artt = mysqli_num_rows($res_artt);
+		while($result_artt = mysqli_fetch_array($res_artt))
 		{
 			$tab_user_rtt=array();
 			$sql_date_fin_grille=$result_artt["a_date_fin_grille"];
@@ -3150,7 +3150,7 @@ function get_group_name_from_id($groupe_id, $mysql_link, $DEBUG=FALSE)
 		$req_name="SELECT g_groupename FROM conges_groupe WHERE g_gid=$groupe_id ";
 		$ReqLog_name = requete_mysql($req_name, $mysql_link, "ajout_global_groupe", $DEBUG);
 
-		$resultat_name = mysql_fetch_array($ReqLog_name);
+		$resultat_name = mysqli_fetch_array($ReqLog_name);
 		return $resultat_name["g_groupename"];
 
 }
@@ -3222,7 +3222,7 @@ function get_list_all_users_du_resp_as_list($resp_login, $mysql_link, $DEBUG=FAL
 
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
       // on peuple la liste locale : ['nom.prenom'] = "'login'"
       // echo "<pre>__res ". $resultat1["u_nom"].".".$resultat1["u_prenom"]. "</pre>" ;
@@ -3259,7 +3259,7 @@ function get_list_all_users_du_resp_as_list($resp_login, $mysql_link, $DEBUG=FAL
 		$ReqLog_2 = requete_mysql($sql_2, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
 		// on va verifier si les resp récupérés sont absents (si oui, c'est $resp_login qui traite leurs users
-		while ($resultat_2 = mysql_fetch_array($ReqLog_2))
+		while ($resultat_2 = mysqli_fetch_array($ReqLog_2))
 		{
 			$current_resp=$resultat_2["u_login"];
 			// verif dans la base si le current_resp est absent :
@@ -3272,7 +3272,7 @@ function get_list_all_users_du_resp_as_list($resp_login, $mysql_link, $DEBUG=FAL
 			$ReqLog_3 = requete_mysql($req, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
 			// si le current resp est absent : on recup la liste de ses users pour les traiter .....
-			if (mysql_num_rows($ReqLog_3)!=0)
+			if (mysqli_num_rows($ReqLog_3)!=0)
 			{   /*
 				if($list_users=="")
 					$list_users=get_list_all_users_du_resp($current_resp, $mysql_link, $DEBUG);
@@ -3355,7 +3355,7 @@ function get_list_all_users_du_resp_as_list_v1($resp_login, $mysql_link, $DEBUG=
 
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_login=$resultat1["u_login"];
 		/* if($list_users=="")
@@ -3394,7 +3394,7 @@ function get_list_all_users_du_resp_as_list_v1($resp_login, $mysql_link, $DEBUG=
 		$ReqLog_2 = requete_mysql($sql_2, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
 		// on va verifier si les resp récupérés sont absents (si oui, c'est $resp_login qui traite leurs users
-		while ($resultat_2 = mysql_fetch_array($ReqLog_2))
+		while ($resultat_2 = mysqli_fetch_array($ReqLog_2))
 		{
 			$current_resp=$resultat_2["u_login"];
 			// verif dans la base si le current_resp est absent :
@@ -3407,7 +3407,7 @@ function get_list_all_users_du_resp_as_list_v1($resp_login, $mysql_link, $DEBUG=
 			$ReqLog_3 = requete_mysql($req, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
 			// si le current resp est absent : on recup la liste de ses users pour les traiter .....
-			if (mysql_num_rows($ReqLog_3)!=0)
+			if (mysqli_num_rows($ReqLog_3)!=0)
 			{   /*
 				if($list_users=="")
 					$list_users=get_list_all_users_du_resp($current_resp, $mysql_link, $DEBUG);
@@ -3477,7 +3477,7 @@ function get_list_all_users_du_resp_v142($resp_login, $mysql_link, $DEBUG=FALSE)
 
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_login=$resultat1["u_login"];
 		if($list_users=="")
@@ -3510,7 +3510,7 @@ function get_list_all_users_du_resp_v142($resp_login, $mysql_link, $DEBUG=FALSE)
 		$ReqLog_2 = requete_mysql($sql_2, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
 		// on va verifier si les resp récupérés sont absents (si oui, c'est $resp_login qui traite leurs users
-		while ($resultat_2 = mysql_fetch_array($ReqLog_2))
+		while ($resultat_2 = mysqli_fetch_array($ReqLog_2))
 		{
 			$current_resp=$resultat_2["u_login"];
 			// verif dans la base si le current_resp est absent :
@@ -3523,7 +3523,7 @@ function get_list_all_users_du_resp_v142($resp_login, $mysql_link, $DEBUG=FALSE)
 			$ReqLog_3 = requete_mysql($req, $mysql_link, "get_list_all_users_du_resp", $DEBUG);
 
 			// si le current resp est absent : on recup la liste de ses users pour les traiter .....
-			if (mysql_num_rows($ReqLog_3)!=0)
+			if (mysqli_num_rows($ReqLog_3)!=0)
 			{
 				if($list_users=="")
 					$list_users=get_list_all_users_du_resp_v142($current_resp, $mysql_link, $DEBUG);
@@ -3554,7 +3554,7 @@ function get_list_users_du_groupe($group_id, $mysql_link, $DEBUG=FALSE)
 	$sql="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid = $group_id and gu_nature='membre' ORDER BY gu_login ";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_users_du_groupe", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_login=$resultat1["gu_login"];
 		if($list_users=="")
@@ -3582,7 +3582,7 @@ function get_list_users_des_groupes_du_resp($resp_login, $mysql_link, $DEBUG=FAL
 		$sql="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) and gu_nature='membre' ORDER BY gu_login ";
 		$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_users_des_groupes_du_resp", $DEBUG);
 
-		while ($resultat1 = mysql_fetch_array($ReqLog1))
+		while ($resultat1 = mysqli_fetch_array($ReqLog1))
 		{
 			$current_login=$resultat1["gu_login"];
 			if($list_users_des_groupes_du_resp=="")
@@ -3606,9 +3606,9 @@ function get_list_groupes_du_resp($resp_login, $mysql_link, $DEBUG=FALSE)
 	$sql="SELECT gr_gid FROM conges_groupe_resp WHERE gr_login='$resp_login' ORDER BY gr_gid";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_du_resp", $DEBUG);
 
-	if(mysql_num_rows($ReqLog1)!=0)
+	if(mysqli_num_rows($ReqLog1)!=0)
 	{
-		while ($resultat1 = mysql_fetch_array($ReqLog1))
+		while ($resultat1 = mysqli_fetch_array($ReqLog1))
 		{
 			$current_group=$resultat1["gr_gid"];
 			if($list_group=="")
@@ -3631,9 +3631,9 @@ function get_list_groupes_du_grand_resp($resp_login, $mysql_link, $DEBUG=FALSE)
 	$sql="SELECT ggr_gid FROM conges_groupe_grd_resp WHERE ggr_login='$resp_login' ORDER BY ggr_gid";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_du_grand_resp", $DEBUG);
 
-	if(mysql_num_rows($ReqLog1)!=0)
+	if(mysqli_num_rows($ReqLog1)!=0)
 	{
-		while ($resultat1 = mysql_fetch_array($ReqLog1))
+		while ($resultat1 = mysqli_fetch_array($ReqLog1))
 		{
 			$current_group=$resultat1["ggr_gid"];
 			if($list_group=="")
@@ -3656,7 +3656,7 @@ function get_list_groupes_double_valid($mysql_link, $DEBUG=FALSE)
 	$sql="SELECT g_gid FROM conges_groupe WHERE g_double_valid='Y' ORDER BY g_gid ";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_double_valid_du_resp", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_gid=$resultat1["g_gid"];
 		if($list_groupes_double_valid=="")
@@ -3683,7 +3683,7 @@ function get_list_groupes_double_valid_du_resp($resp_login, $mysql_link, $DEBUG=
 		$sql="SELECT DISTINCT(g_gid) FROM conges_groupe WHERE g_double_valid='Y' AND g_gid IN ($list_groups) ORDER BY g_gid ";
 		$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_double_valid_du_resp", $DEBUG);
 
-		while ($resultat1 = mysql_fetch_array($ReqLog1))
+		while ($resultat1 = mysqli_fetch_array($ReqLog1))
 		{
 			$current_gid=$resultat1["g_gid"];
 			if($list_groupes_double_valid_du_resp=="")
@@ -3707,7 +3707,7 @@ function get_list_groupes_double_valid_du_grand_resp($resp_login, $mysql_link, $
 	$sql="SELECT DISTINCT(ggr_gid) FROM conges_groupe_grd_resp WHERE ggr_login='$resp_login' ORDER BY ggr_gid ";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_double_valid_du_grand_resp", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_gid=$resultat1["ggr_gid"];
 		if($list_groupes_double_valid_du_grand_resp=="")
@@ -3734,7 +3734,7 @@ function get_list_users_des_groupes_du_user($user_login,$snature="membre",$mysql
 		$sql="SELECT DISTINCT(gu_login) FROM conges_groupe_users WHERE gu_gid IN ($list_groups) and gu_nature='membre' ORDER BY gu_login ";
 		$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_users_des_groupes_du_user", $DEBUG);
 
-		while ($resultat1 = mysql_fetch_array($ReqLog1))
+		while ($resultat1 = mysqli_fetch_array($ReqLog1))
 		{
 			$current_login=$resultat1["gu_login"];
 			if($list_users=="")
@@ -3761,7 +3761,7 @@ function get_list_groupes_du_user($user_login,$snature="membre",$mysql_link, $DE
 	$sql="SELECT gu_gid FROM conges_groupe_users WHERE gu_login='$user_login' ".$swhere. " ORDER BY gu_gid";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_groupes_du_user", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_group=$resultat1["gu_gid"];
 		if($list_group=="")
@@ -3784,7 +3784,7 @@ function get_list_all_users($mysql_link, $DEBUG=FALSE)
 
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_all_users", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_login=$resultat1["u_login"];
 		if($list_users=="")
@@ -3809,7 +3809,7 @@ function get_list_all_groupes($mysql_link, $DEBUG=FALSE)
 	$sql="SELECT DISTINCT(gu_gid) FROM conges_groupe_users ORDER BY gu_gid";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_list_all_groupes", $DEBUG);
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$current_group=$resultat1["gu_gid"];
 		if($list_group=="")
@@ -3838,7 +3838,7 @@ function get_tab_resp_du_user($user_login, $mysql_link, $DEBUG=FALSE)
 		$req = "SELECT u_resp_login FROM conges_users WHERE u_login='$user_login' ";
 		$res = requete_mysql($req, $mysql_link, "get_tab_resp_du_user", $DEBUG);
 
-		$rec = mysql_fetch_array($res);
+		$rec = mysqli_fetch_array($res);
 		$tab_resp[$rec['u_resp_login']]="present";
 
 		// recup des resp des groupes du user
@@ -3854,7 +3854,7 @@ function get_tab_resp_du_user($user_login, $mysql_link, $DEBUG=FALSE)
 					$sql="SELECT gr_login FROM conges_groupe_resp WHERE gr_gid=$gid AND gr_login!='$user_login' ";
 					$ReqLog1 = requete_mysql($sql, $mysql_link, "get_tab_resp_du_user", $DEBUG);
 
-					while ($resultat1 = mysql_fetch_array($ReqLog1))
+					while ($resultat1 = mysqli_fetch_array($ReqLog1))
 					{
 						//attention à ne pas mettre 2 fois le meme resp dans le tableau
 						if (in_array($resultat1["gr_login"], $tab_resp)==FALSE)
@@ -3885,7 +3885,7 @@ function get_tab_resp_du_user($user_login, $mysql_link, $DEBUG=FALSE)
 	                                     AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
 	                                     AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())";
 				$ReqLog_3 = requete_mysql($req, $mysql_link, "get_tab_resp_du_user", $DEBUG);
-				if(mysql_num_rows($ReqLog_3)!=0)
+				if(mysqli_num_rows($ReqLog_3)!=0)
 				{
 					$nb_present=$nb_present-1;
 					$tab_resp[$current_resp]="absent";
@@ -3937,7 +3937,7 @@ function get_tab_grd_resp_du_user($user_login, &$tab_grd_resp, $mysql_link, $DEB
 				$sql="SELECT ggr_login FROM conges_groupe_grd_resp WHERE ggr_gid=$gid ";
 				$ReqLog1 = requete_mysql($sql, $mysql_link, "get_tab_grd_resp_du_user", $DEBUG);
 
-				while ($resultat1 = mysql_fetch_array($ReqLog1))
+				while ($resultat1 = mysqli_fetch_array($ReqLog1))
 				{
 					//attention à ne pas mettre 2 fois le meme resp dans le tableau
 					if (in_array($resultat1["ggr_login"], $tab_grd_resp)==FALSE)
@@ -3965,7 +3965,7 @@ connecter alors qu'il n'a pas de compte dans
 
 	$req = "SELECT COUNT(*) FROM conges_users WHERE u_login='$username'";
 	$res = requete_mysql($req, $mysql_link, "valid_ldap_user", $DEBUG);
-	$cpt = mysql_fetch_array($res);
+	$cpt = mysqli_fetch_array($res);
 	$cpt = $cpt[0];
 
 	if ($cpt == 0)
@@ -3984,7 +3984,7 @@ function is_resp($login, $mysql_link, $DEBUG=FALSE)
 	$select_info="SELECT u_is_resp FROM conges_users WHERE u_login='$login' ";
 	$ReqLog_info = requete_mysql($select_info, $mysql_link, "is_resp", $DEBUG);
 
-	$resultat_info = mysql_fetch_array($ReqLog_info);
+	$resultat_info = mysqli_fetch_array($ReqLog_info);
 	$sql_is_resp=$resultat_info["u_is_resp"];
 
 	if($sql_is_resp=='Y')
@@ -4001,7 +4001,7 @@ function is_gest($login, $mysql_link, $DEBUG=FALSE)
 	$select_info="SELECT u_is_gest FROM conges_users WHERE u_login='$login' ";
 	$ReqLog_info = requete_mysql($select_info, $mysql_link, "is_gest", $DEBUG);
 
-	$resultat_info = mysql_fetch_array($ReqLog_info);
+	$resultat_info = mysqli_fetch_array($ReqLog_info);
 	$sql_is_gest=$resultat_info["u_is_gest"];
 
 	if($sql_is_gest=='Y')
@@ -4020,7 +4020,7 @@ function is_resp_of_user($resp_login, $user_login, $mysql_link, $DEBUG=FALSE)
 	$select_info="SELECT u_resp_login FROM conges_users WHERE u_login='$user_login' ";
 	$ReqLog_info = requete_mysql($select_info, $mysql_link, "is_resp_of_user", $DEBUG);
 
-	$resultat_info = mysql_fetch_array($ReqLog_info);
+	$resultat_info = mysqli_fetch_array($ReqLog_info);
 	$sql_resp_login=$resultat_info["u_resp_login"];
 
 	if($resp_login==$sql_resp_login)
@@ -4040,7 +4040,7 @@ function is_admin($login, $mysql_link, $DEBUG=FALSE)
 	$select_info="SELECT u_is_admin FROM conges_users WHERE u_login='$login' ";
 	$ReqLog_info = requete_mysql($select_info, $mysql_link, "is_admin", $DEBUG);
 
-	$resultat_info = mysql_fetch_array($ReqLog_info);
+	$resultat_info = mysqli_fetch_array($ReqLog_info);
 	$sql_is_admin=$resultat_info["u_is_admin"];
 
 	if($sql_is_admin=='Y')
@@ -4058,7 +4058,7 @@ function admin_is_responsable($login, $mysql_link, $DEBUG=FALSE)
 	$select_info="SELECT u_is_resp FROM conges_users WHERE u_login='$login' ";
 	$ReqLog_info = requete_mysql($select_info, $mysql_link, "admin_is_responsable", $DEBUG);
 
-	$resultat_info = mysql_fetch_array($ReqLog_info);
+	$resultat_info = mysqli_fetch_array($ReqLog_info);
 	$sql_is_resp=$resultat_info["u_is_resp"];
 
 	if($sql_is_resp=='Y')
@@ -4076,12 +4076,12 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
 	// Récupération du + grand p_num (+ grand numero identifiant de conges)
 	$sql1 = "SELECT max(p_num) FROM conges_periode" ;
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "insert_dans_periode", $DEBUG);
-	if(mysql_result($ReqLog1, 0))
-		$num_new_demande = mysql_result($ReqLog1, 0)+1;
+	if(mysqli_result($ReqLog1, 0))
+		$num_new_demande = mysqli_result($ReqLog1, 0)+1;
 	else
 		$num_new_demande = 1;  // la table est vide ! le premier num sera 1
     /* _protectsql_ dpa */ 
-    $commentaire = mysql_escape_string($commentaire);
+    $commentaire = mysqli_real_escape_string($mysql_link,$commentaire);
 
 	$sql2 = "INSERT INTO conges_periode
 			SET p_login='$login',
@@ -4123,7 +4123,7 @@ function init_tab_jours_feries($mysql_link, $DEBUG=FALSE)
 	$sql_select="SELECT jf_date FROM conges_jours_feries ";
 	$res_select = requete_mysql($sql_select, $mysql_link, "init_tab_jours_feries", $DEBUG);
 
-	while( $row = mysql_fetch_array($res_select))
+	while( $row = mysqli_fetch_array($res_select))
 	{
 		$_SESSION["tab_j_feries"][]=$row["jf_date"];
 	}
@@ -4181,27 +4181,27 @@ function init_config_tab($DEBUG=FALSE)
 
 	/******************************************/
 	//  recup des variables de la table conges_config
-	$mysql_link = MYSQL_CONNECT($mysql_serveur,$mysql_user,$mysql_pass);
+	$mysql_link = mysqli_connect($mysql_serveur,$mysql_user,$mysql_pass);
 	if (! $mysql_link)
 	{
-		die("connexion_mysql() : Impossible de se connecter au serveur ".mysql_error($mysql_link));
+		die("connexion_mysql() : Impossible de se connecter au serveur ".mysqli_error($mysql_link));
 	}
     // _ac3 
-    if ( ! mysql_set_charset($mysql_charset,$mysql_link) ) {
+    if ( ! mysqli_set_charset($mysql_link,$mysql_charset) ) {
       die("mysql_set_charset() : set_charset ".$mysql_charset.
-          " en erreur ". mysql_error($mysql_link));
+          " en erreur ". mysqli_error($mysql_link));
     };
 
-	$dbselect   = mysql_select_db($mysql_database,$mysql_link);
+	$dbselect   = mysqli_select_db($mysql_link, $mysql_database);
 	if (! $dbselect)
 	{
-		die("connexion_mysql() : Impossible de se connecter à la base de données ".mysql_error($mysql_link));
+		die("connexion_mysql() : Impossible de se connecter à la base de données ".mysqli_error($mysql_link));
 	}
 
 	$sql = "SELECT conf_nom, conf_valeur, conf_type FROM conges_config";
-	$req = mysql_query($sql) or die ("ERREUR : mysql_query --> $sql ".mysql_error($mysql_link));
+	$req = mysqli_query($mysql_link,$sql) or die ("ERREUR : mysqli_query --> $sql ".mysqli_error($mysql_link));
 
-	while ($data = mysql_fetch_array($req))
+	while ($data = mysqli_fetch_array($req))
 	{
 		$key=$data[0];
 		$value=$data[1];
@@ -4241,9 +4241,10 @@ function init_config_tab($DEBUG=FALSE)
 	/******************************************/
 	//  recup des mails dans  la table conges_mail
 	$sql_mail = "SELECT mail_nom, mail_subject, mail_body FROM conges_mail";
-	$req_mail = mysql_query($sql_mail) or die ("ERREUR : mysql_query --> $sql_mail ".mysql_error($mysql_link));
+	$req_mail = mysqli_query($mysql_link,$sql_mail) or 
+      die ("ERREUR : mysqli_query --> $sql_mail ".mysqli_error($mysql_link));
 
-	while ($data_mail = mysql_fetch_array($req_mail))
+	while ($data_mail = mysqli_fetch_array($req_mail))
 	{
 		$mail_nom=$data_mail[0];
 		$key1=$mail_nom."_sujet";
@@ -4258,8 +4259,11 @@ function init_config_tab($DEBUG=FALSE)
 	/******************************************/
 	//  config_ldap.php
 	if(isset($config_ldap_server)) {$tab['ldap_server']=$config_ldap_server ;}
-	if(isset($config_ldap_protocol_version)) {$tab['ldap_protocol_version']=$config_ldap_protocol_version ;}
-		else {$tab['ldap_protocol_version']=0 ;}
+	if(isset($config_ldap_protocol_version)) {
+      $tab['ldap_protocol_version']=$config_ldap_protocol_version ;
+    } else {
+      $tab['ldap_protocol_version']=0 ;
+    }
 	if(isset($config_ldap_bupsvr)) {$tab['ldap_bupsvr']=$config_ldap_bupsvr ;}
 	if(isset($config_basedn)) {$tab['basedn']=$config_basedn ;}
 	if(isset($config_ldap_user)) {$tab['ldap_user']=$config_ldap_user ;}
@@ -4288,9 +4292,10 @@ function init_config_tab($DEBUG=FALSE)
 	if(isset($_SESSION['userlogin']))
 	{
 		$sql_user = "SELECT u_is_resp, u_is_admin FROM conges_users WHERE u_login='".$_SESSION['userlogin']."' ";
-		$req_user = mysql_query($sql_user) or die ("ERREUR : mysql_query --> $sql_user ".mysql_error($mysql_link));
+		$req_user = mysqli_query($mysql_link,$sql_user) or 
+          die ("ERREUR : mysqli_query --> $sql_user ".mysqli_error($mysql_link));
 
-		if($data_user = mysql_fetch_array($req_user))
+		if($data_user = mysqli_fetch_array($req_user))
 		{
 			$_SESSION['is_resp']=$data_user[0] ;
 			$_SESSION['is_admin']=$data_user[1] ;
@@ -4320,7 +4325,7 @@ function get_user_see_all($login, $mysql_link, $DEBUG=FALSE)
 	$sql="SELECT u_see_all FROM conges_users WHERE u_login='$login' ";
 	$ReqLog1 = requete_mysql($sql, $mysql_link, "get_user_see_all", $DEBUG);
 
-	if($resultat1 = mysql_fetch_array($ReqLog1))
+	if($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$see_all=$resultat1["u_see_all"];
 		if($see_all=="Y")
@@ -4340,7 +4345,7 @@ function recup_tableau_types_conges($mysql_link, $DEBUG=FALSE)
 	$sql_cong="SELECT ta_id, ta_libelle, ta_type FROM conges_type_absence WHERE ta_type='conges' ORDER BY ta_id";
 	$ReqLog_cong = requete_mysql($sql_cong, $mysql_link, "recup_tableau_types_conges", $DEBUG);
 
-	while ($resultat_cong = mysql_fetch_array($ReqLog_cong))
+	while ($resultat_cong = mysqli_fetch_array($ReqLog_cong))
 	{
 		$id=(int)$resultat_cong['ta_id'];
 		$tab[$id]= $resultat_cong['ta_libelle'];
@@ -4354,7 +4359,7 @@ function recup_tableau_types_conges_ordinaires($mysql_link, $DEBUG=FALSE) //modi
 	$sql_cong="SELECT ta_id, ta_libelle, ta_type FROM conges_type_absence WHERE (ta_type='conges' AND ta_libelle!='compte épargne temps')ORDER BY ta_id";
 	$ReqLog_cong = requete_mysql($sql_cong, $mysql_link, "recup_tableau_types_conges_ordinaires", $DEBUG);
 
-	while ($resultat_cong = mysql_fetch_array($ReqLog_cong))
+	while ($resultat_cong = mysqli_fetch_array($ReqLog_cong))
 	{
 		$id=(int)$resultat_cong['ta_id'];
 		$tab[$id]= $resultat_cong['ta_libelle'];
@@ -4369,7 +4374,7 @@ function recup_tableau_types_absence($mysql_link, $DEBUG=FALSE)
 	$sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='absences' ORDER BY ta_id";
 	$ReqLog_abs = requete_mysql($sql_abs, $mysql_link, "recup_tableau_types_absence", $DEBUG);
 
-	while ($resultat_abs = mysql_fetch_array($ReqLog_abs))
+	while ($resultat_abs = mysqli_fetch_array($ReqLog_abs))
 	{
 		$id=$resultat_abs['ta_id'];
 		$tab[$id]= $resultat_abs['ta_libelle'];
@@ -4384,7 +4389,7 @@ function recup_tableau_types_conges_exceptionnels($mysql_link, $DEBUG=FALSE)
 	$sql_abs="SELECT ta_id, ta_libelle FROM conges_type_absence WHERE ta_type='conges_exceptionnels' ";
 	$ReqLog_abs = requete_mysql($sql_abs, $mysql_link, "recup_tableau_types_conges_exceptionnels", $DEBUG);
 
-	while ($resultat_abs = mysql_fetch_array($ReqLog_abs))
+	while ($resultat_abs = mysqli_fetch_array($ReqLog_abs))
 	{
 		$id=$resultat_abs['ta_id'];
 		$tab[$id]= $resultat_abs['ta_libelle'];
@@ -4403,7 +4408,7 @@ function recup_tableau_tout_types_abs($mysql_link, $DEBUG=FALSE)
 
 	$ReqLog_cong = requete_mysql($sql_cong, $mysql_link, "recup_tableau_tout_types_abs", $DEBUG);
 
-	while ($resultat_cong = mysql_fetch_array($ReqLog_cong))
+	while ($resultat_cong = mysqli_fetch_array($ReqLog_cong))
 	{
 		$tab_2=array();
 		$id=$resultat_cong['ta_id'];
@@ -4422,7 +4427,7 @@ function get_type_abs($_type_abs_id, $mysql_link, $DEBUG=FALSE)
 	$sql_abs="SELECT ta_type FROM conges_type_absence WHERE ta_id='$_type_abs_id' ";
 	$ReqLog_abs = requete_mysql($sql_abs, $mysql_link, "get_type_abs", $DEBUG);
 
-	if($resultat_abs = mysql_fetch_array($ReqLog_abs))
+	if($resultat_abs = mysqli_fetch_array($ReqLog_abs))
 		return $resultat_abs['ta_type'];
 	else
 		return "" ;
@@ -4433,7 +4438,7 @@ function get_libelle_abs($_type_abs_id, $mysql_link, $DEBUG=FALSE)
 {
 	$sql_abs="SELECT ta_libelle FROM conges_type_absence WHERE ta_id='$_type_abs_id' ";
 	$ReqLog_abs = requete_mysql($sql_abs, $mysql_link, "get_libelle_abs", $DEBUG);
-	if($resultat_abs = mysql_fetch_array($ReqLog_abs))
+	if($resultat_abs = mysqli_fetch_array($ReqLog_abs))
 		return $resultat_abs['ta_libelle'];
 	else
 		return "" ;
@@ -4443,19 +4448,19 @@ function get_libelle_abs($_type_abs_id, $mysql_link, $DEBUG=FALSE)
 // recup dans un tableau de tableaux les nb et soldes de conges d'un user (indicé par id de conges)
 function recup_tableau_conges_for_user($login, $mysql_link, $DEBUG=FALSE)
 {
-	// on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
-
-	if ($_SESSION['config']['gestion_conges_exceptionnels']==TRUE) // on prend tout les types de conges
-		$sql_bilan = "SELECT ta_libelle, su_nb_an, su_solde FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = '$login' ORDER BY su_abs_id ASC";
-	else // on prend tout les types de conges SAUF les conges exceptionnels
-		$sql_bilan = "SELECT ta_libelle, su_nb_an, su_solde FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != 'conges_exceptionnels' AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = '$login' ORDER BY su_abs_id ASC";
-
+  // on pourrait tout faire en un seule select, mais cela bug si on change la prise en charge des conges exceptionnels en cours d'utilisation ...
+  // conges4ac v3 utilisation de _ignore_ pour exclure des type de conges en desuetude
+  if ($_SESSION['config']['gestion_conges_exceptionnels']==TRUE) { // on prend tous les types de conges
+    $sql_bilan = "SELECT ta_libelle, su_nb_an, su_solde FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type != '_ignore_' and conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = '$login' ORDER BY su_abs_id ASC";
+  } else { // on prend tout les types de conges SAUF les conges exceptionnels
+    $sql_bilan = "SELECT ta_libelle, su_nb_an, su_solde FROM conges_solde_user, conges_type_absence WHERE conges_type_absence.ta_type not in ('conges_exceptionnels','_ignore_') AND conges_type_absence.ta_id = conges_solde_user.su_abs_id AND su_login = '$login' ORDER BY su_abs_id ASC";
+  }
 
 	$ReqLog_bilan = requete_mysql($sql_bilan, $mysql_link, "recup_tableau_types_conges", $DEBUG);
 
-	$count_num_bilan = mysql_num_rows($ReqLog_bilan);
+	$count_num_bilan = mysqli_num_rows($ReqLog_bilan);
 	$tab_cong_user=array();
-	while ($resultat_bilan = mysql_fetch_array($ReqLog_bilan))
+	while ($resultat_bilan = mysqli_fetch_array($ReqLog_bilan))
 	{
 		$tab=array();
 		$sql_id=$resultat_bilan["ta_libelle"];
@@ -4474,7 +4479,7 @@ function affiche_tableau_bilan_conges_user($login, $mysql_link, $DEBUG=FALSE)
 	$sql_1 = "SELECT u_quotite FROM conges_users where u_login = '$login' ";
 	$ReqLog_1 = requete_mysql($sql_1, $mysql_link, "affiche_tableau_bilan_conges_user", $DEBUG) ;
 
-	$resultat_1 = mysql_fetch_array($ReqLog_1);
+	$resultat_1 = mysqli_fetch_array($ReqLog_1);
 	$sql_quotite=$resultat_1["u_quotite"];
 
 
@@ -4557,7 +4562,7 @@ function recup_infos_du_user($login, $list_groups_double_valid, $mysql_link, $DE
 
 	$ReqLog = requete_mysql($sql, $mysql_link, "recup_infos_du_user", $DEBUG) ;
 
-	if($resultat = mysql_fetch_array($ReqLog))
+	if($resultat = mysqli_fetch_array($ReqLog))
 	{
       //      print_r($resultat);
 		$tab_user=array();
@@ -4587,7 +4592,7 @@ function recup_infos_du_user($login, $list_groups_double_valid, $mysql_link, $DE
 				$sql="SELECT gu_login FROM conges_groupe_users WHERE gu_login='$login' AND gu_gid IN ($list_groups_double_valid) ORDER BY gu_login ";
 				$ReqLog1 = requete_mysql($sql, $mysql_link, "recup_infos_du_user", $DEBUG);
 
-				if(mysql_num_rows($ReqLog1)!=0)
+				if(mysqli_num_rows($ReqLog1)!=0)
 					$tab_user['double_valid'] = "Y";
 			}
 		}
@@ -4611,7 +4616,7 @@ function recup_infos_all_users($mysql_link, $DEBUG=FALSE)
 
 	$ReqLog = requete_mysql($sql, $mysql_link, "recup_infos_all_users", $DEBUG) ;
 
-	while ($resultat = mysql_fetch_array($ReqLog))
+	while ($resultat = mysqli_fetch_array($ReqLog))
 	{
 		$tab_user=array();
 		$sql_login=$resultat["u_login"];
@@ -4668,7 +4673,7 @@ function recup_infos_all_users_du_grand_resp($login, $mysql_link, $DEBUG=FALSE)
 		$ReqLog_users = requete_mysql($sql_users, $mysql_link, "recup_infos_all_users_du_grand_resp", $DEBUG) ;
 
 		$list_all_users_dbl_valid="";
-		while ($resultat_users = mysql_fetch_array($ReqLog_users))
+		while ($resultat_users = mysqli_fetch_array($ReqLog_users))
 		{
 			$current_login=$resultat_users["gu_login"];
 			if($list_all_users_dbl_valid=="")
@@ -4705,7 +4710,7 @@ function get_tab_from_mysql_enum_field($table, $column, $mysql_link, $DEBUG=FALS
    $req_enum = "DESCRIBE $table $column";
    $res_enum = requete_mysql($req_enum, $mysql_link, "affiche_select_from_mysql_enum_field", $DEBUG);
 
-   while ($row_enum = mysql_fetch_array($res_enum))
+   while ($row_enum = mysqli_fetch_array($res_enum))
    {
       $sql_type=$row_enum['Type'];
       // exemple : enum('autre','labo','fonction','personne','web', ....
@@ -4766,7 +4771,7 @@ function get_last_absence_id($mysql_link, $DEBUG=FALSE)
 {
    $req_1="SELECT MAX(ta_id) FROM conges_type_absence ";
    $res_1 = requete_mysql($req_1, $mysql_link, "get_last_absence_id", $DEBUG);
-   $row_1 = mysql_fetch_row($res_1);
+   $row_1 = mysqli_fetch_row($res_1);
    if(!$row_1)
       return 0;     // si la table est vide, on renvoit 0
    else
@@ -4906,7 +4911,7 @@ function log_action($num_periode, $etat_periode, $login_pour, $comment, $mysql_l
   }	else {
       $user = "inconnu";
   }
-  $comment = mysql_escape_string($comment);
+  $comment = mysqli_real_escape_string($mysql_link,$comment);
 
   $sql = "INSERT INTO conges_logs
 		SET log_p_num='$num_periode',
@@ -4966,7 +4971,7 @@ function init_tab_jours_fermeture($user, $mysql_link, $DEBUG=FALSE)
 conges_jours_fermeture.jf_gid = 0";
 	$res_select = requete_mysql($sql_select, $mysql_link, "init_tab_jours_fermeture", $DEBUG);
 
-	while( $row = mysql_fetch_array($res_select))
+	while( $row = mysqli_fetch_array($res_select))
 	{
 		$_SESSION["tab_j_fermeture"][]=$row["jf_date"];
 	}
@@ -4993,7 +4998,7 @@ function is_absent($login, $mysql_link, $DEBUG=FALSE)
 						AND TO_DAYS(conges_periode.p_date_deb) <= TO_DAYS(NOW())
 						AND TO_DAYS(conges_periode.p_date_fin) >= TO_DAYS(NOW())";
 	$res = requete_mysql($req, $mysql_link, "is_absent", $DEBUG);
-	if(mysql_num_rows($res)==0)
+	if(mysqli_num_rows($res)==0)
 		return TRUE;
 	else
 		return FALSE;
@@ -5006,7 +5011,7 @@ function is_user_in_group($login, $mysql_link, $DEBUG=FALSE)
     $sql="SELECT * FROM conges_groupe_users WHERE gu_login LIKE '$login'";
     $ReqLog1 = requete_mysql($sql, $mysql_link, "?", $DEBUG); // COMMENTAIRE  A REFAIRE
 
-    if(mysql_num_rows($ReqLog1)!=0)
+    if(mysqli_num_rows($ReqLog1)!=0)
         return TRUE;
     else
         return FALSE;
@@ -5022,9 +5027,9 @@ function has_int_calendar_mode($ulogin,$dblink)
     if  ($_SESSION['config']['int_calendar'] == "1") {
       $sql_req_hasintcalendar = "select u_has_int_calendar from conges_users where u_login='".$ulogin."'" ;
       // echo "<pre>".$sql_req_hasintcalendar."</pre>" ; 
-      $req_hic = mysql_query($sql_req_hasintcalendar, $dblink) ;
+      $req_hic = mysqli_query($dblink, $sql_req_hasintcalendar) ;
       if ($req_hic) {
-        $lus = mysql_fetch_row($req_hic) ;
+        $lus = mysqli_fetch_row($req_hic) ;
         $hasintcalendar = $lus[0] ; 
         if ($hasintcalendar == 'Y') {
           return TRUE ; 
@@ -5187,7 +5192,7 @@ WHERE su_login='$user_login' AND su_abs_id=$type_conges " ;
 		$ReqLog_solde_conges = requete_mysql($select_solde, $mysql_link, 
                                              "verif_solde_user", $DEBUG);
 
-		$resultat_solde = mysql_fetch_array($ReqLog_solde_conges);
+		$resultat_solde = mysqli_fetch_array($ReqLog_solde_conges);
 		$sql_solde_user = $resultat_solde["su_solde"];
         $soldeuser = $sql_solde_user ; 
   /* recup du nombre de jours de conges type $type_conges login $user_login 
@@ -5198,7 +5203,7 @@ p_etat='valid') " ;
 		$ReqLog_solde_conges_a_valider = requete_mysql(
             $select_solde_a_valider, $mysql_link, "verif_solde_user", $DEBUG);
 
-		$resultat_solde_a_valider = mysql_fetch_array($ReqLog_solde_conges_a_valider);
+		$resultat_solde_a_valider = mysqli_fetch_array($ReqLog_solde_conges_a_valider);
 		$sql_solde_user_a_valider = $resultat_solde_a_valider["SUM(p_nb_jours)"];
 		if ($sql_solde_user_a_valider == NULL ) {
 			$sql_solde_user_a_valider = 0;
@@ -5241,21 +5246,6 @@ function referer2rootpath($request_scheme,$server_addr,$server_port,$request_uri
       array_push($lruri,"") ; // trailing slash 
     };
   $rootpath = $request_scheme."://".$server_addr.":".$server_port.implode("/",$lruri);
-  return $rootpath ; 
-}
-function attic_referer2rootpath_v1($http_referer) {
-  $rootpath = "" ; 
-  if (preg_match('/^([^:]+):\/\/(.+)$/',$http_referer,$match) ) {
-    $rootpath = $match[1]."://" ; 
-    $luri = explode("/",$match[2]);
-    if (end($luri) == "index.php") { 
-      array_pop($luri) ;
-      array_push($luri,"") ; // trailing slash 
-    };
-    $rootpath .= implode("/",$luri); 
-  }
-  // $slast = $luri[sizeof($luri) - 1 ] ; // avant dernier = dernier repertoire
-  // $lret = array($rootpath,$slast) ;  
   return $rootpath ; 
 }
 
@@ -5354,7 +5344,7 @@ WHERE (gu_login='$user' AND conges_groupe_users.gu_gid=conges_jours_fermeture.jf
 conges_jours_fermeture.jf_gid = 0";
   $cgfe_req = requete_mysql($cgfe_select, $mysql_link, "get_vperiod", $DEBUG);
 
-  while( $row = mysql_fetch_array($cgfe_req) ) {
+  while( $row = mysqli_fetch_array($cgfe_req) ) {
     $ddatej = new DateTime($row['jf_date']) ; 
     if (($ddatej >= $dmindate) && ($ddatej <= $dmaxdate)) {
       $sdatej = $ddatej->format('Y-m-d') ;
@@ -5366,7 +5356,7 @@ conges_jours_fermeture.jf_gid = 0";
   $cgf_select = "SELECT jf_date FROM conges_jours_feries" ; 
   $cgf_req = requete_mysql($cgf_select, $mysql_link, "get_vperiod", $DEBUG);
 
-  while( $row = mysql_fetch_array($cgf_req) ) {
+  while( $row = mysqli_fetch_array($cgf_req) ) {
     $ddatej = new DateTime($row['jf_date']) ; 
     if (($ddatej >= $dmindate) && ($ddatej <= $dmaxdate)) {
       $sdatej = $ddatej->format('Y-m-d') ;
@@ -5379,7 +5369,7 @@ conges_jours_fermeture.jf_gid = 0";
   $cp_select = "SELECT p_date_deb,p_demi_jour_deb,p_date_fin,p_demi_jour_fin,p_etat,p_type,p_commentaire FROM conges_periode WHERE p_login='$user'" ; 
   $cp_req = requete_mysql($cp_select, $mysql_link, "get_vperiod", $DEBUG);
 
-  while( $row = mysql_fetch_array($cp_req) ) {
+  while( $row = mysqli_fetch_array($cp_req) ) {
     $dp_date_deb = new DateTime($row['p_date_deb']) ; 
     if (($dp_date_deb >= $dmindate) && ($dp_date_deb <= $dmaxdate)) {
       // on ne traite que les valide et etat demande 
@@ -5655,7 +5645,7 @@ function get_recurrentvacancy_with_update($user, $mysql_link, $dmindate, $dmaxda
   // _dpatodo
   $cer_req = requete_mysql($cer_select, $mysql_link, "get_recurrentvacancy_with_update", $DEBUG);
 
-  while( $row = mysql_fetch_array($cer_req) ) {
+  while( $row = mysqli_fetch_array($cer_req) ) {
     $ddatej = new DateTime($row['e_date_jour']) ; 
     if (($ddatej >= $dmindate) && ($ddatej <= $dmaxdate)) {
       $sdatej = $ddatej->format('Y-m-d') ;
@@ -5745,7 +5735,7 @@ function get_recurrentscheme($user, $mysql_link, $DEBUG=FALSE)
 ORDER BY a_date_debut_grille ASC"; 
   $ca_req = requete_mysql($ca_select, $mysql_link, "get_recurrentscheme", $DEBUG);
   $lrec_scheme = array(); 
-  while( $row = mysql_fetch_array($ca_req) ) {
+  while( $row = mysqli_fetch_array($ca_req) ) {
     /* echo "<pre>\n" ;  
     print_r($row); 
     echo "</pre>\n" ;
@@ -5776,6 +5766,114 @@ ORDER BY a_date_debut_grille ASC";
   return $lrec_scheme ;  
 }
 
+/* _dpa_todo: 
+   delivre date du jour / heure du jour soit réelle , soit impose par config 
+   sous la forme d'un array comparable au resultat de getdate(), ie.
+   'year','mon','mday','hours','minutes','seconds','mode'
+   mode = 0 ; heure systeme vrai 
+   mode = 1 ; heure forcee par configuration 
+*/
+function conges_get_date($DEBUG=FALSE) {
+  $lmydate = array();
+  $lnow = getdate(); 
+  $lmydate['mode'] = 0 ;
+  /* we keep real time hour */ 
+  $lmydate['hours']   =  $lnow['hours']   ;
+  $lmydate['minutes'] =  $lnow['minutes'] ;
+  $lmydate['seconds'] =  $lnow['seconds'] ;
+
+  if (array_key_exists('date-forcee', $_SESSION['config'])) {
+    if  ($_SESSION['config']['date-forcee'] != "" ) {
+      /* au format 2015-01-01 */ 
+      $ldatef = explode("-",$_SESSION['config']['date-forcee']);
+      $lmydate['mode'] = 1 ; 
+      $lmydate['year'] = intval($ldatef[0]) ;
+      $lmydate['mon']  = intval($ldatef[1]) ; 
+      $lmydate['mday'] = intval($ldatef[2]) ; 
+    }
+  } 
+  if ($lmydate['mode'] == 0) {
+      $lmydate['year'] = $lnow['year'] ;
+      $lmydate['mon']  = $lnow['mon']  ;
+      $lmydate['mday'] = $lnow['mday'] ;
+  }
+  return $lmydate ; 
+}
+function conges_get_date_fmt1($DEBUG=FALSE) {
+  $lmydate = conges_get_date($DEBUG); 
+  return sprintf("%02d-%02d-%02d",$lmydate['year'],$lmydate['mon'],$lmydate['mday']); 
+}
+
+
+/* <attic> */ 
+function get_recurrentvacancy_1($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=FALSE)
+{
+  global $afourteen ; 
+  // on batit sur la periode $dmindate, $dmaxdate la liste des dates chomees
+  // (ddate,'d' ou 'a' ou 'p') pour day,am,pm TEL QUE PROGRAMMEE  
+  $lvacperiod = array() ; 
+  $lrecscheme = get_recurrentscheme($user, $mysql_link) ; 
+  // recherche operationnelle comme suit 
+  $dcurrent = $dmindate ; 
+
+  $curscheme = get_currentscheme($lrecscheme,$dcurrent); // (datedeb,9999-12-31,(4=>'p',11=>'p'))
+  $ascheme = $curscheme[2] ; // 3ieme item ; 
+
+  if (sizeof($ascheme) == 0 ) { // cas ou le schema est vide 
+    return $lvacperiod ; 
+  };
+
+  $ashiftedscheme = array() ; // recale / idx le schema 
+  // $lqueu = array(); 
+  $idx = date2vacperiodidx($dcurrent) ; // si idx vaut 5 
+  foreach($ascheme as $jx => $jval ) {
+    if ($idx <= $jx ) {
+      $ashiftedscheme[$jx - $idx ] = $jval ; 
+    } else {
+      $ashiftedscheme[$afourteen + $jx - $idx ] = $jval ; 
+    }
+  } 
+  // array_push($ashiftedscheme,$lqueu) ; // fusion des 2 nouveau schema : 6=>'p', 13=>'p' 
+  // return $ashiftedscheme ; 
+
+  $lsscheme = sizeof($ashiftedscheme); 
+  // _dpa en chantier 
+  $fourteeniter = 0 ; 
+  while ($dcurrent < $dmaxdate) { 
+    foreach($ashiftedscheme as $kx => $kval ) {
+      $dcurrent = clone($dmindate) ; // on CLONE objet date de depart 
+      // _dpa $dcurrent est bien un nouvel objet pour chaque date
+      $dcurrent->add(dayindateinterval($kx + $fourteeniter*$afourteen)) ; 
+      // array_push($lvacperiod, array($dcurrent,$kval));
+      $lvacperiod[$dcurrent->format('Y-m-d')] = $kval ; // care index par date  
+
+    }
+    $fourteeniter++ ; 
+  }
+  return $lvacperiod; 
+} 
+// _dpa_refactor: a traiter comme un objet
+function attic_get_currentscheme($lrecscheme,$ddate) {
+  // provisoirement le dernier
+  $ilast = sizeof($lrecscheme) - 1 ; 
+  return $lrecscheme[$ilast] ; 
+}
+
+function attic_referer2rootpath_v1($http_referer) {
+  $rootpath = "" ; 
+  if (preg_match('/^([^:]+):\/\/(.+)$/',$http_referer,$match) ) {
+    $rootpath = $match[1]."://" ; 
+    $luri = explode("/",$match[2]);
+    if (end($luri) == "index.php") { 
+      array_pop($luri) ;
+      array_push($luri,"") ; // trailing slash 
+    };
+    $rootpath .= implode("/",$luri); 
+  }
+  // $slast = $luri[sizeof($luri) - 1 ] ; // avant dernier = dernier repertoire
+  // $lret = array($rootpath,$slast) ;  
+  return $rootpath ; 
+}
 function attic_correct_artt_scheme_v0($user, $mysql_link, $DEBUG=FALSE)
 {
   /* _dpa cette fonction existe uniquement pour rétablir les données conges_artt 
@@ -5924,100 +6022,8 @@ WHERE a_login='$user' AND a_date_fin_grille='$sactufin' ; " ;
     log_action(0, "", $user, "correct_artt_scheme init", $mysql_link, $DEBUG);
   }
 }
-/* _dpa_todo: 
-   delivre date du jour / heure du jour soit réelle , soit impose par config 
-   sous la forme d'un array comparable au resultat de getdate(), ie.
-   'year','mon','mday','hours','minutes','seconds','mode'
-   mode = 0 ; heure systeme vrai 
-   mode = 1 ; heure forcee par configuration 
-*/
-function conges_get_date($DEBUG=FALSE) {
-  $lmydate = array();
-  $lnow = getdate(); 
-  $lmydate['mode'] = 0 ;
-  /* we keep real time hour */ 
-  $lmydate['hours']   =  $lnow['hours']   ;
-  $lmydate['minutes'] =  $lnow['minutes'] ;
-  $lmydate['seconds'] =  $lnow['seconds'] ;
 
-  if (array_key_exists('date-forcee', $_SESSION['config'])) {
-    if  ($_SESSION['config']['date-forcee'] != "" ) {
-      /* au format 2015-01-01 */ 
-      $ldatef = explode("-",$_SESSION['config']['date-forcee']);
-      $lmydate['mode'] = 1 ; 
-      $lmydate['year'] = intval($ldatef[0]) ;
-      $lmydate['mon']  = intval($ldatef[1]) ; 
-      $lmydate['mday'] = intval($ldatef[2]) ; 
-    }
-  } 
-  if ($lmydate['mode'] == 0) {
-      $lmydate['year'] = $lnow['year'] ;
-      $lmydate['mon']  = $lnow['mon']  ;
-      $lmydate['mday'] = $lnow['mday'] ;
-  }
-  return $lmydate ; 
-}
-function conges_get_date_fmt1($DEBUG=FALSE) {
-  $lmydate = conges_get_date($DEBUG); 
-  return sprintf("%02d-%02d-%02d",$lmydate['year'],$lmydate['mon'],$lmydate['mday']); 
-}
-
-
-
-
-/* __attic */ 
-function get_recurrentvacancy_1($user, $mysql_link, $dmindate, $dmaxdate, $DEBUG=FALSE)
-{
-  global $afourteen ; 
-  // on batit sur la periode $dmindate, $dmaxdate la liste des dates chomees
-  // (ddate,'d' ou 'a' ou 'p') pour day,am,pm TEL QUE PROGRAMMEE  
-  $lvacperiod = array() ; 
-  $lrecscheme = get_recurrentscheme($user, $mysql_link) ; 
-  // recherche operationnelle comme suit 
-  $dcurrent = $dmindate ; 
-
-  $curscheme = get_currentscheme($lrecscheme,$dcurrent); // (datedeb,9999-12-31,(4=>'p',11=>'p'))
-  $ascheme = $curscheme[2] ; // 3ieme item ; 
-
-  if (sizeof($ascheme) == 0 ) { // cas ou le schema est vide 
-    return $lvacperiod ; 
-  };
-
-  $ashiftedscheme = array() ; // recale / idx le schema 
-  // $lqueu = array(); 
-  $idx = date2vacperiodidx($dcurrent) ; // si idx vaut 5 
-  foreach($ascheme as $jx => $jval ) {
-    if ($idx <= $jx ) {
-      $ashiftedscheme[$jx - $idx ] = $jval ; 
-    } else {
-      $ashiftedscheme[$afourteen + $jx - $idx ] = $jval ; 
-    }
-  } 
-  // array_push($ashiftedscheme,$lqueu) ; // fusion des 2 nouveau schema : 6=>'p', 13=>'p' 
-  // return $ashiftedscheme ; 
-
-  $lsscheme = sizeof($ashiftedscheme); 
-  // _dpa en chantier 
-  $fourteeniter = 0 ; 
-  while ($dcurrent < $dmaxdate) { 
-    foreach($ashiftedscheme as $kx => $kval ) {
-      $dcurrent = clone($dmindate) ; // on CLONE objet date de depart 
-      // _dpa $dcurrent est bien un nouvel objet pour chaque date
-      $dcurrent->add(dayindateinterval($kx + $fourteeniter*$afourteen)) ; 
-      // array_push($lvacperiod, array($dcurrent,$kval));
-      $lvacperiod[$dcurrent->format('Y-m-d')] = $kval ; // care index par date  
-
-    }
-    $fourteeniter++ ; 
-  }
-  return $lvacperiod; 
-} 
-// _dpa_refactor: a traiter comme un objet
-function get_currentscheme($lrecscheme,$ddate) {
-  // provisoirement le dernier
-  $ilast = sizeof($lrecscheme) - 1 ; 
-  return $lrecscheme[$ilast] ; 
-}
+/* </attic> */ 
 
 /* echo "<pre>"; 
      print_r($sql3n) ; 

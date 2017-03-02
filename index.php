@@ -107,8 +107,8 @@ else
 if(isset($_SESSION['userlogin']))
 {
 	$request= "SELECT u_nom, u_passwd, u_prenom, u_is_resp FROM conges_users where u_login = '".$_SESSION['userlogin']."' " ;
-	$rs = mysql_query($request , $mysql_link) or die("Erreur : index.php : ".mysql_error());
-	if(mysql_num_rows($rs) <= 0)
+	$rs = mysqli_query($mysql_link,$request) or die("Erreur : index.php : ".mysqli_error());
+	if(mysqli_num_rows($rs) <= 0)
 	{
 		header("Location: index.php");
 	}
@@ -128,7 +128,7 @@ if(isset($_SESSION['userlogin']))
       }; 
 
 		$session=session_id();
-		$row = mysql_fetch_array($rs);
+		$row = mysqli_fetch_array($rs);
 
 		$NOM=$row["u_nom"];
 		$PRENOM=$row["u_prenom"];

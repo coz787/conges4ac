@@ -261,7 +261,7 @@ class API extends REST {
       $lresult["ret"] = 1 ; // ok 
       $sel_cta = "select ta_type from conges_type_absence where ta_id='".$_REQUEST['type']."';" ; 
       $rq_cta = requete_mysql($sel_cta, $this->mysqllk, "do_calc_joursnsolde", $DEBUG);
-      $res_cta = mysql_fetch_array($rq_cta); // 1 row seulement
+      $res_cta = mysqli_fetch_array($rq_cta); // 1 row seulement
       if (!$res_cta) {
         // error_log("do_v1_calc_joursnsolde error on conges_type_absence");
         $this->response($this->json($lresult), 200);
@@ -269,7 +269,7 @@ class API extends REST {
       if (ereg("^conges",$res_cta["ta_type"])) { // type conges suivi en solde    
         $sel_su = "select su_solde from conges_solde_user where su_login='".$_REQUEST['uid']."' and su_abs_id='".$_REQUEST['type']."' ;" ;
         $rq_su = requete_mysql($sel_su, $this->mysqllk, "do_calc_joursnsolde", $DEBUG);
-        $res_su = mysql_fetch_array($rq_su); // 1 row seulement
+        $res_su = mysqli_fetch_array($rq_su); // 1 row seulement
         if (!$res_su) {
           // error_log("do_v1_calc_joursnsolde error on conges_solde_user");
           $this->response($this->json($lresult), 200);

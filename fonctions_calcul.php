@@ -187,7 +187,7 @@ function verif_jours_feries_saisis($date, $mysql_link, $DEBUG=FALSE)
 	$sql_select="SELECT jf_date FROM conges_jours_feries WHERE jf_date >= '$premier_an' AND jf_date <= '$dernier_an' ";
 	$res_select = requete_mysql($sql_select, $mysql_link, "verif_jours_feries_saisis", $DEBUG);
 	$res_select = requete_mysql($sql_select, $mysql_link, "verif_jours_feries_saisis", $DEBUG);
-	if(mysql_num_rows($res_select)==0)
+	if(mysqli_num_rows($res_select)==0)
 		return FALSE;
 	else
 		return TRUE;
@@ -282,11 +282,10 @@ function verif_periode_chevauche_periode_user($date_debut, $date_fin, $user, $ta
 								AND p_date_deb<='$current_day' AND p_date_fin>='$current_day' ";
 
 			$user_periode_request = requete_mysql($user_periode_sql, $mysql_link, "verif_periode_chevauche_periode_user", $DEBUG);
-//			$user_periode_request = mysql_query($user_periode_sql, $mysql_link);
 
-			if(mysql_num_rows($user_periode_request)!=0)  // le jour courant est dans un periode de conges du user
+			if(mysqli_num_rows($user_periode_request)!=0)  // le jour courant est dans un periode de conges du user
 			{
-				while($resultat_periode=mysql_fetch_array($user_periode_request))
+				while($resultat_periode = mysqli_fetch_array($user_periode_request))
 				{
                   // ac3 la periode re-evalue est exclue de la recherche 
                   if ($resultat_periode['p_num'] == $revised_period) continue ; 
