@@ -118,7 +118,7 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 	echo "<td class=\"titre\">".$_SESSION['lang']['divers_type_maj_1']."</td>\n";
 	echo "</tr>\n";
 	echo "<tr align=\"center\">\n";
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
 		$sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
@@ -157,7 +157,7 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 	echo "<input type=\"submit\" value=\"".$_SESSION['lang']['form_cancel']."\">\n";
 	echo "</form>\n" ;
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 }
 
@@ -187,7 +187,7 @@ function suppression($p_num_to_delete, $onglet, $DEBUG=FALSE)
 	echo "	<input type=\"submit\" value=\"".$_SESSION['lang']['form_retour']."\">\n";
 	echo " </form> \n";
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 }
 

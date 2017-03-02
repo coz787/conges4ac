@@ -224,7 +224,7 @@ echo "</td>\n";
 		affichage($onglet, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $year_affichage, $mysql_link, $DEBUG);
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	/*************************************/
 	/***  fin de la page             ***/
@@ -261,7 +261,7 @@ function affichage($onglet, $year_calendrier_saisie_debut, $mois_calendrier_sais
 	$sql1 = "SELECT u_nom, u_prenom FROM conges_users where u_login = '".$_SESSION['userlogin']."' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG) ;
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
 		$NOM=$resultat1["u_nom"];
 		$PRENOM=$resultat1["u_prenom"];
 	}
@@ -798,11 +798,11 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 		$sql_verif_echange1="SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login='".$_SESSION['userlogin']."' AND e_date_jour='$new_debut' ";
 		$result_verif_echange1 = requete_mysql($sql_verif_echange1, $mysql_link, "echange_absence_rtt", $DEBUG) ;
 
-		$count_verif_echange1=mysql_num_rows($result_verif_echange1);
+		$count_verif_echange1=mysqli_num_rows($result_verif_echange1);
 
         /* $new_comment=addslashes($new_comment); */
         /* _protectsql_ dpa */ 
-        $new_comment = mysql_escape_string($new_comment);
+        $new_comment = mysqli_real_escape_string($mysql_link,$new_comment);
 
 		// si le couple user/date1 existe dans conges_echange_rtt : on update
 		if($count_verif_echange1!=0)
@@ -826,7 +826,7 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 		$sql_verif_echange2="SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login='".$_SESSION['userlogin']."' AND e_date_jour='$new_fin' ";
 		$result_verif_echange2 = requete_mysql($sql_verif_echange2, $mysql_link, "echange_absence_rtt", $DEBUG);
 
-		$count_verif_echange2=mysql_num_rows($result_verif_echange2);
+		$count_verif_echange2=mysqli_num_rows($result_verif_echange2);
 
 		// si le couple user/date2 existe dans conges_echange_rtt : on update
 		if($count_verif_echange2!=0)
@@ -889,7 +889,7 @@ function affichage_demandes_en_cours($tri_date, $onglet, $mysql_link, $DEBUG=FAL
 		$sql3=$sql3." ORDER BY p_date_deb ASC ";
 	$ReqLog3 = requete_mysql($sql3, $mysql_link, "affichage_demandes_en_cours", $DEBUG) ;
 
-	$count3=mysql_num_rows($ReqLog3);
+	$count3=mysqli_num_rows($ReqLog3);
 	if($count3==0)
 	{
 		echo "<b>".$_SESSION['lang']['user_demandes_aucune_demande']."</b><br>\n";
@@ -915,7 +915,7 @@ function affichage_demandes_en_cours($tri_date, $onglet, $mysql_link, $DEBUG=FAL
 		}
 		echo "</tr>\n" ;
 
-		while ($resultat3 = mysql_fetch_array($ReqLog3))
+		while ($resultat3 = mysqli_fetch_array($ReqLog3))
 		{
 			$sql_p_date_deb = eng_date_to_fr($resultat3["p_date_deb"], $DEBUG);
 			$sql_p_demi_jour_deb = $resultat3["p_demi_jour_deb"];
@@ -1000,7 +1000,7 @@ function affichage_historique_conges($tri_date, $year_affichage, $onglet, $mysql
 
 	$ReqLog2 = requete_mysql($sql2, $mysql_link, "affichage_historique_conges", $DEBUG) ;
 
-	$count2=mysql_num_rows($ReqLog2);
+	$count2=mysqli_num_rows($ReqLog2);
 	if($count2==0)
 	{
 		echo "<b>".$_SESSION['lang']['user_conges_aucun_conges']."</b><br>\n";
@@ -1027,7 +1027,7 @@ function affichage_historique_conges($tri_date, $year_affichage, $onglet, $mysql
 
 		echo "</tr>\n";
 
-		while ($resultat2 = mysql_fetch_array($ReqLog2))
+		while ($resultat2 = mysqli_fetch_array($ReqLog2))
 		{
 			$sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"], $DEBUG);
 			$sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
@@ -1122,7 +1122,7 @@ function affichage_historique_absences($tri_date, $year_affichage, $onglet, $mys
 
 	$ReqLog4 = requete_mysql($sql4, $mysql_link, "affichage_historique_absences", $DEBUG) ;
 
-	$count4=mysql_num_rows($ReqLog4);
+	$count4=mysqli_num_rows($ReqLog4);
 	if($count4==0)
 	{
 		echo "<b>".$_SESSION['lang']['user_abs_aucune_abs']."</b><br>\n";
@@ -1149,7 +1149,7 @@ function affichage_historique_absences($tri_date, $year_affichage, $onglet, $mys
 		}
 		echo "</tr>\n";
 
-		while ($resultat4 = mysql_fetch_array($ReqLog4))
+		while ($resultat4 = mysqli_fetch_array($ReqLog4))
 		{
 			$sql_login= $resultat4["p_login"];
 			$sql_date_deb= eng_date_to_fr($resultat4["p_date_deb"], $DEBUG);

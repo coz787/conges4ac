@@ -183,7 +183,7 @@ if($DEBUG==TRUE) { echo "lang_file=".$_SESSION['config']['lang_file']."<br>\n"; 
 		affichage($onglet, $year_calendrier_saisie_debut, $mois_calendrier_saisie_debut, $year_calendrier_saisie_fin, $mois_calendrier_saisie_fin, $tri_date, $year_affichage, $mysql_link, $DEBUG);
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	/*************************************/
 	/***  fin de la page             ***/
@@ -221,7 +221,7 @@ function affichage($onglet, $year_calendrier_saisie_debut, $mois_calendrier_sais
 	$sql1 = "SELECT u_nom, u_prenom FROM conges_users where u_login = '".$_SESSION['userlogin']."' ";
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "affichage", $DEBUG) ;
 
-	while ($resultat1 = mysql_fetch_array($ReqLog1)) {
+	while ($resultat1 = mysqli_fetch_array($ReqLog1)) {
 		$NOM=$resultat1["u_nom"];
 		$PRENOM=$resultat1["u_prenom"];
 	}
@@ -719,7 +719,7 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 		$sql_verif_echange1="SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login='".$_SESSION['userlogin']."' AND e_date_jour='$new_debut' ";
 		$result_verif_echange1 = requete_mysql($sql_verif_echange1, $mysql_link, "echange_absence_rtt", $DEBUG) ;
 
-		$count_verif_echange1=mysql_num_rows($result_verif_echange1);
+		$count_verif_echange1=mysqli_num_rows($result_verif_echange1);
 
 		// si le couple user/date1 existe dans conges_echange_rtt : on update
 		if($count_verif_echange1!=0)
@@ -744,7 +744,7 @@ function echange_absence_rtt($onglet, $new_debut_string, $new_fin_string, $new_c
 		$sql_verif_echange2="SELECT e_absence, e_presence from conges_echange_rtt WHERE e_login='".$_SESSION['userlogin']."' AND e_date_jour='$new_fin' ";
 		$result_verif_echange2 = requete_mysql($sql_verif_echange2, $mysql_link, "echange_absence_rtt", $DEBUG);
 
-		$count_verif_echange2=mysql_num_rows($result_verif_echange2);
+		$count_verif_echange2=mysqli_num_rows($result_verif_echange2);
 
 		// si le couple user/date2 existe dans conges_echange_rtt : on update
 		if($count_verif_echange2!=0)
@@ -817,7 +817,7 @@ function affichage_demandes_en_cours($tri_date, $onglet, $mysql_link, $DEBUG=FAL
 		$sql3=$sql3." ORDER BY p_date_deb ASC ";
 	$ReqLog3 = requete_mysql($sql3, $mysql_link, "affichage_demandes_en_cours", $DEBUG) ;
 
-	$count3=mysql_num_rows($ReqLog3);
+	$count3=mysqli_num_rows($ReqLog3);
 	if($count3==0)
 	{
 		echo "<b>".$_SESSION['lang']['user_demandes_aucune_demande']."</b><br>\n";
@@ -843,7 +843,7 @@ function affichage_demandes_en_cours($tri_date, $onglet, $mysql_link, $DEBUG=FAL
 		}
 		echo "</tr>\n" ;
 
-		while ($resultat3 = mysql_fetch_array($ReqLog3))
+		while ($resultat3 = mysqli_fetch_array($ReqLog3))
 		{
 			$sql_p_date_deb = eng_date_to_fr($resultat3["p_date_deb"], $DEBUG);
 			$sql_p_demi_jour_deb = $resultat3["p_demi_jour_deb"];
@@ -928,7 +928,7 @@ function affichage_historique_conges($tri_date, $year_affichage, $onglet, $mysql
 
 	$ReqLog2 = requete_mysql($sql2, $mysql_link, "affichage_historique_conges", $DEBUG) ;
 
-	$count2=mysql_num_rows($ReqLog2);
+	$count2=mysqli_num_rows($ReqLog2);
 	if($count2==0)
 	{
 		echo "<b>".$_SESSION['lang']['user_conges_aucun_conges']."</b><br>\n";
@@ -955,7 +955,7 @@ function affichage_historique_conges($tri_date, $year_affichage, $onglet, $mysql
 
 		echo "</tr>\n";
 
-		while ($resultat2 = mysql_fetch_array($ReqLog2))
+		while ($resultat2 = mysqli_fetch_array($ReqLog2))
 		{
 			$sql_p_date_deb = eng_date_to_fr($resultat2["p_date_deb"], $DEBUG);
 			$sql_p_demi_jour_deb = $resultat2["p_demi_jour_deb"];
@@ -1050,7 +1050,7 @@ function affichage_historique_absences($tri_date, $year_affichage, $onglet, $mys
 
 	$ReqLog4 = requete_mysql($sql4, $mysql_link, "affichage_historique_absences", $DEBUG) ;
 
-	$count4=mysql_num_rows($ReqLog4);
+	$count4=mysqli_num_rows($ReqLog4);
 	if($count4==0)
 	{
 		echo "<b>".$_SESSION['lang']['user_abs_aucune_abs']."</b><br>\n";
@@ -1077,7 +1077,7 @@ function affichage_historique_absences($tri_date, $year_affichage, $onglet, $mys
 		}
 		echo "</tr>\n";
 
-		while ($resultat4 = mysql_fetch_array($ReqLog4))
+		while ($resultat4 = mysqli_fetch_array($ReqLog4))
 		{
 			$sql_login= $resultat4["p_login"];
 			$sql_date_deb= eng_date_to_fr($resultat4["p_date_deb"], $DEBUG);
@@ -1192,14 +1192,14 @@ function verif_solde_user($user_login, $type_conges, $nb_jours, $mysql_link, $DE
 		$select_solde="SELECT su_solde FROM conges_solde_user WHERE su_login='$user_login' AND su_abs_id=$type_conges " ;
 		$ReqLog_solde_conges = requete_mysql($select_solde, $mysql_link, "verif_solde_user", $DEBUG);
 
-		$resultat_solde = mysql_fetch_array($ReqLog_solde_conges);
+		$resultat_solde = mysqli_fetch_array($ReqLog_solde_conges);
 		$sql_solde_user = $resultat_solde["su_solde"];
 
 		// recup du nombre de jours de conges de type $type_conges pour le user de login $user_login qui sont à valider par son resp ou le grd resp
 		$select_solde_a_valider="SELECT SUM(p_nb_jours) FROM conges_periode WHERE p_login='$user_login' AND p_type=$type_conges AND (p_etat='demande' OR p_etat='valid') " ;
 		$ReqLog_solde_conges_a_valider = requete_mysql($select_solde_a_valider, $mysql_link, "verif_solde_user", $DEBUG);
 
-		$resultat_solde_a_valider = mysql_fetch_array($ReqLog_solde_conges_a_valider);
+		$resultat_solde_a_valider = mysqli_fetch_array($ReqLog_solde_conges_a_valider);
 		$sql_solde_user_a_valider = $resultat_solde_a_valider["SUM(p_nb_jours)"];
 		if ($sql_solde_user_a_valider == NULL )
 			$sql_solde_user_a_valider = 0;

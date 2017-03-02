@@ -117,7 +117,7 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 	echo "</tr>\n" ;
 	// affichage 2ieme ligne : valeurs actuelles
 	echo "<tr align=\"center\">\n" ;
-	while ($resultat1 = mysql_fetch_array($ReqLog1))
+	while ($resultat1 = mysqli_fetch_array($ReqLog1))
 	{
 		$sql_date_deb=eng_date_to_fr($resultat1["p_date_deb"]);
 		$sql_demi_jour_deb = $resultat1["p_demi_jour_deb"];
@@ -182,7 +182,7 @@ function confirmer($p_num, $onglet, $DEBUG=FALSE)
 	echo "<input type=\"submit\" value=\"".$_SESSION['lang']['form_cancel']."\">\n" ;
 	echo "</form>\n" ;
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 }
 
 
@@ -197,7 +197,7 @@ function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $n
 	$mysql_link = connexion_mysql() ;
 
     /* _protectsql_ dpa */ 
-    $new_comment = mysql_escape_string($new_comment);
+    $new_comment = mysqli_real_escape_string($mysql_link,$new_comment);
 
 	$sql1 = "UPDATE conges_periode
 		SET p_date_deb=STR_TO_DATE('$new_debut', '%d-%m-%Y'), p_demi_jour_deb='$new_demi_jour_deb', p_date_fin=STR_TO_DATE('$new_fin', '%d-%m-%Y'), p_demi_jour_fin='$new_demi_jour_fin', p_nb_jours='$new_nb_jours', p_commentaire='$new_comment', ";
@@ -212,7 +212,7 @@ function modifier($p_num_to_update, $new_debut, $new_demi_jour_deb, $new_fin, $n
 	$comment_log = "modification de demande num $p_num_to_update ($new_nb_jours jour(s)) ( de $new_debut $new_demi_jour_deb a $new_fin $new_demi_jour_fin) ($new_comment)";
 	log_action($p_num_to_update, "$p_etat", $_SESSION['userlogin'], $comment_log, $mysql_link, $DEBUG);
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 
 	echo $_SESSION['lang']['form_modif_ok']."<br><br> \n" ;
 	/* APPEL D'UNE AUTRE PAGE */
