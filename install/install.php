@@ -46,9 +46,14 @@ include($tab_lang_file[0]) ;
 
 if($DEBUG==TRUE) { echo "SESSION = <br>\n"; print_r($_SESSION); echo "<br><br>\n"; }
 
+  if (isset($_SESSION['config']['titre_application'])) {
+    $stitreapplication = isset($_SESSION['config']['titre_application']) ; 
+  } else { 
+    $stitreapplication = "conges4ac" ; 
+  }
 	
 	echo "<html>\n<head>\n";
-	echo "<TITLE>".$_SESSION['config']['titre_application']." : Installation : </TITLE>\n</head>\n";
+	echo "<TITLE>".$stitreapplication." : Installation : </TITLE>\n</head>\n";
 	echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";	
 	echo "<link href=\"../style_basic.css\" rel=\"stylesheet\" type=\"text/css\">\n";
 	echo "</head>\n";
@@ -108,10 +113,10 @@ function lance_install($lang, $DEBUG=FALSE)
 		/*************************************/
 		// FIN : mise à jour de la "installed_version" et de la langue dans la table conges_config
 		$sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-		$result_update_version = mysql_query($sql_update_version, $mysql_link) or die (mysql_error());
+		$result_update_version = mysqli_query($mysql_link,$sql_update_version) or die (mysqli_error());
 
 		$sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-		$result_update_lang = mysql_query($sql_update_lang, $mysql_link) or die (mysql_error());
+		$result_update_lang = mysqli_query($mysql_link,$sql_update_lang) or die (mysqli_error());
 		
 		$tab_url=explode("/", $_SERVER['HTTP_REFERER']);
 		$url_accueil="";
@@ -121,7 +126,7 @@ function lance_install($lang, $DEBUG=FALSE)
 		}
 		$url_accueil=$url_accueil.$tab_url[$i] ;  // on prend l'url complet sans le /install/install.php à la fin
 		$sql_update_lang="UPDATE conges_config SET conf_valeur = '$url_accueil' WHERE conf_nom='URL_ACCUEIL_CONGES' ";
-		$result_update_lang = mysql_query($sql_update_lang, $mysql_link) or die (mysql_error());
+		$result_update_lang = mysqli_query($mysql_link,$sql_update_lang) or die (mysqli_error());
 		
 		
 		$comment_log = "Install de php_conges (version = $config_php_conges_version) ";

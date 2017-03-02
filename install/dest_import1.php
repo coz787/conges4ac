@@ -240,15 +240,15 @@ echo "</fieldset> \n";
 if (0 && $goon && $DEBUG) {
 
 echo "<br><br>DEBUG table src conge_user = <br>" ; 
-$req_src_user = mysql_query("select u_login, u_nom, u_prenom from conges_users", $mysqlsrc_link) ;
-while ($res1 = mysql_fetch_row($req_src_user)){ 
+$req_src_user = mysqli_query($mysqlsrc_link,"select u_login, u_nom, u_prenom from conges_users") ;
+while ($res1 = mysqli_fetch_row($req_src_user)){ 
   //echo $res1 . "<br>"; // 
   echo "[". join(" ",$res1)."]<br>";
 }
 
 echo "<br><br>DEBUG table dest conge_user = <br>" ; 
-$req_dest_user = mysql_query("select u_login, u_nom, u_prenom from conges_users", $mysqldest_link) ;
-while ($res1 = mysql_fetch_row($req_dest_user)){ 
+$req_dest_user = mysqli_query($mysqldest_link,"select u_login, u_nom, u_prenom from conges_users") ;
+while ($res1 = mysqli_fetch_row($req_dest_user)){ 
   //echo $res1 . "<br>"; // 
   echo "[". join(" ",$res1)."]<br>";
 }
@@ -266,20 +266,20 @@ echo "<tr><td>les agents de la base source n'existent pas en base destination</t
 
 if ($goon) {
   // on place tous les agents deja en base ds un directory indexe par le login 
-  $req_dest_user = mysql_query("select u_login from conges_users", $mysqldest_link) ;
+  $req_dest_user = mysqli_query($mysqldest_link,"select u_login from conges_users") ;
   $l_dest_user = array(); 
-  while ($res1 = mysql_fetch_row($req_dest_user)) {
+  while ($res1 = mysqli_fetch_row($req_dest_user)) {
     //array_push($l_dest_user, $res1[0]) ; 
     $l_dest_user[$res1[0]] = $res1[0] ; // test plus efficace pour la suite 
   }
   // if ($DEBUG ) echo "<td>". join(" ",$l_dest_user) ."</td>" ; 
 
-  $req_src_user = mysql_query("select u_login from conges_users", $mysqlsrc_link) ;
+  $req_src_user = mysqli_query($mysqlsrc_link,"select u_login from conges_users") ;
   $test_res = 1 ; 
   $lduplicateuser = array() ; 
   $luser2add =  array(); // list des users a ajouter 
   $lreslogin = array ('admin', 'conges') ; // user techniq a ecacrter des traitements
-  while ($res2 = mysql_fetch_row($req_src_user)) {
+  while ($res2 = mysqli_fetch_row($req_src_user)) {
     $newlogin = $res2[0] ; 
 
     if  ( !in_array($newlogin,$lreslogin) ) {
@@ -308,18 +308,18 @@ echo "</tr>\n";
 echo "<tr><td>les groupes identifiÃ©s par g_newgid en src ne doivent pas exister en base dest </td>"; 
 if ($goon) {
   // on place tous les groupes deja en base ds un directory 
-  $req_dest_gp = mysql_query("select g_gid from conges_groupe", $mysqldest_link) ;
+  $req_dest_gp = mysqli_query($mysqldest_link,"select g_gid from conges_groupe") ;
   $l_dest_gp = array(); 
-  while ($res1 = mysql_fetch_row($req_dest_gp)) {
+  while ($res1 = mysqli_fetch_row($req_dest_gp)) {
     //array_push($l_dest_user, $res1[0]) ; 
     $l_dest_gp[$res1[0]] = $res1[0] ; // test plus efficace pour la suite 
   }
   // if ($DEBUG ) echo "<td>". join(" ",$l_dest_gp) ."</td>" ;
-  $req_src_gp = mysql_query("select g_newgid from conges_groupe", $mysqlsrc_link) ;
+  $req_src_gp = mysqli_query($mysqlsrc_link,"select g_newgid from conges_groupe") ;
   if ($req_src_gp) { // si la requÃ¨te est non vide 
     $test_res = 1 ; 
     $l_src_gpe = array();
-    while ($res2 = mysql_fetch_row($req_src_gp)) {
+    while ($res2 = mysqli_fetch_row($req_src_gp)) {
       $newgp = $res2[0] ;
       array_push($l_src_gpe, $newgp) ; 
       if ( !($newgp >= 1 ) || array_key_exists($newgp, $l_dest_gp)) {
@@ -348,18 +348,18 @@ echo "<tr><td>les types absences identifiÃ©s identifiÃ©s par ta_newid doiven
 <br> et exister dans la base dest table conges_type_absence identifie par ta_id </td>"; 
 
 if ($goon) {
-  $req_src_ta = mysql_query("select ta_newid from conges_type_absence", $mysqlsrc_link) ;
+  $req_src_ta = mysqli_query($mysqlsrc_link,"select ta_newid from conges_type_absence") ;
   if ($req_src_ta) {  // colonne ta_newid est definie 
     // on recueil les ta_id en base dest 
     $l_dest_ta = array() ; 
-    $req_dest_ta = mysql_query("select ta_id from conges_type_absence", $mysqldest_link) ;
-    while ($res1 = mysql_fetch_row($req_dest_ta)) {
+    $req_dest_ta = mysqli_query($mysqldest_link,"select ta_id from conges_type_absence") ;
+    while ($res1 = mysqli_fetch_row($req_dest_ta)) {
     //array_push($l_dest_user, $res1[0]) ; 
       $l_dest_ta[$res1[0]] = $res1[0] ; // test plus efficace pour la suite 
     }
     $test_res = 1 ; 
     $merror = "" ; 
-    while($res2 = mysql_fetch_row($req_src_ta)) {
+    while($res2 = mysqli_fetch_row($req_src_ta)) {
       $importedta = $res2[0] ;
       if (!array_key_exists($importedta, $l_dest_ta)) {
         $test_res = 0 ;
@@ -386,8 +386,8 @@ echo "</tr>\n";
 // on capte ds 2 table de correspondance les types absences importÃ©s 
 $l_src_ta = array();
 $l_src_tainv = array() ; 
-$req_src_ta = mysql_query("select ta_id, ta_newid from conges_type_absence", $mysqlsrc_link) ;
-while($res2 = mysql_fetch_row($req_src_ta)) {
+$req_src_ta = mysqli_query($mysqlsrc_link,"select ta_id, ta_newid from conges_type_absence") ;
+while($res2 = mysqli_fetch_row($req_src_ta)) {
   $l_src_ta[$res2[0]] = $res2[1] ;
   $l_src_tainv[$res2[1]] = $res2[0] ;
 };
@@ -407,9 +407,9 @@ echo "<tr><td>les types absences des Ã©lÃ©ments conges_periode identifiÃ©s
 
 if ($goon) {
   // conges_periode 
-  $req_src_conges_periode =  mysql_query("select * from conges_periode ", $mysqlsrc_link) ;
+  $req_src_conges_periode =  mysqli_query($mysqlsrc_link,"select * from conges_periode ") ;
   $test_res = 1 ;
-  while ($res2 = mysql_fetch_row($req_src_conges_periode)) {
+  while ($res2 = mysqli_fetch_row($req_src_conges_periode)) {
     $newlogin = $res2[0] ; 
     if  ( array_key_exists($newlogin, $luser2add) ) {  
       // on ne traite que les users Ã  ajouter 
@@ -456,11 +456,11 @@ if ($goon) { // tous les tests sont passes ; on peut importer
   // conges_groupe, conges_groupe_resp, conges_groupes_grd_resp, conges_groupe_users 
   // conges_logs
   if ($currentcmd == "do_import") {
-    // mysql_query("LOCK TABLES conges_users, conges_echange_rtt, conges_artt, conges_periode , conges_solde_user, conges_groupe, conges_groupe_users, conges_groupe_resp, conges_groupes_grd_resp WRITE" ,  $mysqldest_link) ;
+    // mysqli_query("LOCK TABLES conges_users, conges_echange_rtt, conges_artt, conges_periode , conges_solde_user, conges_groupe, conges_groupe_users, conges_groupe_resp, conges_groupes_grd_resp WRITE" ,  $mysqldest_link) ;
     $lsqlcmde = array() ; // sinon risque d'empilement des requetes 
     // conges_users 
-    $req_src_user = mysql_query("select * from conges_users", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_user)) {
+    $req_src_user = mysqli_query($mysqlsrc_link,"select * from conges_users") ;
+    while ($res2 = mysqli_fetch_row($req_src_user)) {
       $newlogin = $res2[0] ; 
       if  ( !in_array($newlogin,$lreslogin) ) {
         $req_dest_users = "insert into conges_users values (". 
@@ -471,8 +471,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       };
     }; 
     // conges_echange_rtt 
-    $req_src_echange_rtt = mysql_query("select * from conges_echange_rtt", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_echange_rtt)) {
+    $req_src_echange_rtt = mysqli_query($mysqlsrc_link,"select * from conges_echange_rtt") ;
+    while ($res2 = mysqli_fetch_row($req_src_echange_rtt)) {
       $newlogin = $res2[0] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -482,8 +482,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       };
     };
     // conges_artt 
-    $req_src_conges_artt = mysql_query("select * from conges_artt", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_conges_artt)) {
+    $req_src_conges_artt = mysqli_query($mysqlsrc_link,"select * from conges_artt") ;
+    while ($res2 = mysqli_fetch_row($req_src_conges_artt)) {
       $newlogin = $res2[0] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -493,8 +493,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       };
     };
     // conges_periode 
-    $req_src_conges_periode =  mysql_query("select * from conges_periode ", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_conges_periode)) {
+    $req_src_conges_periode =  mysqli_query($mysqlsrc_link,"select * from conges_periode ") ;
+    while ($res2 = mysqli_fetch_row($req_src_conges_periode)) {
       $newlogin = $res2[0] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -511,11 +511,11 @@ if ($goon) { // tous les tests sont passes ; on peut importer
     // on balaie une matrice 
     // (user src) x (type_absence dest pour les ta_type <> 'absences') 
 
-    $req_dest_ta = mysql_query("select ta_id from conges_type_absence where ta_type <> 'absences'", $mysqldest_link) ;
+    $req_dest_ta = mysqli_query($mysqldest_link,"select ta_id from conges_type_absence where ta_type <> 'absences'") ;
     // on se cree une liste des types absences base dest comme suit 
     // id_ta dest ->  id_ta src ou 0 si existe pas ; 
     $lta = array() ;
-    while($resta = mysql_fetch_row($req_dest_ta)) {
+    while($resta = mysqli_fetch_row($req_dest_ta)) {
       if ( array_key_exists($resta[0], $l_src_tainv) ) {
         $lta[$resta[0]] = $l_src_tainv[$resta[0]]; 
         // ta destination ayant corres ds base importÃ©
@@ -528,8 +528,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       print_r($lta );
       echo "</pre></p>\n"; 
     };
-    $req_src_user = mysql_query("select u_login from conges_users", $mysqlsrc_link) ;
-    while ($resuser = mysql_fetch_row($req_src_user)) {
+    $req_src_user = mysqli_query($mysqlsrc_link,"select u_login from conges_users") ;
+    while ($resuser = mysqli_fetch_row($req_src_user)) {
       $newlogin = $resuser[0] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -543,8 +543,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
             print_r($sql_src_csu); 
             echo "</pre></p>\n"; 
           };
-          $req_src_csu =  mysql_query($sql_src_csu, $mysqlsrc_link) ;
-          $src_csu = mysql_fetch_row($req_src_csu) ; 
+          $req_src_csu =  mysqli_query($mysqlsrc_link,$sql_src_csu) ;
+          $src_csu = mysqli_fetch_row($req_src_csu) ; 
           if ($src_csu) {            // $oldta = $src_csu[1] ; 
             $src_csu[1] = $altak ; // attribution nouveau type conge 
             $req_dest_csu = "insert into conges_solde_user values (". my_implode($src_csu). ")";
@@ -565,10 +565,10 @@ if ($goon) { // tous les tests sont passes ; on peut importer
     };
     // conges_groupe 
     $l_src_gpe = array();  // correspondance gpe initial -> gpe future ; 
-    $req_src_gp = mysql_query("select * from conges_groupe", $mysqlsrc_link) ;
+    $req_src_gp = mysqli_query($mysqlsrc_link,"select * from conges_groupe") ;
     if ($req_src_gp) { // si la requÃ¨te est non vide 
       $test_res = 1 ; 
-      while ($res2 = mysql_fetch_row($req_src_gp)) {
+      while ($res2 = mysqli_fetch_row($req_src_gp)) {
         // on conserve ds un hash association g_id -> g_newgid
         $l_src_gpe[$res2[0]] = $res2[4] ; 
         $res2[0] = $res2[4]  ; // g_id devient g_newgid
@@ -585,8 +585,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       // la requÃ¨te est vide 
     };
     // conges_groupe_users
-    $req_src_groupe_users = mysql_query("select * from conges_groupe_users", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_groupe_users)) {
+    $req_src_groupe_users = mysqli_query($mysqlsrc_link,"select * from conges_groupe_users") ;
+    while ($res2 = mysqli_fetch_row($req_src_groupe_users)) {
       $newlogin = $res2[1] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -598,8 +598,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       };
     };
     // conges_groupe_resp
-    $req_src_groupe_resp = mysql_query("select * from conges_groupe_resp", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_groupe_resp)) {
+    $req_src_groupe_resp = mysqli_query($mysqlsrc_link,"select * from conges_groupe_resp") ;
+    while ($res2 = mysqli_fetch_row($req_src_groupe_resp)) {
       $newlogin = $res2[1] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -611,8 +611,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
       };
     };
     // conges_groupes_grd_resp
-    $req_src_groupe_grd_resp = mysql_query("select * from conges_groupe_grd_resp", $mysqlsrc_link) ;
-    while ($res2 = mysql_fetch_row($req_src_groupe_grd_resp)) {
+    $req_src_groupe_grd_resp = mysqli_query($mysqlsrc_link,"select * from conges_groupe_grd_resp") ;
+    while ($res2 = mysqli_fetch_row($req_src_groupe_grd_resp)) {
       $newlogin = $res2[1] ; 
       if  ( array_key_exists($newlogin, $luser2add) ) {  
         // respect des contraintes integrites refrentielles
@@ -625,8 +625,8 @@ if ($goon) { // tous les tests sont passes ; on peut importer
     };
     // import conges_logs apparait en v1.0d 
     // NON : on ne reprend pas les LOGS 
-    // $req_src_conges_logs =  mysql_query("select * from conges_logs ", $mysqlsrc_link) ;
-    // while ($res2 = mysql_fetch_row($req_src_conges_logs)) {
+    // $req_src_conges_logs =  mysqli_query("select * from conges_logs ", $mysqlsrc_link) ;
+    // while ($res2 = mysqli_fetch_row($req_src_conges_logs)) {
     //   $newlogin = $res2[2] ; // log_user_login_par
     //   if  ( !in_array($newlogin,$lreslogin) ) {
     //     $res2[0] = '' ; // force a '' ; auto_increment nouvelle base
@@ -683,16 +683,17 @@ if ($goon) { // tous les tests sont passes ; on peut importer
     // on ouvre en ecriture le fichier cmdestatus 
     $oflog = fopen($sqlcmdestatusfile, 'w') or die("can't open file sqlcmdestatusfile to write ". $sqlcmdestatusfile); 
 
-    mysql_query("LOCK TABLES conges_users WRITE,conges_echange_rtt WRITE,conges_artt WRITE,conges_periode WRITE,conges_solde_user WRITE,conges_groupe WRITE,conges_groupe_users WRITE,conges_groupe_resp WRITE,conges_groupe_grd_resp WRITE,conges_logs WRITE ; " ,  $mysqldest_link) or die("can't LOCK TABLES");
+    mysqli_query($mysqldest_link, 
+"LOCK TABLES conges_users WRITE,conges_echange_rtt WRITE,conges_artt WRITE,conges_periode WRITE,conges_solde_user WRITE,conges_groupe WRITE,conges_groupe_users WRITE,conges_groupe_resp WRITE,conges_groupe_grd_resp WRITE,conges_logs WRITE ; " ) or die("can't LOCK TABLES");
     echo "<p>log execution sauvegardes aussi en <b>". $sqlcmdestatusfile . "</b>.</p>" ;
     echo "commmande status <br> \n " ; 
     echo "<small>\n" ; 
     foreach ($lsqlcmde as $asqlcmde) {
-      $req3 = mysql_query($asqlcmde, $mysqldest_link) ;
+      $req3 = mysqli_query($mysqldest_link, $asqlcmde) ;
       if ($req3) {
         $msg = $asqlcmde . ": ok <br>" ;
       } else {
-        $msg = $asqlcmde . ": <span style=\"color: #f00;\"> error ". mysql_error(). "</span><br>" ;
+        $msg = $asqlcmde . ": <span style=\"color: #f00;\"> error ". mysqli_error(). "</span><br>" ;
       }
       echo $msg ;
       fwrite($oflog, $msg."\n");
@@ -700,7 +701,7 @@ if ($goon) { // tous les tests sont passes ; on peut importer
     echo "</small>\n" ; 
     // echo implode("<br>", $lsqlcmde );
     // at the end of import 
-    mysql_query("UNLOCK TABLES ; " ,  $mysqldest_link) or die("can't UNLOCK TABLES");
+    mysqli_query($mysqldest_link, "UNLOCK TABLES ; " ) or die("can't UNLOCK TABLES");
     fclose($oflog);
   }
 
@@ -727,14 +728,14 @@ function test_coherence_db($src_lnk,$dest_lnk)
   $sanom = ""; 
   $mresult = 1 ; 
   foreach ($ltable as $atable) {
-    $req_showt_src = mysql_query("SHOW COLUMNS FROM ".$atable , $src_lnk) ;
+    $req_showt_src = mysqli_query($src_lnk, "SHOW COLUMNS FROM ".$atable ) ;
     $lre_src = array();
-    while ($res1 = mysql_fetch_row($req_showt_src)){ 
+    while ($res1 = mysqli_fetch_row($req_showt_src)){ 
       array_push($lre_src, $res1);
     };
-    $req_showt_dest = mysql_query("SHOW COLUMNS FROM ".$atable , $dest_lnk) ;
+    $req_showt_dest = mysqli_query($dest_lnk, "SHOW COLUMNS FROM ".$atable ) ;
     $lre_dest = array();
-    while ($res1 = mysql_fetch_row($req_showt_dest)){ 
+    while ($res1 = mysqli_fetch_row($req_showt_dest)){ 
       array_push($lre_dest, $res1);
     };
     // passe en revue la correspondance de table (table src doit etre

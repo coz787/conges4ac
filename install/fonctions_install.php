@@ -81,11 +81,11 @@ function test_database($DEBUG=FALSE)
 	if( isset($mysql_serveur) && ($mysql_serveur!="") && isset($mysql_user) && ($mysql_user!="") 
 			&& isset($mysql_pass) && ($mysql_pass!="") && isset($mysql_database) && ($mysql_database!="") )
 	{
-		$mysql_link = MYSQL_CONNECT($mysql_serveur,$mysql_user,$mysql_pass);
+		$mysql_link = MYSQLI_CONNECT($mysql_serveur,$mysql_user,$mysql_pass);
         // _ac3 
-        if ( ! mysql_set_charset($mysql_charset,$mysql_link) ) {
-          die("mysql_set_charset() : set_charset ".$mysql_charset.
-              " en erreur ". mysql_error($mysql_link));
+        if ( ! mysqli_set_charset($mysql_link,$mysql_charset) ) {
+          die("mysql_set_charset() : set_charset ".$mysqli_charset.
+              " en erreur ". mysqli_error($mysql_link));
         };
 
         
@@ -93,12 +93,12 @@ function test_database($DEBUG=FALSE)
 			return FALSE;
 		else
 		{		
-			$dbselect   = mysql_select_db($mysql_database, $mysql_link);
+          $dbselect   = mysqli_select_db($mysql_link, $mysql_database);
 			if (! $dbselect)
 				return FALSE;
 			else
 			{
-				mysql_close($mysql_link);
+				mysqli_close($mysql_link);
 				return TRUE ;
 			}
 		}
@@ -110,16 +110,17 @@ function test_database($DEBUG=FALSE)
 
 function mysql_connexion($mysql_serveur, $mysql_user, $mysql_pass, $mysql_database,$mysql_charset="")
 {
-	$mysql_link = MYSQL_CONNECT($mysql_serveur, $mysql_user, $mysql_pass) or die("erreur : mysql_connexion<br>\n".mysql_error());
+	$mysql_link = MYSQLI_CONNECT($mysql_serveur, $mysql_user, $mysql_pass) or die("erreur : mysql_connexion<br>\n".mysqli_error());
     // _ac3 
-    if ( ! mysql_set_charset($mysql_charset,$mysql_link) ) {
+    if ( ! mysqli_set_charset($mysql_link,$mysql_charset) ) {
       die("mysql_set_charset() : set_charset ".$mysql_charset.
-          " en erreur ". mysql_error($mysql_link));
+          " en erreur ". mysqli_error($mysql_link));
     };
 
 
 		
-	$dbselect   = mysql_select_db($mysql_database, $mysql_link) or die("erreur : mysql_connexion<br>\n".mysql_error());
+	$dbselect   = mysqli_select_db($mysql_link, $mysql_database) or 
+      die("erreur : mysql_connexion<br>\n".mysqli_error());
 
 	return $mysql_link;
 }
@@ -131,10 +132,10 @@ function get_installed_version($mysql_link, $DEBUG=FALSE)
 	$installed_version=0;
 	
 	$sql="SELECT conf_valeur FROM conges_config WHERE conf_nom='installed_version' ";
-	if($reglog= mysql_query($sql, $mysql_link))
+	if($reglog= mysqli_query($mysql_link,$sql))
 	{
 		// la table existe !
-		if($result=mysql_fetch_array($reglog))
+		if($result=mysqli_fetch_array($reglog))
 		{
 			if($DEBUG==TRUE) { echo "result = <br>\n"; print_r($result); echo "<br>\n"; }
 			$installed_version = $result['conf_valeur'];
@@ -160,7 +161,7 @@ function test_create_table($mysql_link, $DEBUG=FALSE)
 				`test2` varchar(100) BINARY NOT NULL default '',
  				 PRIMARY KEY  (`test1`)
 				) " ;
-	$result_create = mysql_query($sql_create, $mysql_link);
+	$result_create = mysqli_query($mysql_link,$sql_create);
 	if(!$result_create)
 		return FALSE;
 	else
@@ -177,7 +178,7 @@ function test_alter_table($mysql_link, $DEBUG=FALSE)
 	/*********************************************/
 	// alter de la table `conges_test`
 	$sql_alter="ALTER TABLE `conges_test` CHANGE `test2` `test2` varchar(150) ;" ;
-	$result_alter = mysql_query($sql_alter, $mysql_link) or die(mysql_error());
+	$result_alter = mysqli_query($mysql_link,$sql_alter) or die(mysqli_error());
 	if(!$result_alter)
 		return FALSE;
 	else
@@ -194,7 +195,7 @@ function test_drop_table($mysql_link, $DEBUG=FALSE)
 	/*********************************************/
 	// suppression de la table `conges_test`
 	$sql_drop="DROP TABLE `conges_test` ;" ;
-	$result_drop = mysql_query($sql_drop, $mysql_link);
+	$result_drop = mysqli_query($mysql_link,$sql_drop);
 	if(!$result_drop)
 		return FALSE;
 	else
@@ -207,8 +208,8 @@ function test_drop_table($mysql_link, $DEBUG=FALSE)
 function is_rtt_comme_conges($mysql_link)
 {
 	$sql="SELECT conf_valeur FROM conges_config WHERE conf_nom = 'rtt_comme_conges' ";
-	$ReqLog = mysql_query($sql, $mysql_link) or die("ERREUR : is_rtt_comme_conges : <br>\n".$sql." --> ".mysql_error());
-	if ($resultat = mysql_fetch_array($ReqLog))
+	$ReqLog = mysqli_query($mysql_link,$sql) or die("ERREUR : is_rtt_comme_conges : <br>\n".$sql." --> ".mysqli_error());
+	if ($resultat = mysqli_fetch_array($ReqLog))
 		if($resultat['conf_valeur']=="TRUE")
 			return TRUE;
 	

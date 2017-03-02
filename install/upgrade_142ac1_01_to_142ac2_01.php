@@ -119,9 +119,9 @@ $required_version = "1.4.2ac1_01" ;
 echo "<tr>\n<td>test version application</td> " ; 
 if ($goon) {
   $sql_iv = "select conf_valeur from conges_config where conf_nom = 'installed_version' "  ;
-  $req_sql_iv = mysql_query($sql_iv, $mysql_link) ;
+  $req_sql_iv = mysqli_query($sql_iv, $mysql_link) ;
   if ($req_sql_iv) { 
-    $lrow = mysql_fetch_row($req_sql_iv); 
+    $lrow = mysqli_fetch_row($req_sql_iv); 
     $instal_version = $lrow[0] ; 
     if ($instal_version == $required_version) {
       echo "<td>ok. application version est ". $instal_version . "</td>\n" ;
@@ -167,7 +167,7 @@ echo "<tr><td width=\"35%\" align=center >info/action</td><td align=center>statu
 echo "<tr>\n<td>table conges_users: ajout champ u_has_int_calendar </td> " ;
 if ($goon) {
   $sql_cuint  = "select u_has_int_calendar from conges_users " ;
-  $req_sql_cuint = mysql_query($sql_cuint, $mysql_link) ;
+  $req_sql_cuint = mysqli_query($sql_cuint, $mysql_link) ;
   if ($req_sql_cuint) {
     echo "<td>ok.<br> table conges_users dispose deja de la colonne u_has_int_calendar</td>" ;    } else {
     if ($currentcmd == "addg_uhint") {
@@ -177,10 +177,10 @@ if ($goon) {
           "UNLOCK TABLES; " ) ; 
       foreach ($sql_cu_alter1_arr as $sql_un) {
         if ($goon) {
-          $req_sql_alter1 = mysql_query($sql_un, $mysql_link) ;
+          $req_sql_alter1 = mysqli_query($sql_un, $mysql_link) ;
           if (!$req_sql_alter1) {
             $goon = 0 ; 
-            echo "<td class=\"warning\" >echec : ". mysql_error(). "</td>" ; 
+            echo "<td class=\"warning\" >echec : ". mysqli_error(). "</td>" ; 
           }
         }
       }
@@ -201,7 +201,7 @@ if ($goon) {
 echo "<tr>\n<td>table conges_users: ajout champ u_is_gest </td> " ;
 if ($goon) {
   $sql_cuisgest  = "select u_is_gest from conges_users " ;
-  $req_sql_cuisgest = mysql_query($sql_cuisgest, $mysql_link) ;
+  $req_sql_cuisgest = mysqli_query($sql_cuisgest, $mysql_link) ;
   if ($req_sql_cuisgest) {
     echo "<td>ok.<br> table conges_users dispose deja de la colonne u_is_gest</td>" ;    } else {
     if ($currentcmd == "addg_uistgest") {
@@ -211,10 +211,10 @@ if ($goon) {
           "UNLOCK TABLES; " ) ; 
       foreach ($sql_cu_alter2_arr as $sql_un) {
         if ($goon) {
-          $req_sql_alter2 = mysql_query($sql_un, $mysql_link) ;
+          $req_sql_alter2 = mysqli_query($sql_un, $mysql_link) ;
           if (!$req_sql_alter2) {
             $goon = 0 ; 
-            echo "<td class=\"warning\" >echec : ". mysql_error(). "</td>" ; 
+            echo "<td class=\"warning\" >echec : ". mysqli_error(). "</td>" ; 
           }
         }
       }
@@ -245,10 +245,10 @@ echo "<tr valign=top >\n<td>table conges_users: nettoyage des adresses mails </t
 if ($goon)  {
   // echo "<td><small>" ; 
   $sql_ule  = "select u_login, u_email from conges_users order by u_login " ;
-  $req_sql_ule = mysql_query($sql_ule, $mysql_link) ;
+  $req_sql_ule = mysqli_query($sql_ule, $mysql_link) ;
   $lfaultusers = array(); 
   $sfaultemail = "<small>" ; 
-  while ( $luser = mysql_fetch_row($req_sql_ule) ) {
+  while ( $luser = mysqli_fetch_row($req_sql_ule) ) {
     $email = $luser[1] ;
     if ((substr($email, -1, 1) == ">") || (substr($email, 0, 1) == "<")) {
       $sfaultemail .= $email. ", " ; 
@@ -270,11 +270,11 @@ if ($goon)  {
       array_push($lsql_neat,"unlock tables; " ); 
       //echo "<td>_todo : <br><small>"; 
       foreach ($lsql_neat as $sql_un) {
-        $req_sql_n = mysql_query($sql_un, $mysql_link) ;
+        $req_sql_n = mysqli_query($sql_un, $mysql_link) ;
         if (!$req_sql_n) {
           $goon = 0 ; 
           break; 
-          echo "<td class=\"warning\" >echec : ". mysql_error(). "on". 
+          echo "<td class=\"warning\" >echec : ". mysqli_error(). "on". 
             $sql_un. "</td>" ; 
         };
       }
@@ -333,7 +333,7 @@ function add_set_config($lconfignv, $mysql_link)
   global $goon, $currentcmd,$PHP_SELF ; // pas top mais on s'y fait ...
   foreach ($lconfignv as $itemk => $litemval) {
     $sql_confnom = "select conf_nom from conges_config where conf_nom='".$itemk."'"; 
-    $req_confnom = mysql_query($sql_confnom, $mysql_link) ;
+    $req_confnom = mysqli_query($sql_confnom, $mysql_link) ;
     echo "<tr valign=top >" ;
     echo "<td>".$itemk."</td>" ; 
     if ($req_confnom) { 
@@ -368,7 +368,7 @@ function add_set_config($lconfignv, $mysql_link)
       $sformcmd .= "</form>\n";
 
       // on recherche le record 
-      $conf_n = mysql_fetch_row($req_confnom) ;
+      $conf_n = mysqli_fetch_row($req_confnom) ;
       //      if (($mode=="add") && $conf_n ) {
       if ($mode=="add") {       
         if ($conf_n) {
@@ -376,11 +376,11 @@ function add_set_config($lconfignv, $mysql_link)
         } else {
           if ($currentcmd == $itemcmd ) { // alors on cree la donnees
             foreach ($lsql_creat_config as $sql_un) {
-              $req_sql_c = mysql_query($sql_un, $mysql_link) ;
+              $req_sql_c = mysqli_query($sql_un, $mysql_link) ;
               if (!$req_sql_c) {
                 $goon = 0 ; 
                 break; 
-                echo "<td class=\"warning\" >echec : ". mysql_error(). "</td>" ; 
+                echo "<td class=\"warning\" >echec : ". mysqli_error(). "</td>" ; 
               };
             };
             if ($goon) {
@@ -398,18 +398,18 @@ function add_set_config($lconfignv, $mysql_link)
       } elseif ($mode == "update") {
         if ($conf_n) {
           $sql_confval = "select conf_valeur from conges_config where conf_nom='".$itemk."'";
-          $req_confval = mysql_query($sql_confval, $mysql_link) ;
-          $conf_val = mysql_fetch_row($req_confval) ;
+          $req_confval = mysqli_query($sql_confval, $mysql_link) ;
+          $conf_val = mysqli_fetch_row($req_confval) ;
           if ($conf_val[0] == $cf_valeur) { 
             echo "<td> <b>vaut deja </b>".$cf_valeur."</td>";
           } else {
             if ($currentcmd == $itemcmd ) { // alors on cree la donnees
               foreach ($lsql_creat_config as $sql_un) {
-                $req_sql_c = mysql_query($sql_un, $mysql_link) ;
+                $req_sql_c = mysqli_query($sql_un, $mysql_link) ;
                 if (!$req_sql_c) {
                   $goon = 0 ; 
                   break; 
-                  echo "<td class=\"warning\" >echec : ". mysql_error(). "</td>" ; 
+                  echo "<td class=\"warning\" >echec : ". mysqli_error(). "</td>" ; 
                 };
               };
               if ($goon) {

@@ -128,7 +128,7 @@ $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST[
 				}
 			}
 
-			mysql_close($mysql_link);
+			mysqli_close($mysql_link);
 		}
 	}
 
@@ -143,9 +143,13 @@ $lang=(isset($_GET['lang']) ? $_GET['lang'] : ((isset($_POST['lang'])) ? $_POST[
 function install($lang, $mysql_link, $DEBUG=FALSE)
 {
 	// soit, c'est une install complète , soit c'est une mise à jour d'une version non déterminée
-
+  if (isset($_SESSION['config']['titre_application'])) {
+    $stitreapplication = isset($_SESSION['config']['titre_application']) ; 
+  } else { 
+    $stitreapplication = "conges4ac" ; 
+  }
 	echo "<html>\n<head>\n";
-	echo "<TITLE>".$_SESSION['config']['titre_application'].": Installation : </TITLE>\n</head>\n";
+	echo "<TITLE>".$stitreapplication.": Installation : </TITLE>\n</head>\n";
 	echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
 	echo "<link href=\"../style_basic.css\" rel=\"stylesheet\" type=\"text/css\">\n";
 	echo "</head>\n";

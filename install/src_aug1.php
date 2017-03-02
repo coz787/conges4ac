@@ -109,9 +109,8 @@ if ($goon) {
   $sql_cg = "select g_newgid from conges_groupe" ;
   // $sql_cg = "select g_gid from conges_groupe" ;
 
-# $req_sql_cg = mysql_query($sql_cg, $mysql_link) or die("ERREUR : sql_cg <br>\n".$sql_cg." --> ".mysql_error());
-
-  $req_sql_cg = mysql_query($sql_cg, $mysql_link) ;
+  $req_sql_cg = mysqli_query($mysql_link,$sql_cg) or die("ERREUR : sql_cg <br>\n".$sql_cg." --> ".mysqli_error());
+ // $req_sql_cg = mysql_query($sql_cg, $mysql_link) ;
 
   if ($req_sql_cg) { 
   // while ($resultat1 = mysql_fetch_array($req_sql_cg))
@@ -129,10 +128,10 @@ if ($goon) {
           "UNLOCK TABLES; " ) ; 
       foreach ($sql_cg_alter1_arr as $sql_un) {
         if ($goon) {
-          $req_sql_alter1 = mysql_query($sql_un, $mysql_link) ;
+          $req_sql_alter1 = mysqli_query($mysql_link,$sql_un) ;
           if (!$req_sql_alter1) {
             $goon = 0 ; 
-            echo "<td>echec : ". mysql_error(). "</td>" ; 
+            echo "<td>echec : ". mysqli_error(). "</td>" ; 
           }
         }
       }
@@ -175,11 +174,11 @@ if ($goon) {
       // on fait  echo "<td>will do offset with ". $soffset. "</td>\n" ;
       $sql_cg_u1 = "update `conges_groupe` set g_newgid = g_gid + ".  $soffset ; 
       // where * ; pour tous les rows 
-      $req_sql_cg_u1 = mysql_query( $sql_cg_u1, $mysql_link) ;
+      $req_sql_cg_u1 = mysqli_query($mysql_link, $sql_cg_u1) ;
       if( $req_sql_cg_u1 ) {
         echo "<td>offset de ". $soffset. " effectue avec succes. </td>\n" ;
       } else {
-        echo "<td>echec offset : ". mysql_error(). "</td>" ; 
+        echo "<td>echec offset : ". mysqli_error(). "</td>" ; 
         $goon = 0 ; 
       }
       
@@ -208,7 +207,7 @@ if ($goon) {
 echo "<tr><td>table: conges_type_absence: ajout du nouveau champ ta_newid </td> " ; 
 if ($goon) {
   $sql_ta  = "select ta_newid  from conges_type_absence" ;
-  $req_sql_ta = mysql_query($sql_ta, $mysql_link) ;
+  $req_sql_ta = mysqli_query($mysql_link,$sql_ta) ;
 
   if ($req_sql_ta) { 
     echo "<td>ok.<br> table conges_type_absence dispose deja de la colonne ta_newid </td>";
@@ -222,11 +221,11 @@ if ($goon) {
           "UNLOCK TABLES; " ) ; 
       $goon = 1 ; 
       foreach ($sql_cta_arr as $sql_un) {
-        $req_sql_alter2 = mysql_query($sql_un, $mysql_link) ;
+        $req_sql_alter2 = mysqli_query($mysql_link,$sql_un) ;
         if (!$req_sql_alter2) {
           $goon = 0 ; 
           break; 
-          echo "<td>echec : ". mysql_error(). "</td>" ; 
+          echo "<td>echec : ". mysqli_error(). "</td>" ; 
         }
       }
 
@@ -261,11 +260,11 @@ if ($goon && $req_sql_ta) {
       $sgettanval = getpost_variable("tan_val", "nothing"); // . $taid_update,"nothing")  ; 
       //       echo "<p> cta id ".$taid_update." update with value ". $sgettanval. "</p>" ;
       $sql_updateta = "update conges_type_absence set ta_newid = ".$sgettanval." where ta_id=".$taid_update.";" ;
-      $req_maj_ta = mysql_query($sql_updateta, $mysql_link) ;
+      $req_maj_ta = mysqli_query($mysql_link,$sql_updateta) ;
       if ($req_maj_ta) {
         echo "<p>ta_id ". $taid_update." mis a jour avec ".$sgettanval. "</p>" ; 
       } else {
-        echo "<p> ERREUR maj ". $taid_update." avec ".$sgettanval." error mysql ".mysql_error()."</p>" ; 
+        echo "<p> ERREUR maj ". $taid_update." avec ".$sgettanval." error mysql ".mysqli_error()."</p>" ; 
       };
     } 
   };
@@ -274,10 +273,10 @@ if ($goon && $req_sql_ta) {
   echo "<tr><td>ta_id</td><td>ta_type</td><td>ta_libelle</td>
 <td>ta_short_libelle</td><td>ta_newid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>\n" ; 
   $sql_ta  = "select *  from conges_type_absence order by ta_id" ;
-  $req_maj_ta = mysql_query($sql_ta, $mysql_link) ;
+  $req_maj_ta = mysqli_query($mysql_link,$sql_ta) ;
 
   if ($req_maj_ta) { 
-    while ($lata = mysql_fetch_row($req_maj_ta)) {
+    while ($lata = mysqli_fetch_row($req_maj_ta)) {
       echo "<tr>" ; // on fait un formulaire par rang = BOURRIN 
       echo "<form action=\"$PHP_SELF?cmd=save_tanewid&taid=$lata[0]\" method=\"POST\">\n";
       // ecrit les 4 donnees 
@@ -291,25 +290,25 @@ if ($goon && $req_sql_ta) {
       echo "</tr>" ; 
     }
   } else {
-    echo "<tr><td>" . mysql_error(). "</td></tr>\n"; 
+    echo "<tr><td>" . mysqli_error(). "</td></tr>\n"; 
   }; 
   echo "</table>\n"; 
   echo "</fieldset>\n" ; 
  };
 
-$req_ta_check = mysql_query("select ta_id from conges_type_absence where ta_newid = NULL ", $mysql_link) ;
+$req_ta_check = mysqli_query($mysql_link,"select ta_id from conges_type_absence where ta_newid = NULL ") ;
 
 if ($req_ta_check) {
-  while ($reqdum = mysql_fetch_row($req_ta_check)) {
+  while ($reqdum = mysqli_fetch_row($req_ta_check)) {
     $goon = 0 ; // si on trouve des Ã©lÃ©ments non rempli 
   };
  } else   {
   $goon = 0 ; // si requete est en erreur ldd , il y a un pb 
 };
 
-$req_gp_check = mysql_query("select g_gid from conges_groupe where g_newgid = NULL ", $mysql_link) ;
+$req_gp_check = mysqli_query($mysql_link,"select g_gid from conges_groupe where g_newgid = NULL ") ;
 if ($req_gp_check) {
-  while ($reqdum = mysql_fetch_row($req_gp_check)) {
+  while ($reqdum = mysqli_fetch_row($req_gp_check)) {
     $goon = 0 ; // si on trouve des Ã©lÃ©ments non rempli 
   }; 
 } else {

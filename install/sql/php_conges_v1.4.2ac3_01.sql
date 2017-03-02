@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `conges_config` (
 #
 
 INSERT INTO `conges_config` VALUES ('installed_version', '0', '00_php_conges', 'texte', 'config_comment_installed_version');
-INSERT INTO `conges_config` VALUES ('installed_state', 'v3rc16', '00_php_conges', 'texte', 'config_comment_installed_state');
+INSERT INTO `conges_config` VALUES ('installed_state', 'v3irc19', '00_php_conges', 'texte', 'config_comment_installed_state');
 # 
 INSERT INTO `conges_config` VALUES ('url_conges_assistance', 'http://portail-dgac.aviation-civile.gouv.fr/portal/server.pt/', '00_php_conges', 	'texte', 'config_comment_url_conges_assistance'); 
 INSERT INTO `conges_config` VALUES ('message_for_all', '', '00_php_conges',     'texte', 'config_comment_message_for_all'); 
@@ -390,7 +390,7 @@ INSERT INTO `conges_config` VALUES ("jourshorsperiode-ouvert",'FALSE', '12_Fonct
 
 CREATE TABLE `conges_type_absence` (
   `ta_id` int(2) unsigned NOT NULL AUTO_INCREMENT,
-  `ta_type` enum('conges','absences', 'conges_exceptionnels') NOT NULL default 'conges',
+  `ta_type` enum('conges','absences', 'conges_exceptionnels','_ignore_') NOT NULL default 'conges',
   `ta_libelle` varchar(20) NOT NULL default '',
   `ta_short_libelle` char(3) NOT NULL default '',
   PRIMARY KEY  (`ta_id`)
@@ -439,8 +439,7 @@ CREATE TABLE `conges_solde_user` (
 CREATE TABLE `conges_solde_edition` (
        `se_id_edition` INT( 11 ) NOT NULL ,
        `se_id_absence` INT( 2 ) NOT NULL ,
-       `se_solde` DECIMAL( 4, 2 ) NOT NULL,
-       PRIMARY KEY  (`se_id_edition`,`se_id_absence`)
+       `se_solde` DECIMAL( 4, 2 ) NOT NULL
 )  ;
 
 # --------------------------------------------------------

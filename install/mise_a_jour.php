@@ -341,10 +341,12 @@ function lance_maj($lang, $installed_version, $config_php_conges_version, $etape
 		{
 			// mise à jour de la "installed_version" et de la langue dans la table conges_config
 			$sql_update_version="UPDATE conges_config SET conf_valeur = '$config_php_conges_version' WHERE conf_nom='installed_version' ";
-			$result_update_version = mysql_query($sql_update_version, $mysql_link) or die (mysql_error());
+			$result_update_version = mysqli_query($mysql_link,$sql_update_version) 
+              or die (mysqli_error());
 
 			$sql_update_lang="UPDATE conges_config SET conf_valeur = '$lang' WHERE conf_nom='lang' ";
-			$result_update_lang = mysql_query($sql_update_lang, $mysql_link) or die (mysql_error());
+			$result_update_lang = mysqli_query($mysql_link,$sql_update_lang) 
+              or die (mysqli_error());
 
 			$comment_log = "Mise a jour de php_conges (version $installed_version --> version $config_php_conges_version) ";
 			log_action(0, "", "", $comment_log, $mysql_link, $DEBUG);
@@ -360,7 +362,7 @@ function lance_maj($lang, $installed_version, $config_php_conges_version, $etape
 		// rien, on ne devrait jammais arriver dans ce else !!!
 	}
 
-	mysql_close($mysql_link);
+	mysqli_close($mysql_link);
 }
 
 

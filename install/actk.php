@@ -28,6 +28,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 $actkmversion = "v1.0a" ;
 
+$func = function($value) {
+    return $value * 2;
+};
+print_r(array_map($func, range(1, 5)));
+// will be defined by mysql_newconnexion
+$mysql_nlink = NULL ;
+// required by use of array_map 
+$mres = function($mystr) { 
+  global $mysql_nlink ; 
+  return mysqli_real_escape_string($mysql_nlink,$mystr); 
+}
+
 // affiche les entetes html ...
 function affiche_entete($title)
 {
@@ -45,28 +57,22 @@ function mysql_newconnexion($mysql_serveur, $mysql_user, $mysql_pass, $mysql_dat
 // retourne un nouveau lien database ou erreur mysql sous forme de texte ; 
 {
   //   echo "mysql_newconnexion" . $mysql_serveur. $mysql_user. $mysql_pass. $mysql_database."<br>" ; 
-  $mysql_nlink = mysql_connect($mysql_serveur, $mysql_user, $mysql_pass, True) ;
+  global $mysql_nlink ; 
+  $mysql_nlink = mysqli_connect($mysql_serveur, $mysql_user, $mysql_pass, True) ;
   if (!$mysql_nlink) 
     return "erreur : mysql_newconnexion connect<br>\n".mysql_error() ;
   // _ac3 
-  if ( ! mysql_set_charset($mysql_charset,$mysql_nlink) ) {
+  if ( ! mysqli_set_charset($mysql_nlink,$mysql_charset) ) {
     die("mysql_set_charset() : set_charset ".$mysql_charset.
-        " en erreur ". mysql_error($mysql_nlink));
+        " en erreur ". mysqli_error($mysql_nlink));
   };
 
   
-  $dbselect   = mysql_select_db($mysql_database, $mysql_nlink) ;
+  $dbselect   = mysqli_select_db($mysql_nlink,$mysql_database) ;
   if (!$dbselect) 
-    return "erreur : mysql_newconnexion select_db <br>\n".mysql_error();
+    return "erreur : mysql_newconnexion select_db <br>\n".mysqli_error($mysql_nlink);
 
   return $mysql_nlink;
-}
-
-function my_implode1($larray) 
-// retourne les elements du tableau en format:  'item0', 'item1',    'itemN'
-// utile pour injection sql 
-{
-  return "'".implode("', '", array_map('mysql_real_escape_string', $larray)) . "'";
 }
 
 function my_implode($larray) 
@@ -75,7 +81,7 @@ function my_implode($larray)
 // utile pour injection sql 
 {
   $sret = "" ; 
-  $lescarr =  array_map('mysql_real_escape_string', $larray) ;
+  $lescarr =  array_map($mres,$larray) ;
   $nbitem = 0 ; 
   foreach($lescarr as $aitem) {
     $nbitem += 1 ; 
