@@ -236,8 +236,8 @@ CREATE TABLE `conges_users` (
 # Contenu de la table `conges_users`
 #
 
-INSERT INTO `conges_users` VALUES ('admin', 'php_conges', 'admin', 'N', 'admin', 'Y', 'N', 'c132e6998d305dad1c43bc3f897791fb', 100, NULL,'N','N');
-INSERT INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtuel', 'Y', NULL, 'Y', 'Y', '3cdb69ff35635d9a3f6eccb6a5e269e6', 100, NULL,'N','N');
+INSERT INTO `conges_users` VALUES ('admin', 'php_conges', 'admin', 'N', 'admin', 'Y', 'N', 'bdbe700da1334e0046fc216a888ff1ca', 100, NULL,'N','N');
+INSERT INTO `conges_users` VALUES ('conges', 'conges', 'responsable-virtuel', 'Y', NULL, 'Y', 'Y', 'bdbe700da1334e0046fc216a888ff1ca', 100, NULL,'N','N');
 
 # --------------------------------------------------------
 
