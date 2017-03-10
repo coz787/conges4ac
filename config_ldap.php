@@ -207,8 +207,8 @@ $config_ldap_server = "ldaps://ldapds.lfpo.aviation-civile.gouv.fr:636";
 $config_ldap_protocol_version = 3 ;   // 3 si version 3 , 0 sinon !
 $config_ldap_bupsvr = "" ; // "ldap://ldap.cedre.aviation";
 $config_basedn      = "sn=internes_si,dc=aviation-civile,dc=gouv,dc=fr";
-$config_ldap_user   = "sn=conges,sn=lecteurs,sn=virtuels,dc=aviation-civile,dc=gouv,dc=fr";
-$config_ldap_pass   = ";conges@2011%";
+$config_ldap_user   = "_ldapvuser_";
+$config_ldap_pass   = "_ldappassword_";
 $config_searchdn    = "sn=internes_si,dc=aviation-civile,dc=gouv,dc=fr";
 
 $config_ldap_prenom = "givenName"; 

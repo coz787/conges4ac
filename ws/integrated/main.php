@@ -33,6 +33,7 @@ Suite 330, Boston, MA 02111-1307 USA
 */
  	
 require_once("../Rest.inc.php");
+require_once("../../config_ldap.php"); // to avoid hard writting of ldap id
 	
 class API extends REST {
   public $data = "";
@@ -44,15 +45,16 @@ class API extends REST {
   const DB_basedn = "dc=aviation-civile,dc=gouv,dc=fr";
   // acbacea complété par sn=ldap-siege,sn=n,sn=internes_si,
   const DB_basednorg = "sn=organigramme,sn=applications,dc=aviation-civile,dc=gouv,dc=fr";
-  const DB_USER = "sn=conges,sn=lecteurs,sn=virtuels,dc=aviation-civile,dc=gouv,dc=fr";
-  const DB_PASSWORD = ";conges@2011%";   
-  /* const DB_USER = 'sn=completion.amelia,sn=lecteurs,sn=virtuels,dc=aviation-civile,dc=gouv,dc=fr';
-     const DB_PASSWORD = '$ameli@/' ;  */
+
+  /*  replacing usage of CONST, direct use of 
+      DB_USER = $config_ldap_user ; 
+      DB_PASSWORD = $config_ldap_pass ; */
 		
   private $db = NULL;
 	
   public function __construct(){
     parent::__construct();	 // Init parent contructor
+
     if (!array_key_exists('noldap',$_REQUEST))  // if noldap, forget 
       $this->ldapConnect();	 // initiating Database connection 
   }
@@ -74,7 +76,7 @@ class API extends REST {
 # error_log("ldap_connect = ". $this->db);
       if (!($this->db)) throw new Exception('ldap_connect') ; 
       @ldap_set_option($this->db, self::DB_protocol, $dummy1); 
-      $bindstatus = @ldap_bind($this->db, self::DB_USER , self::DB_PASSWORD ); 
+      $bindstatus = @ldap_bind($this->db, $config_ldap_user , $config_ldap_pass ); 
       if (!($bindstatus)) throw new Exception('ldap_bind') ;
     } catch (Exception $e) {
       $this->_content_type = "text/plain";
