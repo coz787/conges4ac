@@ -134,6 +134,7 @@ Sa publication n'est qu'un juste retour des choses ; elle pourra servir de
 	/jquery/development-bundle/ui/i18n/jquery.ui.datepicker-fr.js
     ( Merci à John Resig pour jquery (travail formidable!) jeresig@gmail.com )
  
+    Les outils ./actools sont écrits en Python2 (i love it!) .  
 
 ----------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
