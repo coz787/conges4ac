@@ -1,0 +1,348 @@
+***************************************
+****  php_conges / conges4ac       ****
+***************************************
+
+SOMMAIRE :
+----------
+-> première installation.
+-> installation avec LDAP
+-> installation avec CAS
+-> mises à jour. (passage d'une version à l'autre)
+-> configuration (config générale et types d'absences)
+-> tests.
+
+
+Conges4ac : le mode d'installation est identique à php_conges : 
+des couples user/pwd par defaut , différents ont été créés. 
+L'emploi d'un annuaire suppose disposer d'un user virtuel annuaire. 
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> PREMIERE INSTALLATION : 
+---------------------------
+	1: télécharger conges4ac sur github 
+	-----------------------------------
+    Pour mémoire, http://www.ced.univ-montp2.fr/php_conges/
+
+
+	2: décompression de l'archive :
+	--------------------------------
+	décompresser l'archive .tar.gz ou .zip
+	gunzip php_conges.version.tar.gz
+	tar xvf php_conges.version.tar
+	ou
+	unzip php_conges.version.zip
+
+
+	3: installation des fichiers :
+	------------------------------
+	- copier le contenu de l'archive dans l'arborescence de votre site web.
+	- ATTENTION : le répertoire "tmp" de PHP_IDS (INCLUDE.EXTERNAL/phpids-0.5.3/lib/IDS/tmp) 
+      doit être accessible en écriture ! ("writable") !!!
+
+
+	4: configuration de PHP :
+	-------------------------
+	- l'option "magic_quotes_gpc" doit être à "on". 
+	- l'option "track_vars" doit être à "enable". 
+	  (directive de compilation de php ou option de configuration dans php.ini)
+	  (Notez que depuis PHP 4.0.3, track_vars est toujours activée.)
+
+
+	5: preparation de la database :
+	-------------------------------- 
+	Votre administrateur MySql doit créer la database db_conges et un utilisateur qui aura les droits sur cette database.
+	Les droits requis sont les droits classiques sur la database + les droits de creation/mofication/suppression de tables .
+	(ces droits sont necessaire pour les procedure d'installation et de mises a jour futures)
+
+exemple : sequence sql 
+CREATE DATABASE `conges_ac1` ;
+CREATE USER 'congesac'@'%' IDENTIFIED BY '***';
+GRANT USAGE ON * . * TO 'congesac'@'%' IDENTIFIED BY '***' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+GRANT ALL PRIVILEGES ON `conges_ac1` TO 'congesac'@'%';
+
+
+	6: configuration de base PHP_Conges :
+	--------------------------------------
+	- Renommer le fichier "dbconnect_new.php"  en "dbconnect.php".
+	- Editer le fichier "dbconnect.php" et renseigner les paramètres relatifs à votre 
+	  connexion MySQL (serveur, user, password, database).
+	- Puis saisir l'URL suivant dans votre navigateur pour obtenir le formulaire de configuration de php_conges : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	- ajout d'une nouvelle langue : (optionnel, le francais et l'espagnol sont livés avec php_conges)
+		- télécharger le fichier de langue.
+		- copier ce fichier de langue dans le répertoire install/lang/ de votre application php_conges.
+		- vérifier que votre fichier ai les bons droits en lecture.
+		- accéder à la page de configutaion de php_conges, sélectionner la langues choisie et valider.
+
+	7: utilisation :
+	----------------
+	PHP_Conges est désormais prêt à fonctionner, il suffit de saisir dans votre navigateur l'URL :
+	http://monsiteweb.mondomaine.org/mon_chemin/php_conges/
+	Utilisateur par défaut = "admin" / mot de passe = "BarPsg61"
+	Responsable virtuel = "conges" / mot de passe = "BarPsg61"
+
+	Cependant, pour pouvoir utiliser votre application, les utilisateurs doivent être saisis dans la database.
+	Pour cela il faut se connecter à PHP_conges en tant que responsable , puis ouvrir la section "mode administrateur".
+	Une nouvelle fenêtre s'ouvre alors, dans laquelle vous pouvez saisir vos responsables et vos utilisateurs.
+	Penser à supprimer l'utilisateur par défaut (admin) ou a changer son mot de passe !!!
+	(Ne pas supprimer le responsable virtuel, mais changer son mot de passe !!!)
+
+	
+	8: Sécurité :
+	----------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommendé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+
+
+	
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> INSTALLATION AVEC LDAP :
+----------------------------
+	suivre les étapes de 1 à 5 de l'intallation "classique"....
+	
+	PHP_Conges est désormais prêt à fonctionner. Pour fonctionner avec LDAP, chaque utilisateur doit être connnu à la fois, dans LDAP et 
+	dans php_conges.
+	Il va donc faloir soit créer à la main les utilisateurs dans php_conges, soit extraire du LDAP les utilisateurs de php_conges et les 
+	ajouter dans la database db_conges!
+	
+	les étapes sont les suivantes :
+	
+	6: configuration de PHP_Conges :
+	----------------------------------
+	- Renommer le fichier "dbconnect_new.php"  en "dbconnect.php".
+	- Editer le fichier "dbconnect.php" et renseigner les paramètres relatifs à votre 
+	  connexion MySQL (serveur, user, password, database).
+	- Puis saisir l'URL suivant dans votre navigateur pour obtenir le formulaire de configuration de php_conges : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	- lancer l'installation.
+	- lors de l'étape de configuration : Positionner l'option de configuration $config_how_to_connect_user="ldap"; !
+	- pour extraire les utilisateurs du LDAP, Positionner l'option de configuration $config_export_users_from_ldap=TRUE; !
+	- Renseignez également les variables relatives à votre connexion MySQL (serveur, user, password, database).
+	  éditer le fichier "config_ldap.php" et positionner les options de configuration comme désiré.
+	- ajout d'une nouvelle langue : (optionnel, le francais et l'espagnol sont livés avec php_conges)
+		- télécharger le fichier de langue.
+		- copier ce fichier de langue dans le répertoire install/lang/ de votre application php_conges.
+		- vérifier que votre fichier ai les bons droits en lecture.
+		- accéder à la page de configutaion de php_conges, sélectionner la langues choisie et valider.
+	
+	7: création des utilisateurs :
+	------------------------------
+	Saisir dans votre navigateur l'URL :
+	http://monsiteweb.mondomaine.org/mon_chemin/php_conges/
+	Utilisateur par défaut = "admin" / mot de passe = "BarPsg61"
+	Responsable virtuel = "conges" / mot de passe = "BarPsg61"
+	
+	Se connecter avec l'utilisateur par défaut = "admin" / mot de passe = "BarPsg61", puis ouvrir la section "mode administrateur".
+	Une nouvelle fenêtre s'ouvre alors, dans laquelle vous pouvez, suivant que l'option $config_export_users_from_ldap est à TRUE ou FALSE : 
+	soit importer les utilisateurs du LDAP grace à une liste déroulante... soit saisir les utilisateurs à la main...
+	Penser à supprimer l'utilisateur par défaut (admin) ou a changer son mot de passe !!!
+	(Attention: l'utilisateur "admin" se connecte toujours avec une authentification dans la database db_conges, quelque 
+	soit l'option $config_export_users_from_ldap .)
+
+
+	8: Sécurité :
+	----------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommendé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+
+
+	Remarque : utilisation avec Easy_php :
+	---------------------------------------------------------------------
+	sous easy_php il faut éditer le php.ini et décommenter la ligne
+        extension=php_ldap.dll
+    ... sinon pb avec l'authentification et la recup des users LDAP !
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> INSTALLATION AVEC CAS :
+----------------------------
+	suivre les étapes de 1 à 5 de l'intallation "classique"....
+	
+	PHP_Conges est désormais prêt à fonctionner. Pour fonctionner avec un serveur CAS, chaque utilisateur doit être connnu à la fois, 
+	dans CAS et dans php_conges.
+	Il va donc falloir soit créer à la main les utilisateurs dans php_conges, soit extraire d'un LDAP les utilisateurs de php_conges et les 
+	ajouter dans la database db_conges! (fréquement, CAS s'appuie sur un serveur LDAP ...)
+	 
+	les étapes sont les suivantes :
+	
+	6: configuration de PHP_Conges :
+	----------------------------------
+	- Renommer le fichier "dbconnect_new.php"  en "dbconnect.php".
+	- Editer le fichier "dbconnect.php" et renseigner les paramètres relatifs à votre 
+	  connexion MySQL (serveur, user, password, database).
+	- Puis saisir l'URL suivant dans votre navigateur pour obtenir le formulaire de configuration de php_conges : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	- lancer l'installation.
+	- lors de l'étape de configuration :  Positionner l'option de configuration $config_how_to_connect_user="CAS"; !
+	- pour extraire les utilisateurs du LDAP, Positionner l'option de configuration $config_export_users_from_ldap=TRUE; !
+	- Renseignez également les variables relatives à votre connexion MySQL (serveur, user, password, database).
+	  éditer le fichier "config_CAS.php" et positionner les options de configuration comme désiré.
+	- Si vous vous servez du LDAP, éditer le fichier "config_ldap.php" et positionner les options de configuration comme désiré.
+	- ajout d'une nouvelle langue : (optionnel, le francais et l'espagnol sont livés avec php_conges)
+		- télécharger le fichier de langue.
+		- copier ce fichier de langue dans le répertoire install/lang/ de votre application php_conges.
+		- vérifier que votre fichier ai les bons droits en lecture.
+		- accéder à la page de configutaion de php_conges, sélectionner la langues choisie et valider.
+	
+	7: création des utilisateurs :
+	------------------------------
+	Saisir dans votre navigateur l'URL :
+	http://monsiteweb.mondomaine.org/mon_chemin/php_conges/
+	Utilisateur par défaut = "admin" / mot de passe = "BarPsg61"
+	Responsable virtuel = "conges" / mot de passe = "BarPsg61"
+	
+	Se connecter avec l'utilisateur par défaut = "admin" / mot de passe = "BarPsg61", puis ouvrir la section "mode administrateur".
+	Une nouvelle fenêtre s'ouvre alors, dans laquelle vous pouvez, suivant que l'option $config_export_users_from_ldap est à TRUE ou FALSE : 
+	soit importer les utilisateurs du LDAP grace à une liste déroulante... soit saisir les utilisateurs à la main...
+	Penser à supprimer l'utilisateur par défaut (admin) ou a changer son mot de passe !!!
+	(Attention: l'utilisateur "admin" se connecte toujours avec une authentification dans la database db_conges, quelque 
+	soit l'option $config_export_users_from_ldap .)
+
+
+	8: Sécurité :
+	----------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommendé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> MISE A JOUR  (passage d'une version à l'autre) :
+----------------------------------------------------
+	Il est toujours conseillé, avant chaque mise à jour, de faire une sauvegarde de votre répertoire  
+	php_conges, et SURTOUT de votre database !
+	
+	1: télécharger php_conges
+	----------------------------
+	http://www.ced.univ-montp2.fr/php_conges/
+
+
+	2: décompression de l'archive :
+	--------------------------------
+	décompresser l'archive .tar.gz ou .zip
+	gunzip php_conges.version.tar.gz
+	tar xvf php_conges.version.tar
+	ou
+	unzip php_conges.version.zip
+
+
+	3: installation des fichiers
+	-----------------------------
+	copier le contenu de l'archive dans l'arborescence de votre site web (à la place de votre ancienne version).
+	- ATTENTION : le répertoire "tmp" de PHP_IDS (INCLUDE.EXTERNAL/phpids-0.5.3/lib/IDS/tmp) doit être accessible en écriture ! ("writable") !!!
+
+
+	4: mise à jour de la database et configuration de PHP_Conges :
+	---------------------------------------------------------------
+	- Saisir l'URL suivant dans votre navigateur et lancer la mise à jour : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	- La configuration de php_conges est à vérifier après chaque mise a jour car des options de paramètrage sont ajoutées régulièrement, et, celles ci doivent
+	  être renseignées afin que l'application fonctionne correctement.
+	  (ATTENTION : dans certains cas rares, certaines variables de configuration peuvent changer de nom d'une version à l'autre. Soyez 
+	  vigilant!)
+	- ajout d'une nouvelle langue : (optionnel, le francais et l'espagnol sont livés avec php_conges)
+		- télécharger le fichier de langue.
+		- copier ce fichier de langue dans le répertoire install/lang/ de votre application php_conges.
+		- vérifier que votre fichier ai les bons droits en lecture.
+		- accéder à la page de configutaion de php_conges, sélectionner la langues choisie et valider.
+
+	
+	5: Sécurité :
+	----------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommendé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+	
+	
+	IMPORTANT :
+	------------
+	passage de la version 0.7.1 ou inférieure à la version 0.8 ou supérieure :
+	-----------------------------------------------------------------------------
+	Le cryptage des mots de passe a changé (d'un cryptage MySql pour un cryptage MD5)
+	Par soucis de compatibilité avec les versions antèrieures, la fonction d'authentification de php_conges v0.8 supporte 
+	encore l'ancien cryptage, mais celui ci ne sera plus supporté dans les versions à venir. L'authentification des utilisateurs 
+	ne fonctionnera donc plus ...
+	A terme, tous les mots de passe doivent être convertis en cryptage MD5 !
+	Il est a noter que le fait, pour un utilisateur, de changer son password, crypte ce dernier désormais en md5.
+	Pour aider également à ce travail de convertion, la page "validation_password_v0.8.php" , a été intégrée dans le 
+	répertoire "docs" depuis la version 0.8 . Chaque utilisateur peut la consulter, elle lui permet de se loguer avec son login et mot de 
+	passe. Si ceux ci sont valides, 
+	le mot de passe est automatiquement crypté en md5 et modifié dans la database. L'utilisateur peut alors se reconnecter à 
+	php_conges sans problème.
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> CONFIGURATION (config générale et types d'absences) : 
+---------------------------------------------------------
+	1: configuration de base PHP_Conges :
+	--------------------------------------
+	- Le fichier "dbconnect.php" doit contenir les paramètresrelatifs à votre 
+	  connexion MySQL (serveur, user, password, database).
+
+
+	2: configuration générale de PHP_Conges :
+	------------------------------------------
+	- Pour obtenir le formulaire de configuration, saisir l'URL suivant dans votre navigateur : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	  (ce formulaire peut être accessible dans l'application, depuis le mode administarteur si php_conges a été paramétré ainsi)
+	- ajout d'une nouvelle langue : voir 
+		- télécharger le fichier de langue.
+		- copier ce fichier de langue dans le répertoire install/lang/ de votre application php_conges.
+		- vérifier que votre fichier ai les bons droits en lecture.
+		- accéder à la page de configutaion de php_conges, sélectionner la langues choisie et valider.
+
+
+	3: configuration des types d'absence/congés de PHP_Conges :
+	------------------------------------------------------------
+	- Pour obtenir le formulaire de configuration, saisir l'URL suivant dans votre navigateur : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	  (ce formulaire peut être accessible dans l'application, depuis le mode administarteur si php_conges a été paramétré ainsi)
+
+
+	4: configuration des mails envoyés par PHP_Conges :
+	------------------------------------------------------------
+	(cette étape n'est utile QUE si votre php_conges est configuré pour envoyer des mails d'alerte 
+	  (voir configuration de php_conges))
+	- Pour obtenir le formulaire de configuration, saisir l'URL suivant dans votre navigateur : 
+	  http://monsiteweb.mondomaine.org/mon_chemin/php_conges/install/
+	  (ce formulaire peut être accessible dans l'application, depuis le mode administarteur si php_conges a été paramétré ainsi)
+
+
+	REMARQUE : Sécurité :
+	----------------------
+	Afin d'assurer la sécurité de votre application, il est FORTEMENT recommandé de protéger
+	le répertoire "install" (par un fichier ".htaccess" par exemple (sous unix)).
+	En effet, ce répertoire contient les pages d'install et de configuration de l'appli; celles
+	ci ne doivent être accessibles qu'à certainnes personnes habilitées.
+
+
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-> TESTS :
+------------
+	Si vous désirez tester php_conges avant de l'utiliser, un jeu de test (docs/jeutest.sql) est livré avec php_conges.
+	(attention : ce jeu de test ne fonctionne évidement qu'avec une authentification dans la base db_conges (pas dans LDAP) !)
+	Il contient un jeu d'utilisateurs et de responsables déja utilisés.
+	(les mot de passe des utilisateurs sont égaux à leurs login respectifs) 
+	(les responsables dans le jeu de test sont "marie" et "paolo")
+
