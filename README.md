@@ -9,7 +9,7 @@ en oeuvre sur 1200 agents, correction de bug, nouvelles règles métier,
 une ergonomie "client-riche" (emploi de jquery).  
 
 Sa publication n'est qu'un juste retour des choses ; elle pourra
-servir de " bac à idées " pour les dévelopoements comme LiberTempo et
+servir de " bac à idées " pour les développements comme LiberTempo et
 autre ...
 
 La Licence applicable est inchangée / php_conges. GNU/GPL2. 
