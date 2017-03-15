@@ -66,7 +66,9 @@ function enregistrement_edition($login, $mysql_link, $DEBUG=FALSE)
 	if ($_SESSION['config']['gestion_conges_exceptionnels']==TRUE) 
 	{
 	  $tab_type_conges_exceptionnels=recup_tableau_types_conges_exceptionnels($mysql_link, $DEBUG);
-	}
+	} else {
+      $tab_type_conges_exceptionnels=array(); 
+    }
 	foreach($tab_type_conges_exceptionnels as $id_abs => $libelle)
 	{
 		$sql_insert_3 = "INSERT INTO conges_solde_edition
