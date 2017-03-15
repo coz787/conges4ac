@@ -1458,7 +1458,7 @@ function modif_group_users($choix_group, &$radio_group_users, $mysql_link, $DEBU
 	else
 		echo $_SESSION['lang']['form_modif_not_ok']."<br><br> \n";
 
-	$comment_log = "mofification_users_du_groupe : $choix_group" ;
+	$comment_log = "modification_users_du_groupe : $choix_group" ;
 	log_action(0, "", "", $comment_log, $mysql_link, $DEBUG);
 
 	/* APPEL D'UNE AUTRE PAGE */
@@ -1659,7 +1659,7 @@ function modif_user_groups($choix_user, &$radio_user_groups, $mysql_link, $DEBUG
 	else
 		echo $_SESSION['lang']['form_modif_not_ok']." !<br><br> \n";
 
-	$comment_log = "mofification_des groupes auxquels $choix_user appartient" ;
+	$comment_log = "modification_des groupes auxquels $choix_user appartient" ;
 	log_action(0, "", $choix_user, $comment_log, $mysql_link, $DEBUG);
 
 	/* APPEL D'UNE AUTRE PAGE */
@@ -1997,7 +1997,7 @@ function modif_group_responsables($choix_group, &$checkbox_group_resp, &$checkbo
 	else
 		echo $_SESSION['lang']['form_modif_not_ok']." !<br><br> \n";
 
-	$comment_log = "mofification_responsables_du_groupe : $choix_group" ;
+	$comment_log = "modification_responsables_du_groupe : $choix_group" ;
 	log_action(0, "", "", $comment_log, $mysql_link, $DEBUG);
 
 	/* APPEL D'UNE AUTRE PAGE */
@@ -2284,7 +2284,7 @@ function modif_resp_groupes($choix_resp, &$checkbox_resp_group, &$checkbox_grd_r
 	else
 		echo $_SESSION['lang']['form_modif_not_ok']." !<br><br> \n";
 
-	$comment_log = "mofification groupes dont $choix_resp est responsable ou grand responsable" ;
+	$comment_log = "modification groupes dont $choix_resp est responsable ou grand responsable" ;
 	log_action(0, "", $choix_resp, $comment_log, $mysql_link, $DEBUG);
 
 	/* APPEL D'UNE AUTRE PAGE */
