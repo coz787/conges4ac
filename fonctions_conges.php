@@ -4076,10 +4076,19 @@ function insert_dans_periode($login, $date_deb, $demi_jour_deb, $date_fin, $demi
 	// Récupération du + grand p_num (+ grand numero identifiant de conges)
 	$sql1 = "SELECT max(p_num) FROM conges_periode" ;
 	$ReqLog1 = requete_mysql($sql1, $mysql_link, "insert_dans_periode", $DEBUG);
-	if(mysqli_result($ReqLog1, 0))
-		$num_new_demande = mysqli_result($ReqLog1, 0)+1;
-	else
+
+    $resultat1 = mysqli_fetch_array($ReqLog1) ; 
+    if ( $resultat1 ) { 
+		$num_new_demande = $resultat1[0] + 1 ;
+	} else {
 		$num_new_demande = 1;  // la table est vide ! le premier num sera 1
+    }
+    error_log("insert_dans_periode: ".$num_new_demande); 
+
+	/* if(mysqli_data_seek($ReqLog1, 0)) */
+	/* 	$num_new_demande = mysqli_data_seek($ReqLog1, 0)+1; */
+	/* else */
+	/* 	$num_new_demande = 1;  // la table est vide ! le premier num sera 1 */
     /* _protectsql_ dpa */ 
     $commentaire = mysqli_real_escape_string($mysql_link,$commentaire);
 

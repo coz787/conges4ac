@@ -114,7 +114,7 @@ function get_last_edition_id($mysql_link, $DEBUG=FALSE)
 	{
 		$sql2 = "SELECT MAX(ep_id) FROM conges_edition_papier ";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "get_last_edition_id", $DEBUG);
-		return mysqli_result($ReqLog2, 0);
+		return mysqli_fetch_array($ReqLog2)[0];
 	}	
 }
 
@@ -131,7 +131,7 @@ function get_num_last_edition_user($login, $mysql_link, $DEBUG=FALSE)
 	{
 		$sql2 = "SELECT MAX(ep_num_for_user) FROM conges_edition_papier WHERE ep_login='$login' ";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "get_num_last_edition_user", $DEBUG);
-		return mysqli_result($ReqLog2, 0);
+		return mysqli_fetch_array($ReqLog2)[0];
 	}
 }
 
@@ -151,7 +151,7 @@ function get_id_edition_precedente_user($login, $edition_id, $mysql_link, $DEBUG
 		$sql2 = "SELECT MAX(ep_id) FROM conges_edition_papier WHERE ep_login='$login' AND ep_id<$edition_id ";
 		$ReqLog2 = requete_mysql($sql2, $mysql_link, "get_id_edition_precedente_user", $DEBUG);
 
-		return mysqli_result($ReqLog2, 0);
+		return mysqli_fetch_array($ReqLog2)[0];
 	}
 }
 
